@@ -326,6 +326,18 @@ const materialStabilizerBase = { color: 0xffdd00, emissive: 0x887700, emissiveIn
 const materialJointBase = { color: 0x00ccff, emissive: 0x006688, emissiveIntensity: 1.0, roughness: 0.3 };
 const materialSeleccionBase = { color: 0x1a3d8f, emissive: 0x0a1a4a, emissiveIntensity: 1.2, roughness: 0.4 };
 
+function crearMaterial(baseMat) {
+    return new THREE.MeshStandardMaterial(baseMat);
+}
+
+function reemplazarMaterial(mesh, nuevoMat) {
+    const anterior = mesh.material;
+    mesh.material = nuevoMat;
+    if (anterior && anterior !== mesh.userData.materialAntes) {
+        anterior.dispose();
+    }
+}
+
 const materialMusculo = new THREE.MeshStandardMaterial(materialMusculoBase);
 const materialProfundo = new THREE.MeshStandardMaterial(materialProfundoBase);
 const materialHueso = new THREE.MeshStandardMaterial(materialHuesoBase);
@@ -580,27 +592,23 @@ function validarCoberturaInfo() {
 }
 validarCoberturaInfo();
 
-function aplicarSeleccion() {
+function restaurarSeleccion() {
     if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
-        partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
-        delete partes[musculoSeleccionado].userData.materialAntes;
-    }
-    if (musculoSeleccionado && partes[musculoSeleccionado]) {
-        partes[musculoSeleccionado].userData.materialAntes = partes[musculoSeleccionado].material;
-        partes[musculoSeleccionado].material = new THREE.MeshStandardMaterial(materialSeleccionBase);
+        const m = partes[musculoSeleccionado];
+        const anteriorSel = m.material;
+        m.material = m.userData.materialAntes;
+        delete m.userData.materialAntes;
+        if (anteriorSel && anteriorSel !== m.material) anteriorSel.dispose();
     }
 }
 
 function seleccionarMusculo(id) {
-    if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
-        partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
-        delete partes[musculoSeleccionado].userData.materialAntes;
-    }
+    restaurarSeleccion();
     if (musculoSeleccionado === id) { musculoSeleccionado = null; return; }
     const mesh = partes[id];
     if (mesh) {
         mesh.userData.materialAntes = mesh.material;
-        mesh.material = new THREE.MeshStandardMaterial(materialSeleccionBase);
+        mesh.material = crearMaterial(materialSeleccionBase);
         musculoSeleccionado = id;
     }
 }
@@ -713,10 +721,7 @@ function normalizar(texto) {
 function setTexto(texto) { document.getElementById("inputEjercicio").value = texto; }
 
 function limpiar() {
-    if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
-        partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
-        delete partes[musculoSeleccionado].userData.materialAntes;
-    }
+    restaurarSeleccion();
     musculoSeleccionado = null;
 
     Object.values(partes).forEach(parte => {
@@ -724,7 +729,7 @@ function limpiar() {
         if (esArticulacion(parte.name) || esEstructura(parte.name)) baseMat = materialHuesoBase;
         else if (esProfundo(parte.name)) baseMat = materialProfundoBase;
         else baseMat = materialMusculoBase;
-        parte.material = new THREE.MeshStandardMaterial(baseMat);
+        reemplazarMaterial(parte, crearMaterial(baseMat));
     });
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
     document.getElementById("resultado").style.color = "#aaa";
@@ -732,7 +737,7 @@ function limpiar() {
 
 function aplicarMaterial(grupoMusculos, materialBase) {
     grupoMusculos.forEach(grupo => grupo.meshes.forEach(id => {
-        if (partes[id]) partes[id].material = new THREE.MeshStandardMaterial(materialBase);
+        if (partes[id]) reemplazarMaterial(partes[id], crearMaterial(materialBase));
     }));
 }
 
@@ -747,7 +752,7 @@ function rutinaCompleta() {
     limpiar();
     Object.values(partes).forEach(parte => {
         if (esMusculo(parte.name)) {
-            parte.material = new THREE.MeshStandardMaterial(materialPrimaryBase);
+            reemplazarMaterial(parte, crearMaterial(materialPrimaryBase));
         }
     });
     const resultadoDiv = document.getElementById("resultado");
