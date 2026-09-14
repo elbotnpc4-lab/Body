@@ -39,6 +39,8 @@
         #info-panel .info-lista { color: #ddd; padding-left: 4px; }
         #info-panel .cerrar { position: absolute; top: 12px; right: 15px; cursor: pointer; color: #888; font-size: 16px; background: none; border: none; padding: 0; width: auto; }
         #info-panel .cerrar:hover { color: white; background: none; }
+        #info-panel .tecnica-peso { background-color: #1a2a3a; border-left: 3px solid #4a9aff; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; line-height: 1.5; }
+        #info-panel .tecnica-peso strong { color: #6abaff; }
 
         .btn-ejercicio-mini { display: inline-block; width: auto; padding: 3px 8px; margin: 2px 0; font-size: 11px; background-color: #2a4a8a; border: 1px solid #4a6aaa; border-radius: 3px; color: white; cursor: pointer; text-align: left; }
         .btn-ejercicio-mini:hover { background-color: #3a5a9a; }
@@ -65,6 +67,7 @@
     <h2>Mapa Muscular 3D</h2>
     <input type="text" id="inputEjercicio" placeholder="Escribe un ejercicio...">
     <button id="btnEntrenar">Entrenar</button>
+    <button id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">RUTINA COMPLETA (todo el cuerpo)</button>
 
     <p class="seccion-titulo">FILTRAR EJERCICIOS</p>
     <div class="grupo-filtro">
@@ -135,37 +138,25 @@ const [nombresMusculos, infoMusculos, baseDatos] = await Promise.all([
 ]);
 
 const PROFUNDOS = [
-    'transverso_abdominal',
-    'psoas_iliaco_izq', 'psoas_iliaco_der',
-    'subescapular_izq', 'subescapular_der',
-    'oblicuo_int_izq', 'oblicuo_int_der',
-    'gluteo_menor_izq', 'gluteo_menor_der',
-    'piriforme_izq', 'piriforme_der',
-    'vastointermedio_izq', 'vastointermedio_der',
-    'popliteo_izq', 'popliteo_der',
-    'intrinsecos_pie_izq', 'intrinsecos_pie_der',
-    'cuadrado_lumbar_izq', 'cuadrado_lumbar_der',
-    'serrato_post_sup_izq', 'serrato_post_sup_der',
-    'serrato_post_inf_izq', 'serrato_post_inf_der',
-    'redondo_menor_izq', 'redondo_menor_der',
-    'coracobraquial_izq', 'coracobraquial_der',
-    'anconeo_izq', 'anconeo_der',
-    'espinoso_izq', 'espinoso_der',
+    'transverso_abdominal', 'psoas_iliaco_izq', 'psoas_iliaco_der',
+    'subescapular_izq', 'subescapular_der', 'oblicuo_int_izq', 'oblicuo_int_der',
+    'gluteo_menor_izq', 'gluteo_menor_der', 'piriforme_izq', 'piriforme_der',
+    'vastointermedio_izq', 'vastointermedio_der', 'popliteo_izq', 'popliteo_der',
+    'intrinsecos_pie_izq', 'intrinsecos_pie_der', 'cuadrado_lumbar_izq', 'cuadrado_lumbar_der',
+    'serrato_post_sup_izq', 'serrato_post_sup_der', 'serrato_post_inf_izq', 'serrato_post_inf_der',
+    'redondo_menor_izq', 'redondo_menor_der', 'coracobraquial_izq', 'coracobraquial_der',
+    'anconeo_izq', 'anconeo_der', 'espinoso_izq', 'espinoso_der',
     'intercostal_izq_0', 'intercostal_izq_1', 'intercostal_izq_2', 'intercostal_izq_3',
     'intercostal_der_0', 'intercostal_der_1', 'intercostal_der_2', 'intercostal_der_3'
 ];
 
 const ARTICULACIONES = [
-    'hombro_izq', 'hombro_der',
-    'codo_izq', 'codo_der',
-    'muneca_izq', 'muneca_der',
-    'cadera_izq', 'cadera_der',
-    'rodilla_izq', 'rodilla_der',
-    'tobillo_izq', 'tobillo_der',
+    'hombro_izq', 'hombro_der', 'codo_izq', 'codo_der', 'muneca_izq', 'muneca_der',
+    'cadera_izq', 'cadera_der', 'rodilla_izq', 'rodilla_der', 'tobillo_izq', 'tobillo_der',
     'columna_cervical', 'columna_toracica', 'columna_lumbar'
 ];
 
-const ESTRUCTURAS = ['cabeza', 'cuello', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der'];
+const ESTRUCTURAS = ['cabeza', 'cuello', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der', 'occipital'];
 
 const MUSCULOS_RELACIONADOS = {
     'elevador_escapula_izq': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
@@ -176,8 +167,8 @@ const MUSCULOS_RELACIONADOS = {
     'anconeo_der': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial'],
     'iliocostal_izq': ['Longísimo', 'Espinoso', 'Cuadrado Lumbar'],
     'iliocostal_der': ['Longísimo', 'Espinoso', 'Cuadrado Lumbar'],
-    'longisimo_izq': ['Iliocostal', 'Espinoso', 'Semispinal'],
-    'longisimo_der': ['Iliocostal', 'Espinoso', 'Semispinal'],
+    'longisimo_izq': ['Iliocostal', 'Espinoso'],
+    'longisimo_der': ['Iliocostal', 'Espinoso'],
     'espinoso_izq': ['Iliocostal', 'Longísimo'],
     'espinoso_der': ['Iliocostal', 'Longísimo'],
     'cuadriceps_recto_izq': ['Vasto Lateral', 'Vasto Medial', 'Vasto Intermedio', 'Sartorio'],
@@ -231,7 +222,7 @@ const MUSCULOS_RELACIONADOS = {
     'supraespinoso_izq': ['Infraespinoso', 'Subescapular', 'Deltoides Lateral'],
     'supraespinoso_der': ['Infraespinoso', 'Subescapular', 'Deltoides Lateral'],
     'subescapular_izq': ['Supraespinoso', 'Infraespinoso', 'Redondo Mayor'],
-    'subescapular_der': ['Supraespinoso', 'Infraespinoso', 'Redondo Mayor'],
+    'subescapular_der': ['Supraespinoso', 'Infrarespinoso', 'Redondo Mayor'],
     'redondo_mayor_izq': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
     'redondo_mayor_der': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
     'romboides_izq': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho', 'Elevador de la Escápula'],
@@ -326,19 +317,29 @@ const gridHelper = new THREE.GridHelper(20, 20, 0x333333, 0x222222);
 gridHelper.position.y = -1.49;
 scene.add(gridHelper);
 
-const materialMusculo = new THREE.MeshStandardMaterial({ color: 0xaa3333, roughness: 0.6, metalness: 0.1 });
-const materialProfundo = new THREE.MeshStandardMaterial({ color: 0x772222, roughness: 0.6, metalness: 0.1 });
-const materialHueso = new THREE.MeshStandardMaterial({ color: 0xd0d8e0, roughness: 0.5, metalness: 0.1 });
-const materialPrimary = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xaa0000, emissiveIntensity: 1.5, roughness: 0.3 });
-const materialSecondary = new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0x884400, emissiveIntensity: 1.0, roughness: 0.3 });
-const materialStabilizer = new THREE.MeshStandardMaterial({ color: 0xffdd00, emissive: 0x887700, emissiveIntensity: 0.8, roughness: 0.3 });
-const materialJoint = new THREE.MeshStandardMaterial({ color: 0x00ccff, emissive: 0x006688, emissiveIntensity: 1.0, roughness: 0.3 });
-const materialSeleccion = new THREE.MeshStandardMaterial({ color: 0x1a3d8f, emissive: 0x0a1a4a, emissiveIntensity: 1.2, roughness: 0.4 });
+const materialMusculoBase = { color: 0xaa3333, roughness: 0.6, metalness: 0.1 };
+const materialProfundoBase = { color: 0x772222, roughness: 0.6, metalness: 0.1 };
+const materialHuesoBase = { color: 0xd0d8e0, roughness: 0.5, metalness: 0.1 };
+const materialPrimaryBase = { color: 0xff0000, emissive: 0xaa0000, emissiveIntensity: 1.5, roughness: 0.3 };
+const materialSecondaryBase = { color: 0xff8800, emissive: 0x884400, emissiveIntensity: 1.0, roughness: 0.3 };
+const materialStabilizerBase = { color: 0xffdd00, emissive: 0x887700, emissiveIntensity: 0.8, roughness: 0.3 };
+const materialJointBase = { color: 0x00ccff, emissive: 0x006688, emissiveIntensity: 1.0, roughness: 0.3 };
+const materialSeleccionBase = { color: 0x1a3d8f, emissive: 0x0a1a4a, emissiveIntensity: 1.2, roughness: 0.4 };
+
+const materialMusculo = new THREE.MeshStandardMaterial(materialMusculoBase);
+const materialProfundo = new THREE.MeshStandardMaterial(materialProfundoBase);
+const materialHueso = new THREE.MeshStandardMaterial(materialHuesoBase);
+const materialPrimary = new THREE.MeshStandardMaterial(materialPrimaryBase);
+const materialSecondary = new THREE.MeshStandardMaterial(materialSecondaryBase);
+const materialStabilizer = new THREE.MeshStandardMaterial(materialStabilizerBase);
+const materialJoint = new THREE.MeshStandardMaterial(materialJointBase);
+const materialSeleccion = new THREE.MeshStandardMaterial(materialSeleccionBase);
 
 const partes = {};
 function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = null, escala = {x:1, y:1, z:1}) {
     if (!material) material = esProfundo(nombre) ? materialProfundo : ((esArticulacion(nombre) || esEstructura(nombre)) ? materialHueso : materialMusculo);
-    const mesh = new THREE.Mesh(geometria, material);
+    const matClonado = material.clone();
+    const mesh = new THREE.Mesh(geometria, matClonado);
     mesh.position.set(posicion.x, posicion.y, posicion.z);
     mesh.rotation.set(rotacion.x, rotacion.y, rotacion.z);
     mesh.scale.set(escala.x, escala.y, escala.z);
@@ -532,14 +533,28 @@ crearParte(new THREE.CylinderGeometry(0.06, 0.06, 0.4, 8), {x:0, y:2.55, z:-0.05
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8), {x:0, y:1.95, z:-0.1}, 'columna_toracica', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 8), {x:0, y:1.4, z:-0.1}, 'columna_lumbar', {x:0, y:0, z:0}, materialHueso);
 
-function aplicarCapa() {
-    Object.values(partes).forEach(parte => {
-        parte.visible = true;
-        parte.material.opacity = 1;
-        parte.material.transparent = false;
-    });
-    aplicarSeleccion();
+function validarDatos() {
+    const idsValidos = new Set(Object.keys(partes));
+    const errores = [];
+    for (const clave in baseDatos) {
+        const datos = baseDatos[clave];
+        const categorias = ['primary', 'secondary', 'stabilizers', 'joints'];
+        for (const cat of categorias) {
+            for (const grupo of (datos[cat] || [])) {
+                for (const id of grupo.meshes) {
+                    if (!idsValidos.has(id)) errores.push(`[${clave}][${cat}] mesh inexistente: ${id}`);
+                }
+            }
+        }
+    }
+    if (errores.length > 0) {
+        console.warn('=== VALIDACIÓN DE DATOS: ' + errores.length + ' errores ===');
+        errores.forEach(e => console.warn(e));
+    } else {
+        console.log('✓ Validación OK: todos los meshes en ejercicios.json existen en el modelo.');
+    }
 }
+validarDatos();
 
 function aplicarSeleccion() {
     if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
@@ -548,7 +563,7 @@ function aplicarSeleccion() {
     }
     if (musculoSeleccionado && partes[musculoSeleccionado]) {
         partes[musculoSeleccionado].userData.materialAntes = partes[musculoSeleccionado].material;
-        partes[musculoSeleccionado].material = materialSeleccion;
+        partes[musculoSeleccionado].material = materialSeleccion.clone();
     }
 }
 
@@ -561,7 +576,7 @@ function seleccionarMusculo(id) {
     const mesh = partes[id];
     if (mesh) {
         mesh.userData.materialAntes = mesh.material;
-        mesh.material = materialSeleccion;
+        mesh.material = materialSeleccion.clone();
         musculoSeleccionado = id;
     }
 }
@@ -628,6 +643,9 @@ renderer.domElement.addEventListener('click', (event) => {
         const info = infoMusculos[idMusculo];
         infoNombre.innerText = info ? info.nombre : nombreMostrar;
         let html = `<div class="tipo-badge ${tipoBadge}">${tipoTexto}</div>`;
+
+        html += `<div class="tecnica-peso"><strong>💡 Técnica &gt; Peso</strong><br>La técnica correcta es más importante que cargar mucho peso. Con mala forma: (1) el músculo objetivo no trabaja, (2) te lesionas, (3) progresas más lento. <strong>Primero domina el movimiento, después sube el peso.</strong></div>`;
+
         if (info) {
             if (info.funciones) {
                 html += `<div class="info-seccion"><span class="info-label">Función</span>`;
@@ -671,16 +689,20 @@ function setTexto(texto) { document.getElementById("inputEjercicio").value = tex
 
 function limpiar() {
     Object.values(partes).forEach(parte => {
-        if (esArticulacion(parte.name) || esEstructura(parte.name)) parte.material = materialHueso;
-        else if (esProfundo(parte.name)) parte.material = materialProfundo;
-        else parte.material = materialMusculo;
+        let baseMat;
+        if (esArticulacion(parte.name) || esEstructura(parte.name)) baseMat = materialHuesoBase;
+        else if (esProfundo(parte.name)) baseMat = materialProfundoBase;
+        else baseMat = materialMusculoBase;
+        parte.material = new THREE.MeshStandardMaterial(baseMat);
     });
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
     document.getElementById("resultado").style.color = "#aaa";
 }
 
-function aplicarMaterial(grupoMusculos, material) {
-    grupoMusculos.forEach(grupo => grupo.meshes.forEach(id => { if (partes[id]) partes[id].material = material; }));
+function aplicarMaterial(grupoMusculos, materialBase) {
+    grupoMusculos.forEach(grupo => grupo.meshes.forEach(id => {
+        if (partes[id]) partes[id].material = new THREE.MeshStandardMaterial(materialBase);
+    }));
 }
 
 function construirHTMLLista(grupoMusculos, color) {
@@ -688,6 +710,18 @@ function construirHTMLLista(grupoMusculos, color) {
     let html = "";
     grupoMusculos.forEach(grupo => html += `<div class="musculo"><span style="color:${color};">■</span> ${grupo.nombre}</div>`);
     return html;
+}
+
+function rutinaCompleta() {
+    limpiar();
+    Object.values(partes).forEach(parte => {
+        if (esMusculo(parte.name)) {
+            parte.material = new THREE.MeshStandardMaterial(materialPrimaryBase);
+        }
+    });
+    const resultadoDiv = document.getElementById("resultado");
+    resultadoDiv.innerHTML = `<div class="cat"><span class="cat-titulo" style="color:#ff0000;">RUTINA COMPLETA</span><div class="musculo">Todo el cuerpo activado.</div><div class="musculo" style="margin-top:6px; color:#888;">Sugerencia de split semanal:</div><div class="musculo">• Lunes: Pecho + Tríceps</div><div class="musculo">• Martes: Espalda + Bíceps</div><div class="musculo">• Miércoles: Piernas</div><div class="musculo">• Jueves: Hombros + Core</div><div class="musculo">• Viernes: Full body</div></div>`;
+    resultadoDiv.style.color = "#aaa";
 }
 
 function entrenar() {
@@ -708,10 +742,10 @@ function entrenar() {
     const resultadoDiv = document.getElementById("resultado");
     resultadoDiv.style.color = "#aaa";
     if (ejercicioEncontrado) {
-        aplicarMaterial(ejercicioEncontrado.primary || [], materialPrimary);
-        aplicarMaterial(ejercicioEncontrado.secondary || [], materialSecondary);
-        aplicarMaterial(ejercicioEncontrado.stabilizers || [], materialStabilizer);
-        aplicarMaterial(ejercicioEncontrado.joints || [], materialJoint);
+        aplicarMaterial(ejercicioEncontrado.primary || [], materialPrimaryBase);
+        aplicarMaterial(ejercicioEncontrado.secondary || [], materialSecondaryBase);
+        aplicarMaterial(ejercicioEncontrado.stabilizers || [], materialStabilizerBase);
+        aplicarMaterial(ejercicioEncontrado.joints || [], materialJointBase);
         let html = "";
         if (ejercicioEncontrado.primary?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ff0000;">PRIMARIOS</span>${construirHTMLLista(ejercicioEncontrado.primary, '#ff0000')}</div>`;
         if (ejercicioEncontrado.secondary?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ff8800;">SECUNDARIOS</span>${construirHTMLLista(ejercicioEncontrado.secondary, '#ff8800')}</div>`;
@@ -723,8 +757,6 @@ function entrenar() {
         resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
         resultadoDiv.style.color = "#ff4444";
     }
-    aplicarCapa();
-    aplicarSeleccion();
 }
 
 function togglePanel() {
@@ -771,6 +803,7 @@ function renderizarBotones(filtro = "todos") {
 
 document.getElementById("toggle-btn").addEventListener("click", togglePanel);
 document.getElementById("btnEntrenar").addEventListener("click", entrenar);
+document.getElementById("btnRutinaCompleta").addEventListener("click", rutinaCompleta);
 document.getElementById("inputEjercicio").addEventListener("keypress", function(event) { if (event.key === "Enter") entrenar(); });
 document.querySelectorAll(".filtro-btn").forEach(btn => btn.addEventListener("click", function() {
     document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("activo"));
@@ -792,10 +825,9 @@ document.getElementById("legend-help").addEventListener("click", function(e) {
 const leyendaEl = document.getElementById("leyendaFlotante");
 let isDraggingLegend = false;
 let startX, startY, initialLeft, initialTop;
-function getPos(el) { return el.getBoundingClientRect(); }
 
 function iniciarArrastre(clientX, clientY) {
-    const rect = getPos(leyendaEl);
+    const rect = leyendaEl.getBoundingClientRect();
     isDraggingLegend = true;
     startX = clientX;
     startY = clientY;
@@ -835,7 +867,6 @@ document.addEventListener('touchmove', (e) => {
 document.addEventListener('touchend', soltarArrastre);
 
 renderizarBotones("todos");
-aplicarCapa();
 
 function animate() {
     requestAnimationFrame(animate);
