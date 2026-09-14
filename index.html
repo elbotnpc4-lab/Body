@@ -131,7 +131,13 @@ const PROFUNDOS = [
 
 const ARTICULACIONES = [
     'cabeza', 'cuello',
+    'hombro_izq', 'hombro_der',
+    'codo_izq', 'codo_der',
+    'muneca_izq', 'muneca_der',
+    'cadera_izq', 'cadera_der',
     'rodilla_izq', 'rodilla_der',
+    'tobillo_izq', 'tobillo_der',
+    'columna_cervical', 'columna_toracica', 'columna_lumbar',
     'mano_izq', 'mano_der',
     'pie_izq', 'pie_der'
 ];
@@ -210,7 +216,7 @@ const materialJoint = new THREE.MeshStandardMaterial({ color: 0x00ccff, emissive
 
 const partes = {};
 function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = null, escala = {x:1, y:1, z:1}) {
-    if (!material) material = esProfundo(nombre) ? materialProfundo : materialMusculo;
+    if (!material) material = esProfundo(nombre) ? materialProfundo : (esArticulacion(nombre) ? materialHueso : materialMusculo);
     const mesh = new THREE.Mesh(geometria, material);
     mesh.position.set(posicion.x, posicion.y, posicion.z);
     mesh.rotation.set(rotacion.x, rotacion.y, rotacion.z);
@@ -342,9 +348,6 @@ crearParte(new THREE.BoxGeometry(0.05, 0.6, 0.05), {x:0.35, y:0.6, z:0.15}, 'sar
 crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:-0.55, y:0.9, z:0.05}, 'tfl_izq');
 crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:0.55, y:0.9, z:0.05}, 'tfl_der');
 
-crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:-0.25, y:0.1, z:0}, 'rodilla_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:0.25, y:0.1, z:0}, 'rodilla_der', {x:0, y:0, z:0}, materialHueso);
-
 crearParte(new THREE.BoxGeometry(0.15, 0.35, 0.15), {x:-0.25, y:-0.35, z:0.05}, 'gastrocnemio_izq');
 crearParte(new THREE.BoxGeometry(0.15, 0.35, 0.15), {x:0.25, y:-0.35, z:0.05}, 'gastrocnemio_der');
 crearParte(new THREE.BoxGeometry(0.12, 0.25, 0.12), {x:-0.25, y:-0.45, z:-0.05}, 'soleo_izq');
@@ -364,6 +367,22 @@ crearParte(new THREE.BoxGeometry(0.18, 0.1, 0.3), {x:-0.25, y:-0.9, z:0.08}, 'pi
 crearParte(new THREE.BoxGeometry(0.18, 0.1, 0.3), {x:0.25, y:-0.9, z:0.08}, 'pie_der', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:-0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_izq');
 crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_der');
+
+crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:-0.7, y:2.35, z:0}, 'hombro_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:0.7, y:2.35, z:0}, 'hombro_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.1, 16, 16), {x:-0.7, y:1.7, z:0}, 'codo_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.1, 16, 16), {x:0.7, y:1.7, z:0}, 'codo_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.07, 16, 16), {x:-0.7, y:1.2, z:0.05}, 'muneca_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.07, 16, 16), {x:0.7, y:1.2, z:0.05}, 'muneca_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.14, 16, 16), {x:-0.3, y:0.9, z:0}, 'cadera_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.14, 16, 16), {x:0.3, y:0.9, z:0}, 'cadera_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:-0.25, y:0.1, z:0}, 'rodilla_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:0.25, y:0.1, z:0}, 'rodilla_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.08, 16, 16), {x:-0.25, y:-0.8, z:0}, 'tobillo_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.08, 16, 16), {x:0.25, y:-0.8, z:0}, 'tobillo_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.CylinderGeometry(0.06, 0.06, 0.4, 8), {x:0, y:2.55, z:-0.05}, 'columna_cervical', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8), {x:0, y:1.95, z:-0.1}, 'columna_toracica', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 8), {x:0, y:1.4, z:-0.1}, 'columna_lumbar', {x:0, y:0, z:0}, materialHueso);
 
 function aplicarCapa() {
     Object.values(partes).forEach(parte => {
@@ -402,18 +421,13 @@ function cerrarInfo() { infoPanel.style.display = 'none'; }
 window.cerrarInfo = cerrarInfo;
 
 function buscarEjerciciosDeMusculo(idMusculo) {
-    const ejercicios = { primary: [], secondary: [], stabilizers: [] };
+    const ejercicios = { primary: [], secondary: [], stabilizers: [], articulacion: [] };
     for (const clave in baseDatos) {
         const datos = baseDatos[clave];
-        for (const grupo of (datos.primary || [])) {
-            if (grupo.meshes.includes(idMusculo) && !ejercicios.primary.includes(clave)) ejercicios.primary.push(clave);
-        }
-        for (const grupo of (datos.secondary || [])) {
-            if (grupo.meshes.includes(idMusculo) && !ejercicios.secondary.includes(clave)) ejercicios.secondary.push(clave);
-        }
-        for (const grupo of (datos.stabilizers || [])) {
-            if (grupo.meshes.includes(idMusculo) && !ejercicios.stabilizers.includes(clave)) ejercicios.stabilizers.push(clave);
-        }
+        for (const grupo of (datos.primary || [])) if (grupo.meshes.includes(idMusculo) && !ejercicios.primary.includes(clave)) ejercicios.primary.push(clave);
+        for (const grupo of (datos.secondary || [])) if (grupo.meshes.includes(idMusculo) && !ejercicios.secondary.includes(clave)) ejercicios.secondary.push(clave);
+        for (const grupo of (datos.stabilizers || [])) if (grupo.meshes.includes(idMusculo) && !ejercicios.stabilizers.includes(clave)) ejercicios.stabilizers.push(clave);
+        for (const grupo of (datos.joints || [])) if (grupo.meshes.includes(idMusculo) && !ejercicios.articulacion.includes(clave)) ejercicios.articulacion.push(clave);
     }
     return ejercicios;
 }
@@ -423,14 +437,11 @@ renderer.domElement.addEventListener('click', (event) => {
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
-
     const partesVisibles = Object.values(partes).filter(p => p.visible);
     const intersects = raycaster.intersectObjects(partesVisibles);
-
     if (intersects.length > 0) {
         const hit = intersects[0].object;
         const idMusculo = hit.name;
-
         if (clicFiltro === 'musculo' && !esMusculo(idMusculo)) return;
         if (clicFiltro === 'articulacion' && !esArticulacion(idMusculo)) return;
 
@@ -454,30 +465,15 @@ renderer.domElement.addEventListener('click', (event) => {
                 info.funciones.forEach(f => { html += `<div class="info-lista">• ${f}</div>`; });
                 html += `</div>`;
             }
-            if (info.cruza) {
-                html += `<div class="info-seccion"><span class="info-label">Cruza</span><div class="info-texto">${info.cruza.join(" · ")}</div></div>`;
-            }
-            if (info.ubicacion) {
-                html += `<div class="info-seccion"><span class="info-label">Ubicación</span><div class="info-texto">${info.ubicacion}</div></div>`;
-            }
+            if (info.cruza) html += `<div class="info-seccion"><span class="info-label">Cruza</span><div class="info-texto">${info.cruza.join(" · ")}</div></div>`;
+            if (info.ubicacion) html += `<div class="info-seccion"><span class="info-label">Ubicación</span><div class="info-texto">${info.ubicacion}</div></div>`;
         }
 
         const ej = buscarEjerciciosDeMusculo(idMusculo);
-        if (ej.primary.length > 0) {
-            html += `<div class="info-seccion"><span class="info-label" style="color:#ff0000;">Primario en</span>`;
-            ej.primary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
-            html += `</div>`;
-        }
-        if (ej.secondary.length > 0) {
-            html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>`;
-            ej.secondary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
-            html += `</div>`;
-        }
-        if (ej.stabilizers.length > 0) {
-            html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>`;
-            ej.stabilizers.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
-            html += `</div>`;
-        }
+        if (ej.primary.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#ff0000;">Primario en</span>`; ej.primary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
+        if (ej.secondary.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>`; ej.secondary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
+        if (ej.stabilizers.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>`; ej.stabilizers.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
+        if (ej.articulacion.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#00ccff;">Participa en</span>`; ej.articulacion.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
 
         infoContenido.innerHTML = html;
         infoPanel.style.display = 'block';
@@ -494,13 +490,9 @@ function setTexto(texto) { document.getElementById("inputEjercicio").value = tex
 
 function limpiar() {
     Object.values(partes).forEach(parte => {
-        if (esArticulacion(parte.name)) {
-            parte.material = materialHueso;
-        } else if (esProfundo(parte.name)) {
-            parte.material = materialProfundo;
-        } else {
-            parte.material = materialMusculo;
-        }
+        if (esArticulacion(parte.name)) parte.material = materialHueso;
+        else if (esProfundo(parte.name)) parte.material = materialProfundo;
+        else parte.material = materialMusculo;
     });
     aplicarCapa();
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
@@ -508,17 +500,13 @@ function limpiar() {
 }
 
 function aplicarMaterial(grupoMusculos, material) {
-    grupoMusculos.forEach(grupo => {
-        grupo.meshes.forEach(id => { if (partes[id]) { partes[id].material = material; } });
-    });
+    grupoMusculos.forEach(grupo => grupo.meshes.forEach(id => { if (partes[id]) partes[id].material = material; }));
 }
 
 function construirHTMLLista(grupoMusculos, color) {
     if (!grupoMusculos || grupoMusculos.length === 0) return "";
     let html = "";
-    grupoMusculos.forEach(grupo => {
-        html += `<div class="musculo"><span style="color:${color};">■</span> ${grupo.nombre}</div>`;
-    });
+    grupoMusculos.forEach(grupo => html += `<div class="musculo"><span style="color:${color};">■</span> ${grupo.nombre}</div>`);
     return html;
 }
 
@@ -528,16 +516,10 @@ function entrenar() {
     let ejercicioEncontrado = null;
 
     const aliasOrdenados = [];
-    for (const clave in baseDatos) {
-        baseDatos[clave].alias.forEach(alias => {
-            aliasOrdenados.push({ aliasNorm: normalizar(alias), clave });
-        });
-    }
+    for (const clave in baseDatos) baseDatos[clave].alias.forEach(alias => aliasOrdenados.push({ aliasNorm: normalizar(alias), clave }));
     aliasOrdenados.sort((a, b) => b.aliasNorm.length - a.aliasNorm.length);
 
-    for (const entrada of aliasOrdenados) {
-        if (input === entrada.aliasNorm) { ejercicioEncontrado = baseDatos[entrada.clave]; break; }
-    }
+    for (const entrada of aliasOrdenados) if (input === entrada.aliasNorm) { ejercicioEncontrado = baseDatos[entrada.clave]; break; }
     if (!ejercicioEncontrado) {
         for (const entrada of aliasOrdenados) {
             const aliasEscapado = entrada.aliasNorm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -560,9 +542,7 @@ function entrenar() {
         if (ejercicioEncontrado.secondary?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ff8800;">SECUNDARIOS</span>${construirHTMLLista(ejercicioEncontrado.secondary, '#ff8800')}</div>`;
         if (ejercicioEncontrado.stabilizers?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ffdd00;">ESTABILIZADORES</span>${construirHTMLLista(ejercicioEncontrado.stabilizers, '#ffdd00')}</div>`;
         if (ejercicioEncontrado.joints?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#00ccff;">ARTICULACIONES</span>${construirHTMLLista(ejercicioEncontrado.joints, '#00ccff')}</div>`;
-        if (ejercicioEncontrado.movement) {
-            html += `<div class="movimiento"><span class="cat-titulo" style="color:#fff;">MOVIMIENTO</span><div class="musculo">↑ ${ejercicioEncontrado.movement.subida}</div><div class="musculo">↓ ${ejercicioEncontrado.movement.bajada}</div></div>`;
-        }
+        if (ejercicioEncontrado.movement) html += `<div class="movimiento"><span class="cat-titulo" style="color:#fff;">MOVIMIENTO</span><div class="musculo">↑ ${ejercicioEncontrado.movement.subida}</div><div class="musculo">↓ ${ejercicioEncontrado.movement.bajada}</div></div>`;
         resultadoDiv.innerHTML = html;
     } else {
         resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
@@ -582,8 +562,7 @@ function renderizarBotones(filtro = "todos") {
     cont.innerHTML = "";
     const grupos = { mancuerna: [], cuerpo: [] };
     for (const clave in baseDatos) {
-        const datos = baseDatos[clave];
-        if (datos.tipo === "mancuerna") grupos.mancuerna.push(clave);
+        if (baseDatos[clave].tipo === "mancuerna") grupos.mancuerna.push(clave);
         else grupos.cuerpo.push(clave);
     }
     const agregarGrupo = (titulo, claves) => {
@@ -606,31 +585,23 @@ function renderizarBotones(filtro = "todos") {
 
 document.getElementById("toggle-btn").addEventListener("click", togglePanel);
 document.getElementById("btnEntrenar").addEventListener("click", entrenar);
-document.getElementById("inputEjercicio").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") entrenar();
-});
-document.querySelectorAll(".filtro-btn").forEach(btn => {
-    btn.addEventListener("click", function() {
-        document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("activo"));
-        this.classList.add("activo");
-        renderizarBotones(this.getAttribute("data-filtro"));
-    });
-});
-document.querySelectorAll(".capa-btn").forEach(btn => {
-    btn.addEventListener("click", function() {
-        document.querySelectorAll(".capa-btn").forEach(b => b.classList.remove("activo"));
-        this.classList.add("activo");
-        capaActual = this.getAttribute("data-capa");
-        aplicarCapa();
-    });
-});
-document.querySelectorAll(".clic-btn").forEach(btn => {
-    btn.addEventListener("click", function() {
-        document.querySelectorAll(".clic-btn").forEach(b => b.classList.remove("activo"));
-        this.classList.add("activo");
-        clicFiltro = this.getAttribute("data-clic");
-    });
-});
+document.getElementById("inputEjercicio").addEventListener("keypress", function(event) { if (event.key === "Enter") entrenar(); });
+document.querySelectorAll(".filtro-btn").forEach(btn => btn.addEventListener("click", function() {
+    document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("activo"));
+    this.classList.add("activo");
+    renderizarBotones(this.getAttribute("data-filtro"));
+}));
+document.querySelectorAll(".capa-btn").forEach(btn => btn.addEventListener("click", function() {
+    document.querySelectorAll(".capa-btn").forEach(b => b.classList.remove("activo"));
+    this.classList.add("activo");
+    capaActual = this.getAttribute("data-capa");
+    aplicarCapa();
+}));
+document.querySelectorAll(".clic-btn").forEach(btn => btn.addEventListener("click", function() {
+    document.querySelectorAll(".clic-btn").forEach(b => b.classList.remove("activo"));
+    this.classList.add("activo");
+    clicFiltro = this.getAttribute("data-clic");
+}));
 
 renderizarBotones("todos");
 aplicarCapa();
