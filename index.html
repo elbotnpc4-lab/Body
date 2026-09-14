@@ -222,7 +222,7 @@ const MUSCULOS_RELACIONADOS = {
     'supraespinoso_izq': ['Infraespinoso', 'Subescapular', 'Deltoides Lateral'],
     'supraespinoso_der': ['Infraespinoso', 'Subescapular', 'Deltoides Lateral'],
     'subescapular_izq': ['Supraespinoso', 'Infraespinoso', 'Redondo Mayor'],
-    'subescapular_der': ['Supraespinoso', 'Infrarespinoso', 'Redondo Mayor'],
+    'subescapular_der': ['Supraespinoso', 'Infraespinoso', 'Redondo Mayor'],
     'redondo_mayor_izq': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
     'redondo_mayor_der': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
     'romboides_izq': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho', 'Elevador de la Escápula'],
@@ -335,6 +335,8 @@ const materialStabilizer = new THREE.MeshStandardMaterial(materialStabilizerBase
 const materialJoint = new THREE.MeshStandardMaterial(materialJointBase);
 const materialSeleccion = new THREE.MeshStandardMaterial(materialSeleccionBase);
 
+const materialOutline = new THREE.LineBasicMaterial({ color: 0x000000 });
+
 const partes = {};
 function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = null, escala = {x:1, y:1, z:1}) {
     if (!material) material = esProfundo(nombre) ? materialProfundo : ((esArticulacion(nombre) || esEstructura(nombre)) ? materialHueso : materialMusculo);
@@ -346,6 +348,12 @@ function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, mat
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.name = nombre;
+
+    const edges = new THREE.EdgesGeometry(geometria, 1);
+    const outline = new THREE.LineSegments(edges, materialOutline);
+    outline.userData.esOutline = true;
+    mesh.add(outline);
+
     scene.add(mesh);
     partes[nombre] = mesh;
     return mesh;
@@ -563,7 +571,7 @@ function aplicarSeleccion() {
     }
     if (musculoSeleccionado && partes[musculoSeleccionado]) {
         partes[musculoSeleccionado].userData.materialAntes = partes[musculoSeleccionado].material;
-        partes[musculoSeleccionado].material = materialSeleccion.clone();
+        partes[musculoSeleccionado].material = new THREE.MeshStandardMaterial(materialSeleccionBase);
     }
 }
 
@@ -576,7 +584,7 @@ function seleccionarMusculo(id) {
     const mesh = partes[id];
     if (mesh) {
         mesh.userData.materialAntes = mesh.material;
-        mesh.material = materialSeleccion.clone();
+        mesh.material = new THREE.MeshStandardMaterial(materialSeleccionBase);
         musculoSeleccionado = id;
     }
 }
@@ -621,6 +629,7 @@ renderer.domElement.addEventListener('click', (event) => {
     if (intersects.length > 0) {
         const hit = intersects[0].object;
         const idMusculo = hit.name;
+        if (!partes[idMusculo]) return;
         if (clicFiltro === 'musculo' && !esMusculo(idMusculo)) return;
         if (clicFiltro === 'articulacion' && !esArticulacion(idMusculo)) return;
         if (clicFiltro === 'estructura' && !esEstructura(idMusculo)) return;
