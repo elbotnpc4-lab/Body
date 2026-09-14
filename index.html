@@ -1,1 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Muscular 3D</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background-color: #0a0a0a; color: white; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+        #toggle-btn { position: absolute; top: 15px; left: 15px; z-index: 20; background-color: #222; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        #toggle-btn:hover { background-color: #333; }
+        .panel { position: absolute; top: 60px; left: 15px; background-color: rgba(26, 26, 26, 0.95); padding: 20px; border-radius: 6px; width: 350px; border: 1px solid #333; z-index: 10; box-sizing: border-box; display: block; max-height: 80vh; overflow-y: auto; }
+        .panel h2 { margin-top: 0; font-size: 16px; font-weight: normal; color: white; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        input { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background-color: #222; color: white; box-sizing: border-box; font-size: 14px; margin-bottom: 10px; outline: none; }
+        input:focus { border-color: #888; }
+        button { width: 100%; padding: 8px; background-color: #333; color: white; border: 1px solid #555; border-radius: 4px; font-size: 14px; cursor: pointer; margin-bottom: 6px; }
+        button:hover { background-color: #444; }
+        .filtro { display: flex; gap: 6px; margin-bottom: 10px; }
+        .filtro button { margin-bottom: 0; font-size: 12px; padding: 6px; }
+        .filtro button.activo { background-color: #666; border-color: #888; }
+        .seccion-titulo { font-size: 11px; color: #888; margin-top: 10px; margin-bottom: 5px; }
+        .btn-ejemplo { font-size: 12px; padding: 5px; background-color: #222; text-align: left; }
+        .btn-ejemplo:hover { background-color: #333; }
+        #resultado { font-size: 12px; color: #aaa; margin-top: 10px; line-height: 1.6; }
+        #resultado .cat { margin-bottom: 8px; }
+        #resultado .cat-titulo { font-weight: bold; display: block; margin-bottom: 2px; }
+        #resultado .musculo { padding-left: 10px; }
+        #resultado .movimiento { margin-top: 6px; padding-top: 6px; border-top: 1px solid #333; }
 
+        #info-panel { position: absolute; top: 60px; right: 15px; background-color: rgba(26, 26, 26, 0.97); padding: 18px 20px; border-radius: 6px; width: 300px; border: 1px solid #333; z-index: 15; box-sizing: border-box; display: none; max-height: 80vh; overflow-y: auto; font-size: 12px; line-height: 1.5; }
+        #info-panel h3 { margin: 0 0 10px 0; font-size: 14px; color: #ff6666; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
+        #info-panel .info-seccion { margin-bottom: 10px; }
+        #info-panel .info-label { color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; display: block; }
+        #info-panel .info-texto { color: #ddd; }
+        #info-panel .info-lista { color: #ddd; padding-left: 12px; }
+        #info-panel .cerrar { position: absolute; top: 12px; right: 15px; cursor: pointer; color: #888; font-size: 16px; background: none; border: none; padding: 0; width: auto; }
+        #info-panel .cerrar:hover { color: white; background: none; }
+
+        #muscle-popup { position: fixed; background: rgba(20, 20, 20, 0.95); color: white; padding: 7px 10px; border: 1px solid #444; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 30; display: none; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); white-space: nowrap; }
+
+        .leyenda { position: absolute; bottom: 15px; left: 15px; background-color: rgba(26, 26, 26, 0.9); padding: 10px 15px; border-radius: 6px; border: 1px solid #333; font-size: 12px; display: flex; gap: 15px; z-index: 10; }
+        .leyenda-item { display: flex; align-items: center; gap: 5px; }
+        .color-box { width: 12px; height: 12px; border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+<button id="toggle-btn">Ocultar Menú</button>
+
+<div class="panel" id="panelControl">
+    <h2>Mapa Muscular 3D</h2>
+    <input type="text" id="inputEjercicio" placeholder="Escribe un ejercicio...">
+    <button id="btnEntrenar">Entrenar</button>
+
+    <div class="filtro" style="margin-top: 12px;">
+        <button class="filtro-btn activo" data-filtro="todos">Todos</button>
+        <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
+        <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
+    </div>
+
+    <div id="listaBotones"></div>
+
+    <div id="resultado">Escribe un ejercicio...</div>
+</div>
+
+<div id="info-panel">
+    <button class="cerrar" onclick="cerrarInfo()">×</button>
+    <h3 id="info-nombre">Músculo</h3>
+    <div id="info-contenido"></div>
+</div>
+
+<div class="leyenda">
+    <div class="leyenda-item"><div class="color-box" style="background:#ff0000;"></div> Primario</div>
+    <div class="leyenda-item"><div class="color-box" style="background:#ff8800;"></div> Secundario</div>
+    <div class="leyenda-item"><div class="color-box" style="background:#ffdd00;"></div> Estabilizador</div>
+    <div class="leyenda-item"><div class="color-box" style="background:#00ccff;"></div> Articulación</div>
+</div>
+
+<div id="muscle-popup"></div>
+<div id="canvas-container"></div>
+
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const BASE_URL = 'https://raw.githubusercontent.com/elbotnpc4-lab/Body/main/Data/';
+
+const [nombresMusculos, infoMusculos, baseDatos] = await Promise.all([
+    fetch(BASE_URL + 'nombres.json').then(r => r.json()),
+    fetch(BASE_URL + 'musculos.json').then(r => r.json()),
+    fetch(BASE_URL + 'ejercicios.json').then(r => r.json())
+]);
+
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0a0a);
+scene.fog = new THREE.Fog(0x0a0a0a, 10, 20);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 1.5, 5.5);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+container.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1.2, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.update();
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+dirLight.position.set(5, 10, 5);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.width = 2048;
+dirLight.shadow.mapSize.height = 2048;
+dirLight.shadow.camera.near = 0.5;
+dirLight.shadow.camera.far = 25;
+dirLight.shadow.camera.left = -5;
+dirLight.shadow.camera.right = 5;
+dirLight.shadow.camera.top = 5;
+dirLight.shadow.camera.bottom = -5;
+scene.add(dirLight);
+
+const fillLight = new THREE.DirectionalLight(0xaaccff, 0.8);
+fillLight.position.set(-5, 5, 2);
+scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0xffffff, 1.0);
+rimLight.position.set(-2, 3, -5);
+scene.add(rimLight);
+
+const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(20, 20),
+    new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.8, metalness: 0.2 })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -1.5;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const gridHelper = new THREE.GridHelper(20, 20, 0x333333, 0x222222);
+gridHelper.position.y = -1.49;
+scene.add(gridHelper);
+
+const materialMusculo = new THREE.MeshStandardMaterial({ color: 0xaa3333, roughness: 0.6, metalness: 0.1 });
+const materialHueso = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.5, metalness: 0.1 });
+const materialPrimary = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xaa0000, emissiveIntensity: 1.5, roughness: 0.3 });
+const materialSecondary = new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0x884400, emissiveIntensity: 1.0, roughness: 0.3 });
+const materialStabilizer = new THREE.MeshStandardMaterial({ color: 0xffdd00, emissive: 0x887700, emissiveIntensity: 0.8, roughness: 0.3 });
+const materialJoint = new THREE.MeshStandardMaterial({ color: 0x00ccff, emissive: 0x006688, emissiveIntensity: 1.0, roughness: 0.3 });
+
+const partes = {};
+function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = materialMusculo, escala = {x:1, y:1, z:1}) {
+    const mesh = new THREE.Mesh(geometria, material);
+    mesh.position.set(posicion.x, posicion.y, posicion.z);
+    mesh.rotation.set(rotacion.x, rotacion.y, rotacion.z);
+    mesh.scale.set(escala.x, escala.y, escala.z);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.name = nombre;
+    scene.add(mesh);
+    partes[nombre] = mesh;
+    return mesh;
+}
+
+crearParte(new THREE.BoxGeometry(0.45, 0.55, 0.45), {x:0, y:3.0, z:0}, 'cabeza', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.2, 0.2, 0.2), {x:0, y:2.65, z:0}, 'cuello', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:-0.12, y:2.6, z:0.1}, 'esternocleidomastoideo_izq', {z:0.2});
+crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:0.12, y:2.6, z:0.1}, 'esternocleidomastoideo_der', {z:-0.2});
+crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.18, y:2.95, z:0.15}, 'masetero_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.18, y:2.95, z:0.15}, 'masetero_der');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.1), {x:0, y:3.1, z:-0.2}, 'occipital');
+
+crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:-0.28, y:2.3, z:0.15}, 'pectoral_sup_izq');
+crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:0.28, y:2.3, z:0.15}, 'pectoral_sup_der');
+crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:-0.28, y:2.05, z:0.15}, 'pectoral_inf_izq');
+crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:0.28, y:2.05, z:0.15}, 'pectoral_inf_der');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.15), {x:-0.2, y:2.05, z:0.05}, 'pectoral_menor_izq');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.15), {x:0.2, y:2.05, z:0.05}, 'pectoral_menor_der');
+
+for(let i=0; i<3; i++) {
+    crearParte(new THREE.BoxGeometry(0.08, 0.08, 0.1), {x:-0.52, y:2.15 - i*0.1, z:0.1}, `serrato_izq_${i}`, {z:0.3});
+    crearParte(new THREE.BoxGeometry(0.08, 0.08, 0.1), {x:0.52, y:2.15 - i*0.1, z:0.1}, `serrato_der_${i}`, {z:-0.3});
+}
+
+crearParte(new THREE.BoxGeometry(0.15, 0.12, 0.1), {x:-0.1, y:1.75, z:0.2}, 'abdomen_1_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.12, 0.1), {x:0.1, y:1.75, z:0.2}, 'abdomen_1_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.12, 0.1), {x:-0.1, y:1.55, z:0.2}, 'abdomen_2_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.12, 0.1), {x:0.1, y:1.55, z:0.2}, 'abdomen_2_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.12, 0.1), {x:-0.1, y:1.35, z:0.2}, 'abdomen_3_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.12, 0.1), {x:0.1, y:1.35, z:0.2}, 'abdomen_3_der');
+crearParte(new THREE.BoxGeometry(0.3, 0.5, 0.05), {x:0, y:1.55, z:0.02}, 'transverso_abdominal');
+crearParte(new THREE.BoxGeometry(0.12, 0.5, 0.25), {x:-0.42, y:1.55, z:0.05}, 'oblicuo_ext_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.5, 0.25), {x:0.42, y:1.55, z:0.05}, 'oblicuo_ext_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.4, 0.2), {x:-0.35, y:1.55, z:0.1}, 'oblicuo_int_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.4, 0.2), {x:0.35, y:1.55, z:0.1}, 'oblicuo_int_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.08), {x:-0.08, y:1.3, z:-0.05}, 'psoas_iliaco_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.08), {x:0.08, y:1.3, z:-0.05}, 'psoas_iliaco_der');
+
+crearParte(new THREE.BoxGeometry(0.35, 0.5, 0.2), {x:-0.35, y:2.1, z:-0.2}, 'dorsal_izq', {z:-0.2});
+crearParte(new THREE.BoxGeometry(0.35, 0.5, 0.2), {x:0.35, y:2.1, z:-0.2}, 'dorsal_der', {z:0.2});
+crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:-0.1, y:1.85, z:-0.2}, 'erector_espinal_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:0.1, y:1.85, z:-0.2}, 'erector_espinal_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.15), {x:-0.4, y:2.25, z:-0.15}, 'infraespinoso_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.15), {x:0.4, y:2.25, z:-0.15}, 'infraespinoso_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.5, y:2.1, z:-0.1}, 'redondo_mayor_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.5, y:2.1, z:-0.1}, 'redondo_mayor_der');
+crearParte(new THREE.BoxGeometry(0.2, 0.1, 0.2), {x:-0.25, y:2.55, z:-0.1}, 'trapecio_sup_izq', {z:0.3});
+crearParte(new THREE.BoxGeometry(0.2, 0.1, 0.2), {x:0.25, y:2.55, z:-0.1}, 'trapecio_sup_der', {z:-0.3});
+crearParte(new THREE.BoxGeometry(0.25, 0.15, 0.2), {x:-0.35, y:2.35, z:-0.15}, 'trapecio_med_izq');
+crearParte(new THREE.BoxGeometry(0.25, 0.15, 0.2), {x:0.35, y:2.35, z:-0.15}, 'trapecio_med_der');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:-0.2, y:2.05, z:-0.2}, 'trapecio_inf_izq');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:0.2, y:2.05, z:-0.2}, 'trapecio_inf_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.1), {x:-0.3, y:2.4, z:-0.15}, 'romboides_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.1), {x:0.3, y:2.4, z:-0.15}, 'romboides_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.1), {x:-0.35, y:2.3, z:-0.1}, 'subescapular_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.1), {x:0.35, y:2.3, z:-0.1}, 'subescapular_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.5, y:2.45, z:-0.05}, 'supraespinoso_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.5, y:2.45, z:-0.05}, 'supraespinoso_der');
+
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:-0.6, y:2.35, z:0.1}, 'deltoides_ant_izq');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:0.6, y:2.35, z:0.1}, 'deltoides_ant_der');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:-0.7, y:2.35, z:0}, 'deltoides_lat_izq');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:0.7, y:2.35, z:0}, 'deltoides_lat_der');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:-0.6, y:2.35, z:-0.1}, 'deltoides_post_izq');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:0.6, y:2.35, z:-0.1}, 'deltoides_post_der');
+
+crearParte(new THREE.BoxGeometry(0.12, 0.25, 0.15), {x:-0.65, y:1.95, z:0.05}, 'biceps_corto_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.25, 0.15), {x:0.65, y:1.95, z:0.05}, 'biceps_corto_der');
+crearParte(new THREE.BoxGeometry(0.12, 0.25, 0.15), {x:-0.75, y:1.95, z:0.05}, 'biceps_largo_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.25, 0.15), {x:0.75, y:1.95, z:0.05}, 'biceps_largo_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:-0.7, y:1.75, z:0.05}, 'braquial_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:0.7, y:1.75, z:0.05}, 'braquial_der');
+crearParte(new THREE.BoxGeometry(0.12, 0.3, 0.12), {x:-0.7, y:1.95, z:-0.1}, 'triceps_largo_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.3, 0.12), {x:0.7, y:1.95, z:-0.1}, 'triceps_largo_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.2, 0.1), {x:-0.8, y:1.9, z:-0.05}, 'triceps_lat_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.2, 0.1), {x:0.8, y:1.9, z:-0.05}, 'triceps_lat_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.15, 0.1), {x:-0.6, y:1.9, z:-0.1}, 'triceps_med_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.15, 0.1), {x:0.6, y:1.9, z:-0.1}, 'triceps_med_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.3, 0.12), {x:-0.7, y:1.45, z:0.05}, 'antebrazo_flex_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.3, 0.12), {x:0.7, y:1.45, z:0.05}, 'antebrazo_flex_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:-0.7, y:1.45, z:-0.05}, 'antebrazo_ext_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:0.7, y:1.45, z:-0.05}, 'antebrazo_ext_der');
+crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:-0.65, y:1.55, z:0.1}, 'braquiorradial_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:0.65, y:1.55, z:0.1}, 'braquiorradial_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:-0.7, y:1.15, z:0.05}, 'mano_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:0.7, y:1.15, z:0.05}, 'mano_der', {x:0, y:0, z:0}, materialHueso);
+
+crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:-0.25, y:1.0, z:-0.15}, 'gluteo_mayor_izq');
+crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:0.25, y:1.0, z:-0.15}, 'gluteo_mayor_der');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.15), {x:-0.45, y:1.05, z:-0.1}, 'gluteo_med_izq');
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.15), {x:0.45, y:1.05, z:-0.1}, 'gluteo_med_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.1, 0.1), {x:-0.3, y:1.1, z:-0.2}, 'gluteo_menor_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.1, 0.1), {x:0.3, y:1.1, z:-0.2}, 'gluteo_menor_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:-0.3, y:1.0, z:-0.3}, 'piriforme_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:0.3, y:1.0, z:-0.3}, 'piriforme_der');
+
+crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:-0.25, y:0.5, z:0.15}, 'cuadriceps_recto_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:0.25, y:0.5, z:0.15}, 'cuadriceps_recto_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:-0.45, y:0.5, z:0.05}, 'vastolateral_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:0.45, y:0.5, z:0.05}, 'vastolateral_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.5, 0.1), {x:-0.1, y:0.5, z:0.1}, 'vastomedial_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.5, 0.1), {x:0.1, y:0.5, z:0.1}, 'vastomedial_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.1), {x:-0.25, y:0.5, z:0.05}, 'vastointermedio_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.1), {x:0.25, y:0.5, z:0.05}, 'vastointermedio_der');
+
+crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:-0.25, y:0.5, z:-0.15}, 'biceps_femoral_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:0.25, y:0.5, z:-0.15}, 'biceps_femoral_der');
+crearParte(new THREE.BoxGeometry(0.12, 0.4, 0.12), {x:-0.35, y:0.5, z:-0.1}, 'semitendinoso_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.4, 0.12), {x:0.35, y:0.5, z:-0.1}, 'semitendinoso_der');
+crearParte(new THREE.BoxGeometry(0.12, 0.4, 0.12), {x:-0.15, y:0.5, z:-0.1}, 'semimembranoso_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.4, 0.12), {x:0.15, y:0.5, z:-0.1}, 'semimembranoso_der');
+
+crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.1), {x:-0.05, y:0.5, z:0.0}, 'aductor_largo_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.1), {x:0.05, y:0.5, z:0.0}, 'aductor_largo_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.4, 0.1), {x:-0.12, y:0.45, z:0.05}, 'aductor_mayor_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.4, 0.1), {x:0.12, y:0.45, z:0.05}, 'aductor_mayor_der');
+crearParte(new THREE.BoxGeometry(0.06, 0.45, 0.06), {x:-0.2, y:0.5, z:0.05}, 'gracil_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.45, 0.06), {x:0.2, y:0.5, z:0.05}, 'gracil_der');
+crearParte(new THREE.BoxGeometry(0.05, 0.6, 0.05), {x:-0.35, y:0.6, z:0.15}, 'sartorio_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.6, 0.05), {x:0.35, y:0.6, z:0.15}, 'sartorio_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:-0.55, y:0.9, z:0.05}, 'tfl_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:0.55, y:0.9, z:0.05}, 'tfl_der');
+
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:-0.25, y:0.1, z:0}, 'rodilla_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:0.25, y:0.1, z:0}, 'rodilla_der', {x:0, y:0, z:0}, materialHueso);
+
+crearParte(new THREE.BoxGeometry(0.15, 0.35, 0.15), {x:-0.25, y:-0.35, z:0.05}, 'gastrocnemio_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.35, 0.15), {x:0.25, y:-0.35, z:0.05}, 'gastrocnemio_der');
+crearParte(new THREE.BoxGeometry(0.12, 0.25, 0.12), {x:-0.25, y:-0.45, z:-0.05}, 'soleo_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.25, 0.12), {x:0.25, y:-0.45, z:-0.05}, 'soleo_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.08), {x:-0.25, y:-0.4, z:0.15}, 'tibial_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.08), {x:0.25, y:-0.4, z:0.15}, 'tibial_der');
+crearParte(new THREE.BoxGeometry(0.06, 0.3, 0.06), {x:-0.25, y:-0.4, z:-0.1}, 'tibial_posterior_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.3, 0.06), {x:0.25, y:-0.4, z:-0.1}, 'tibial_posterior_der');
+crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.06), {x:-0.35, y:-0.4, z:0.05}, 'peroneo_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.06), {x:0.35, y:-0.4, z:0.05}, 'peroneo_der');
+crearParte(new THREE.BoxGeometry(0.05, 0.15, 0.05), {x:-0.25, y:-0.15, z:-0.1}, 'popliteo_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.15, 0.05), {x:0.25, y:-0.15, z:-0.1}, 'popliteo_der');
+crearParte(new THREE.BoxGeometry(0.05, 0.2, 0.05), {x:-0.25, y:-0.6, z:0.15}, 'extensor_dedos_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.2, 0.05), {x:0.25, y:-0.6, z:0.15}, 'extensor_dedos_der');
+
+crearParte(new THREE.BoxGeometry(0.18, 0.1, 0.3), {x:-0.25, y:-0.9, z:0.08}, 'pie_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.18, 0.1, 0.3), {x:0.25, y:-0.9, z:0.08}, 'pie_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:-0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_izq');
+crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_der');
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const popup = document.getElementById('muscle-popup');
+const infoPanel = document.getElementById('info-panel');
+const infoNombre = document.getElementById('info-nombre');
+const infoContenido = document.getElementById('info-contenido');
+let popupTimeout;
+
+function cerrarInfo() { infoPanel.style.display = 'none'; }
+window.cerrarInfo = cerrarInfo;
+
+function buscarEjerciciosDeMusculo(idMusculo) {
+    const ejercicios = [];
+    for (const clave in baseDatos) {
+        const datos = baseDatos[clave];
+        const todasCategorias = [...(datos.primary || []), ...(datos.secondary || []), ...(datos.stabilizers || []), ...(datos.joints || [])];
+        for (const grupo of todasCategorias) {
+            if (grupo.meshes.includes(idMusculo)) {
+                if (!ejercicios.includes(clave)) ejercicios.push(clave);
+                break;
+            }
+        }
+    }
+    return ejercicios;
+}
+
+renderer.domElement.addEventListener('click', (event) => {
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(Object.values(partes));
+    if (intersects.length > 0) {
+        const hit = intersects[0].object;
+        const idMusculo = hit.name;
+        const nombreMostrar = nombresMusculos[idMusculo] || idMusculo;
+
+        popup.innerText = nombreMostrar;
+        popup.style.left = (event.clientX + 15) + 'px';
+        popup.style.top = (event.clientY - 15) + 'px';
+        popup.style.display = 'block';
+        clearTimeout(popupTimeout);
+        popupTimeout = setTimeout(() => { popup.style.display = 'none'; }, 2000);
+
+        const info = infoMusculos[idMusculo];
+        if (info) {
+            infoNombre.innerText = info.nombre;
+            let html = "";
+            if (info.funciones) {
+                html += `<div class="info-seccion"><span class="info-label">Función</span>`;
+                info.funciones.forEach(f => { html += `<div class="info-lista">• ${f}</div>`; });
+                html += `</div>`;
+            }
+            if (info.cruza) {
+                html += `<div class="info-seccion"><span class="info-label">Cruza</span><div class="info-texto">${info.cruza.join(" · ")}</div></div>`;
+            }
+            if (info.ubicacion) {
+                html += `<div class="info-seccion"><span class="info-label">Ubicación</span><div class="info-texto">${info.ubicacion}</div></div>`;
+            }
+            const ejercicios = buscarEjerciciosDeMusculo(idMusculo);
+            if (ejercicios.length > 0) {
+                html += `<div class="info-seccion"><span class="info-label">Ejercicios</span>`;
+                ejercicios.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
+                html += `</div>`;
+            }
+            infoContenido.innerHTML = html;
+            infoPanel.style.display = 'block';
+        } else {
+            infoNombre.innerText = nombreMostrar;
+            infoContenido.innerHTML = `<div class="info-texto" style="color:#888;">Sin información detallada para este músculo.</div>`;
+            infoPanel.style.display = 'block';
+        }
+    } else {
+        popup.style.display = 'none';
+    }
+});
+
+function normalizar(texto) {
+    return texto.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function setTexto(texto) { document.getElementById("inputEjercicio").value = texto; }
+
+function limpiar() {
+    Object.values(partes).forEach(parte => {
+        if (parte.name.includes('rodilla') || parte.name.includes('mano') || parte.name.includes('pie') || parte.name === 'cabeza' || parte.name === 'cuello') {
+            parte.material = materialHueso;
+        } else {
+            parte.material = materialMusculo;
+        }
+    });
+    document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
+    document.getElementById("resultado").style.color = "#aaa";
+}
+
+function aplicarMaterial(grupoMusculos, material) {
+    grupoMusculos.forEach(grupo => {
+        grupo.meshes.forEach(id => { if (partes[id]) { partes[id].material = material; } });
+    });
+}
+
+function construirHTMLLista(grupoMusculos, color) {
+    if (!grupoMusculos || grupoMusculos.length === 0) return "";
+    let html = "";
+    grupoMusculos.forEach(grupo => {
+        html += `<div class="musculo"><span style="color:${color};">■</span> ${grupo.nombre}</div>`;
+    });
+    return html;
+}
+
+function entrenar() {
+    limpiar();
+    const input = normalizar(document.getElementById("inputEjercicio").value);
+    let ejercicioEncontrado = null;
+
+    const aliasOrdenados = [];
+    for (const clave in baseDatos) {
+        baseDatos[clave].alias.forEach(alias => {
+            aliasOrdenados.push({ aliasNorm: normalizar(alias), clave });
+        });
+    }
+    aliasOrdenados.sort((a, b) => b.aliasNorm.length - a.aliasNorm.length);
+
+    for (const entrada of aliasOrdenados) {
+        if (input === entrada.aliasNorm) { ejercicioEncontrado = baseDatos[entrada.clave]; break; }
+    }
+    if (!ejercicioEncontrado) {
+        for (const entrada of aliasOrdenados) {
+            const aliasEscapado = entrada.aliasNorm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(^|\\s)${aliasEscapado}(\\s|$)`);
+            if (regex.test(input)) { ejercicioEncontrado = baseDatos[entrada.clave]; break; }
+        }
+    }
+
+    const resultadoDiv = document.getElementById("resultado");
+    resultadoDiv.style.color = "#aaa";
+
+    if (ejercicioEncontrado) {
+        aplicarMaterial(ejercicioEncontrado.primary || [], materialPrimary);
+        aplicarMaterial(ejercicioEncontrado.secondary || [], materialSecondary);
+        aplicarMaterial(ejercicioEncontrado.stabilizers || [], materialStabilizer);
+        aplicarMaterial(ejercicioEncontrado.joints || [], materialJoint);
+
+        let html = "";
+        if (ejercicioEncontrado.primary?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ff0000;">PRIMARIOS</span>${construirHTMLLista(ejercicioEncontrado.primary, '#ff0000')}</div>`;
+        if (ejercicioEncontrado.secondary?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ff8800;">SECUNDARIOS</span>${construirHTMLLista(ejercicioEncontrado.secondary, '#ff8800')}</div>`;
+        if (ejercicioEncontrado.stabilizers?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ffdd00;">ESTABILIZADORES</span>${construirHTMLLista(ejercicioEncontrado.stabilizers, '#ffdd00')}</div>`;
+        if (ejercicioEncontrado.joints?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#00ccff;">ARTICULACIONES</span>${construirHTMLLista(ejercicioEncontrado.joints, '#00ccff')}</div>`;
+        if (ejercicioEncontrado.movement) {
+            html += `<div class="movimiento"><span class="cat-titulo" style="color:#fff;">MOVIMIENTO</span><div class="musculo">↑ ${ejercicioEncontrado.movement.subida}</div><div class="musculo">↓ ${ejercicioEncontrado.movement.bajada}</div></div>`;
+        }
+        resultadoDiv.innerHTML = html;
+    } else {
+        resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
+        resultadoDiv.style.color = "#ff4444";
+    }
+}
+
+function togglePanel() {
+    const panel = document.getElementById("panelControl");
+    const btn = document.getElementById("toggle-btn");
+    if (panel.style.display === "none") { panel.style.display = "block"; btn.innerText = "Ocultar Menú"; }
+    else { panel.style.display = "none"; btn.innerText = "Mostrar Menú"; }
+}
+
+function renderizarBotones(filtro = "todos") {
+    const cont = document.getElementById("listaBotones");
+    cont.innerHTML = "";
+    const grupos = { mancuerna: [], cuerpo: [] };
+    for (const clave in baseDatos) {
+        const datos = baseDatos[clave];
+        if (datos.tipo === "mancuerna") grupos.mancuerna.push(clave);
+        else grupos.cuerpo.push(clave);
+    }
+    const agregarGrupo = (titulo, claves) => {
+        if (claves.length === 0) return;
+        const tituloEl = document.createElement("div");
+        tituloEl.className = "seccion-titulo";
+        tituloEl.innerText = titulo;
+        cont.appendChild(tituloEl);
+        claves.forEach(clave => {
+            const btn = document.createElement("button");
+            btn.className = "btn-ejemplo";
+            btn.innerText = clave;
+            btn.addEventListener("click", () => { setTexto(clave); entrenar(); });
+            cont.appendChild(btn);
+        });
+    };
+    if (filtro === "todos" || filtro === "mancuerna") agregarGrupo("MANCUERNAS", grupos.mancuerna);
+    if (filtro === "todos" || filtro === "cuerpo") agregarGrupo("PESO CORPORAL", grupos.cuerpo);
+}
+
+document.getElementById("toggle-btn").addEventListener("click", togglePanel);
+document.getElementById("btnEntrenar").addEventListener("click", entrenar);
+document.getElementById("inputEjercicio").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") entrenar();
+});
+document.querySelectorAll(".filtro-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+        document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("activo"));
+        this.classList.add("activo");
+        renderizarBotones(this.getAttribute("data-filtro"));
+    });
+});
+
+renderizarBotones("todos");
+
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>
