@@ -697,6 +697,12 @@ function normalizar(texto) {
 function setTexto(texto) { document.getElementById("inputEjercicio").value = texto; }
 
 function limpiar() {
+    if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
+        partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
+        delete partes[musculoSeleccionado].userData.materialAntes;
+    }
+    musculoSeleccionado = null;
+
     Object.values(partes).forEach(parte => {
         let baseMat;
         if (esArticulacion(parte.name) || esEstructura(parte.name)) baseMat = materialHuesoBase;
@@ -707,7 +713,7 @@ function limpiar() {
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
     document.getElementById("resultado").style.color = "#aaa";
 }
-
+    
 function aplicarMaterial(grupoMusculos, materialBase) {
     grupoMusculos.forEach(grupo => grupo.meshes.forEach(id => {
         if (partes[id]) partes[id].material = new THREE.MeshStandardMaterial(materialBase);
