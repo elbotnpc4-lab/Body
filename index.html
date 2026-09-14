@@ -32,6 +32,7 @@
         #info-panel .tipo-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-bottom: 8px; text-transform: uppercase; }
         #info-panel .tipo-musculo { background-color: #553333; color: #ff9999; }
         #info-panel .tipo-articulacion { background-color: #335566; color: #99ddff; }
+        #info-panel .tipo-estructura { background-color: #445544; color: #99dd99; }
         #info-panel .info-seccion { margin-bottom: 10px; }
         #info-panel .info-label { color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; display: block; }
         #info-panel .info-texto { color: #ddd; }
@@ -89,6 +90,7 @@
         <button class="clic-btn activo" data-clic="todos">Todos</button>
         <button class="clic-btn" data-clic="musculo">Músculos</button>
         <button class="clic-btn" data-clic="articulacion">Articulaciones</button>
+        <button class="clic-btn" data-clic="estructura">Estructuras</button>
     </div>
 
     <div id="listaBotones"></div>
@@ -150,21 +152,132 @@ const PROFUNDOS = [
 ];
 
 const ARTICULACIONES = [
-    'cabeza', 'cuello',
     'hombro_izq', 'hombro_der',
     'codo_izq', 'codo_der',
     'muneca_izq', 'muneca_der',
     'cadera_izq', 'cadera_der',
     'rodilla_izq', 'rodilla_der',
     'tobillo_izq', 'tobillo_der',
-    'columna_cervical', 'columna_toracica', 'columna_lumbar',
+    'columna_cervical', 'columna_toracica', 'columna_lumbar'
+];
+
+const ESTRUCTURAS = [
+    'cabeza', 'cuello',
     'mano_izq', 'mano_der',
     'pie_izq', 'pie_der'
 ];
 
+const MUSCULOS_RELACIONADOS = {
+    'cuadriceps_recto_izq': ['Vasto Lateral', 'Vasto Medial', 'Vasto Intermedio', 'Sartorio'],
+    'cuadriceps_recto_der': ['Vasto Lateral', 'Vasto Medial', 'Vasto Intermedio', 'Sartorio'],
+    'vastolateral_izq': ['Recto Femoral', 'Vasto Medial', 'Vasto Intermedio'],
+    'vastolateral_der': ['Recto Femoral', 'Vasto Medial', 'Vasto Intermedio'],
+    'vastomedial_izq': ['Recto Femoral', 'Vasto Lateral', 'Vasto Intermedio'],
+    'vastomedial_der': ['Recto Femoral', 'Vasto Lateral', 'Vasto Intermedio'],
+    'vastointermedio_izq': ['Recto Femoral', 'Vasto Lateral', 'Vasto Medial'],
+    'vastointermedio_der': ['Recto Femoral', 'Vasto Lateral', 'Vasto Medial'],
+    'biceps_femoral_izq': ['Semitendinoso', 'Semimembranoso'],
+    'biceps_femoral_der': ['Semitendinoso', 'Semimembranoso'],
+    'semitendinoso_izq': ['Bíceps Femoral', 'Semimembranoso'],
+    'semitendinoso_der': ['Bíceps Femoral', 'Semimembranoso'],
+    'semimembranoso_izq': ['Bíceps Femoral', 'Semitendinoso'],
+    'semimembranoso_der': ['Bíceps Femoral', 'Semitendinoso'],
+    'gluteo_mayor_izq': ['Glúteo Medio', 'Glúteo Menor', 'Piriforme'],
+    'gluteo_mayor_der': ['Glúteo Medio', 'Glúteo Menor', 'Piriforme'],
+    'gluteo_med_izq': ['Glúteo Mayor', 'Glúteo Menor', 'Tensor Fascia Lata'],
+    'gluteo_med_der': ['Glúteo Mayor', 'Glúteo Menor', 'Tensor Fascia Lata'],
+    'biceps_corto_izq': ['Bíceps Cabeza Larga', 'Braquial'],
+    'biceps_corto_der': ['Bíceps Cabeza Larga', 'Braquial'],
+    'biceps_largo_izq': ['Bíceps Cabeza Corta', 'Braquial'],
+    'biceps_largo_der': ['Bíceps Cabeza Corta', 'Braquial'],
+    'triceps_largo_izq': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial'],
+    'triceps_largo_der': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial'],
+    'triceps_lat_izq': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Medial'],
+    'triceps_lat_der': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Medial'],
+    'triceps_med_izq': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Lateral'],
+    'triceps_med_der': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Lateral'],
+    'deltoides_ant_izq': ['Deltoides Lateral', 'Deltoides Posterior', 'Pectoral Mayor'],
+    'deltoides_ant_der': ['Deltoides Lateral', 'Deltoides Posterior', 'Pectoral Mayor'],
+    'deltoides_lat_izq': ['Deltoides Anterior', 'Deltoides Posterior', 'Supraespinoso'],
+    'deltoides_lat_der': ['Deltoides Anterior', 'Deltoides Posterior', 'Supraespinoso'],
+    'deltoides_post_izq': ['Deltoides Anterior', 'Deltoides Lateral', 'Infraespinoso'],
+    'deltoides_post_der': ['Deltoides Anterior', 'Deltoides Lateral', 'Infraespinoso'],
+    'pectoral_sup_izq': ['Pectoral Inferior', 'Deltoides Anterior', 'Serrato Anterior'],
+    'pectoral_sup_der': ['Pectoral Inferior', 'Deltoides Anterior', 'Serrato Anterior'],
+    'pectoral_inf_izq': ['Pectoral Superior', 'Deltoides Anterior', 'Serrato Anterior'],
+    'pectoral_inf_der': ['Pectoral Superior', 'Deltoides Anterior', 'Serrato Anterior'],
+    'dorsal_izq': ['Trapecio Medio', 'Trapecio Inferior', 'Romboides', 'Redondo Mayor'],
+    'dorsal_der': ['Trapecio Medio', 'Trapecio Inferior', 'Romboides', 'Redondo Mayor'],
+    'trapecio_sup_izq': ['Trapecio Medio', 'Trapecio Inferior', 'Elevador de la Escápula'],
+    'trapecio_sup_der': ['Trapecio Medio', 'Trapecio Inferior', 'Elevador de la Escápula'],
+    'trapecio_med_izq': ['Trapecio Superior', 'Trapecio Inferior', 'Romboides'],
+    'trapecio_med_der': ['Trapecio Superior', 'Trapecio Inferior', 'Romboides'],
+    'trapecio_inf_izq': ['Trapecio Superior', 'Trapecio Medio', 'Serrato Anterior'],
+    'trapecio_inf_der': ['Trapecio Superior', 'Trapecio Medio', 'Serrato Anterior'],
+    'infraespinoso_izq': ['Supraespinoso', 'Subescapular', 'Redondo Menor'],
+    'infraespinoso_der': ['Supraespinoso', 'Subescapular', 'Redondo Menor'],
+    'supraespinoso_izq': ['Infraespinoso', 'Subescapular', 'Deltoides Lateral'],
+    'supraespinoso_der': ['Infraespinoso', 'Subescapular', 'Deltoides Lateral'],
+    'subescapular_izq': ['Supraespinoso', 'Infraespinoso', 'Redondo Mayor'],
+    'subescapular_der': ['Supraespinoso', 'Infraespinoso', 'Redondo Mayor'],
+    'redondo_mayor_izq': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
+    'redondo_mayor_der': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
+    'romboides_izq': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho'],
+    'romboides_der': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho'],
+    'serrato_izq_0': ['Pectoral Mayor', 'Pectoral Menor', 'Oblicuo Externo'],
+    'serrato_izq_1': ['Pectoral Mayor', 'Pectoral Menor', 'Oblicuo Externo'],
+    'serrato_izq_2': ['Pectoral Mayor', 'Pectoral Menor', 'Oblicuo Externo'],
+    'serrato_der_0': ['Pectoral Mayor', 'Pectoral Menor', 'Oblicuo Externo'],
+    'serrato_der_1': ['Pectoral Mayor', 'Pectoral Menor', 'Oblicuo Externo'],
+    'serrato_der_2': ['Pectoral Mayor', 'Pectoral Menor', 'Oblicuo Externo'],
+    'abdomen_1_izq': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
+    'abdomen_1_der': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
+    'abdomen_2_izq': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
+    'abdomen_2_der': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
+    'abdomen_3_izq': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
+    'abdomen_3_der': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
+    'oblicuo_ext_izq': ['Oblicuo Interno', 'Recto Abdominal', 'Transverso del Abdomen'],
+    'oblicuo_ext_der': ['Oblicuo Interno', 'Recto Abdominal', 'Transverso del Abdomen'],
+    'oblicuo_int_izq': ['Oblicuo Externo', 'Recto Abdominal', 'Transverso del Abdomen'],
+    'oblicuo_int_der': ['Oblicuo Externo', 'Recto Abdominal', 'Transverso del Abdomen'],
+    'gastrocnemio_izq': ['Sóleo', 'Tibial Posterior', 'Peroneos'],
+    'gastrocnemio_der': ['Sóleo', 'Tibial Posterior', 'Peroneos'],
+    'soleo_izq': ['Gastrocnemio', 'Tibial Posterior', 'Peroneos'],
+    'soleo_der': ['Gastrocnemio', 'Tibial Posterior', 'Peroneos'],
+    'tibial_izq': ['Tibial Posterior', 'Peroneos', 'Extensor de los Dedos'],
+    'tibial_der': ['Tibial Posterior', 'Peroneos', 'Extensor de los Dedos'],
+    'tibial_posterior_izq': ['Sóleo', 'Gastrocnemio', 'Tibial Anterior'],
+    'tibial_posterior_der': ['Sóleo', 'Gastrocnemio', 'Tibial Anterior'],
+    'peroneo_izq': ['Tibial Anterior', 'Tibial Posterior', 'Extensor de los Dedos'],
+    'peroneo_der': ['Tibial Anterior', 'Tibial Posterior', 'Extensor de los Dedos'],
+    'psoas_iliaco_izq': ['Cuadrado Lumbar', 'Recto Abdominal', 'Glúteo Mayor'],
+    'psoas_iliaco_der': ['Cuadrado Lumbar', 'Recto Abdominal', 'Glúteo Mayor'],
+    'cuadrado_lumbar_izq': ['Psoas Ilíaco', 'Erector Espinal', 'Oblicuo Interno'],
+    'cuadrado_lumbar_der': ['Psoas Ilíaco', 'Erector Espinal', 'Oblicuo Interno'],
+    'erector_espinal_izq': ['Cuadrado Lumbar', 'Transverso del Abdomen', 'Glúteo Mayor'],
+    'erector_espinal_der': ['Cuadrado Lumbar', 'Transverso del Abdomen', 'Glúteo Mayor'],
+    'sartorio_izq': ['Recto Femoral', 'Grácil', 'Aductor Largo'],
+    'sartorio_der': ['Recto Femoral', 'Grácil', 'Aductor Largo'],
+    'tfl_izq': ['Glúteo Medio', 'Glúteo Menor', 'Sartorio'],
+    'tfl_der': ['Glúteo Medio', 'Glúteo Menor', 'Sartorio'],
+    'piriforme_izq': ['Glúteo Mayor', 'Glúteo Medio', 'Gémino Superior'],
+    'piriforme_der': ['Glúteo Mayor', 'Glúteo Medio', 'Gémino Superior'],
+    'aductor_largo_izq': ['Aductor Mayor', 'Grácil', 'Pectíneo'],
+    'aductor_largo_der': ['Aductor Mayor', 'Grácil', 'Pectíneo'],
+    'aductor_mayor_izq': ['Aductor Largo', 'Grácil', 'Isquiotibiales'],
+    'aductor_mayor_der': ['Aductor Largo', 'Grácil', 'Isquiotibiales'],
+    'gracil_izq': ['Aductor Largo', 'Aductor Mayor', 'Sartorio'],
+    'gracil_der': ['Aductor Largo', 'Aductor Mayor', 'Sartorio'],
+    'braquial_izq': ['Bíceps Braquial', 'Braquiorradial', 'Tríceps'],
+    'braquial_der': ['Bíceps Braquial', 'Braquiorradial', 'Tríceps'],
+    'braquiorradial_izq': ['Braquial', 'Flexores del Antebrazo', 'Extensores del Antebrazo'],
+    'braquiorradial_der': ['Braquial', 'Flexores del Antebrazo', 'Extensores del Antebrazo']
+};
+
 function esProfundo(id) { return PROFUNDOS.includes(id); }
 function esArticulacion(id) { return ARTICULACIONES.includes(id); }
-function esMusculo(id) { return !esArticulacion(id); }
+function esEstructura(id) { return ESTRUCTURAS.includes(id); }
+function esMusculo(id) { return !esArticulacion(id) && !esEstructura(id); }
 
 let capaActual = 'superficial';
 let clicFiltro = 'todos';
@@ -238,7 +351,7 @@ const materialSeleccion = new THREE.MeshStandardMaterial({ color: 0x1a3d8f, emis
 
 const partes = {};
 function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = null, escala = {x:1, y:1, z:1}) {
-    if (!material) material = esProfundo(nombre) ? materialProfundo : (esArticulacion(nombre) ? materialHueso : materialMusculo);
+    if (!material) material = esProfundo(nombre) ? materialProfundo : ((esArticulacion(nombre) || esEstructura(nombre)) ? materialHueso : materialMusculo);
     const mesh = new THREE.Mesh(geometria, material);
     mesh.position.set(posicion.x, posicion.y, posicion.z);
     mesh.rotation.set(rotacion.x, rotacion.y, rotacion.z);
@@ -418,22 +531,17 @@ function aplicarCapa() {
     Object.values(partes).forEach(parte => {
         const id = parte.name;
         const esProf = esProfundo(id);
+
+        parte.visible = true;
+        parte.material.opacity = 1;
+        parte.material.transparent = false;
+
         if (capaActual === 'superficial') {
             parte.visible = !esProf;
         } else if (capaActual === 'profundo') {
-            parte.visible = true;
-            if (esProf) {
-                parte.material.opacity = 1;
-                parte.material.transparent = false;
-            } else if (!esArticulacion(id)) {
+            if (!esProf && !esArticulacion(id) && !esEstructura(id)) {
                 parte.material.opacity = 0.35;
                 parte.material.transparent = true;
-            }
-        } else {
-            parte.visible = true;
-            if (!esArticulacion(id)) {
-                parte.material.opacity = 1;
-                parte.material.transparent = false;
             }
         }
     });
@@ -441,6 +549,10 @@ function aplicarCapa() {
 }
 
 function aplicarSeleccion() {
+    if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
+        partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
+        delete partes[musculoSeleccionado].userData.materialAntes;
+    }
     if (musculoSeleccionado && partes[musculoSeleccionado]) {
         partes[musculoSeleccionado].userData.materialAntes = partes[musculoSeleccionado].material;
         partes[musculoSeleccionado].material = materialSeleccion;
@@ -450,6 +562,7 @@ function aplicarSeleccion() {
 function seleccionarMusculo(id) {
     if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
         partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
+        delete partes[musculoSeleccionado].userData.materialAntes;
     }
     if (musculoSeleccionado === id) {
         musculoSeleccionado = null;
@@ -507,11 +620,15 @@ renderer.domElement.addEventListener('click', (event) => {
         const idMusculo = hit.name;
         if (clicFiltro === 'musculo' && !esMusculo(idMusculo)) return;
         if (clicFiltro === 'articulacion' && !esArticulacion(idMusculo)) return;
+        if (clicFiltro === 'estructura' && !esEstructura(idMusculo)) return;
 
         seleccionarMusculo(idMusculo);
 
         const nombreMostrar = nombresMusculos[idMusculo] || idMusculo;
         const esArt = esArticulacion(idMusculo);
+        const esEst = esEstructura(idMusculo);
+        const tipoBadge = esArt ? 'tipo-articulacion' : (esEst ? 'tipo-estructura' : 'tipo-musculo');
+        const tipoTexto = esArt ? 'Articulación' : (esEst ? 'Estructura' : 'Músculo');
 
         popup.innerText = nombreMostrar;
         popup.style.left = (event.clientX + 15) + 'px';
@@ -522,7 +639,7 @@ renderer.domElement.addEventListener('click', (event) => {
 
         const info = infoMusculos[idMusculo];
         infoNombre.innerText = info ? info.nombre : nombreMostrar;
-        let html = `<div class="tipo-badge ${esArt ? 'tipo-articulacion' : 'tipo-musculo'}">${esArt ? 'Articulación' : 'Músculo'}</div>`;
+        let html = `<div class="tipo-badge ${tipoBadge}">${tipoTexto}</div>`;
 
         if (info) {
             if (info.funciones) {
@@ -539,6 +656,13 @@ renderer.domElement.addEventListener('click', (event) => {
         if (ej.secondary.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>${listaConBotones(ej.secondary)}</div>`;
         if (ej.stabilizers.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>${listaConBotones(ej.stabilizers)}</div>`;
         if (ej.articulacion.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#00ccff;">Participa en</span>${listaConBotones(ej.articulacion)}</div>`;
+
+        const rel = MUSCULOS_RELACIONADOS[idMusculo];
+        if (rel && rel.length > 0) {
+            html += `<div class="info-seccion"><span class="info-label" style="color:#88dd88;">Músculos relacionados</span>`;
+            rel.forEach(r => { html += `<div class="info-lista">• ${r}</div>`; });
+            html += `</div>`;
+        }
 
         infoContenido.innerHTML = html;
         infoPanel.style.display = 'block';
@@ -562,7 +686,7 @@ function setTexto(texto) { document.getElementById("inputEjercicio").value = tex
 
 function limpiar() {
     Object.values(partes).forEach(parte => {
-        if (esArticulacion(parte.name)) parte.material = materialHueso;
+        if (esArticulacion(parte.name) || esEstructura(parte.name)) parte.material = materialHueso;
         else if (esProfundo(parte.name)) parte.material = materialProfundo;
         else parte.material = materialMusculo;
     });
