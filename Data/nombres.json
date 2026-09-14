@@ -63,7 +63,10 @@
     "extensor_dedos_izq": "Extensor Dedos Izq", "extensor_dedos_der": "Extensor Dedos Der",
     "pie_izq": "Pie Izquierdo", "pie_der": "Pie Derecho",
     "intrinsecos_pie_izq": "Músculos Intrínsecos Pie Izq", "intrinsecos_pie_der": "Músculos Intrínsecos Pie Der",
-
+"redondo_menor_izq": "Redondo Menor Izq", "redondo_menor_der": "Redondo Menor Der",
+"cuadrado_lumbar_izq": "Cuadrado Lumbar Izq", "cuadrado_lumbar_der": "Cuadrado Lumbar Der",
+"serrato_post_sup_izq": "Serrato Post. Superior Izq", "serrato_post_sup_der": "Serrato Post. Superior Der",
+"serrato_post_inf_izq": "Serrato Post. Inferior Izq", "serrato_post_inf_der": "Serrato Post. Inferior Der",
     "hombro_izq": "Hombro Izq", "hombro_der": "Hombro Der",
     "codo_izq": "Codo Izq", "codo_der": "Codo Der",
     "muneca_izq": "Muñeca Izq", "muneca_der": "Muñeca Der",
