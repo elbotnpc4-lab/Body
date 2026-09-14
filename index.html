@@ -27,7 +27,7 @@
         #resultado .musculo { padding-left: 10px; }
         #resultado .movimiento { margin-top: 6px; padding-top: 6px; border-top: 1px solid #333; }
 
-        #info-panel { position: absolute; top: 60px; right: 15px; background-color: rgba(26, 26, 26, 0.97); padding: 18px 20px; border-radius: 6px; width: 310px; border: 1px solid #333; z-index: 15; box-sizing: border-box; display: none; max-height: 82vh; overflow-y: auto; font-size: 12px; line-height: 1.5; }
+        #info-panel { position: absolute; top: 60px; right: 15px; background-color: rgba(26, 26, 26, 0.97); padding: 18px 20px; border-radius: 6px; width: 320px; border: 1px solid #333; z-index: 15; box-sizing: border-box; display: none; max-height: 82vh; overflow-y: auto; font-size: 12px; line-height: 1.5; }
         #info-panel h3 { margin: 0 0 10px 0; font-size: 14px; color: #ff6666; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
         #info-panel .tipo-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-bottom: 8px; text-transform: uppercase; }
         #info-panel .tipo-musculo { background-color: #553333; color: #ff9999; }
@@ -35,9 +35,24 @@
         #info-panel .info-seccion { margin-bottom: 10px; }
         #info-panel .info-label { color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; display: block; }
         #info-panel .info-texto { color: #ddd; }
-        #info-panel .info-lista { color: #ddd; padding-left: 12px; }
+        #info-panel .info-lista { color: #ddd; padding-left: 4px; }
         #info-panel .cerrar { position: absolute; top: 12px; right: 15px; cursor: pointer; color: #888; font-size: 16px; background: none; border: none; padding: 0; width: auto; }
         #info-panel .cerrar:hover { color: white; background: none; }
+
+        .btn-ejercicio-mini {
+            display: inline-block;
+            width: auto;
+            padding: 3px 8px;
+            margin: 2px 0;
+            font-size: 11px;
+            background-color: #2a4a8a;
+            border: 1px solid #4a6aaa;
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+        }
+        .btn-ejercicio-mini:hover { background-color: #3a5a9a; }
 
         #muscle-popup { position: fixed; background: rgba(20, 20, 20, 0.95); color: white; padding: 7px 10px; border: 1px solid #444; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 30; display: none; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); white-space: nowrap; }
 
@@ -91,6 +106,7 @@
     <div class="leyenda-item"><div class="color-box" style="background:#ff8800;"></div> Secundario</div>
     <div class="leyenda-item"><div class="color-box" style="background:#ffdd00;"></div> Estabilizador</div>
     <div class="leyenda-item"><div class="color-box" style="background:#00ccff;"></div> Articulación</div>
+    <div class="leyenda-item"><div class="color-box" style="background:#1a3d8f;"></div> Seleccionado</div>
 </div>
 
 <div id="muscle-popup"></div>
@@ -126,7 +142,11 @@ const PROFUNDOS = [
     'piriforme_izq', 'piriforme_der',
     'vastointermedio_izq', 'vastointermedio_der',
     'popliteo_izq', 'popliteo_der',
-    'intrinsecos_pie_izq', 'intrinsecos_pie_der'
+    'intrinsecos_pie_izq', 'intrinsecos_pie_der',
+    'cuadrado_lumbar_izq', 'cuadrado_lumbar_der',
+    'serrato_post_sup_izq', 'serrato_post_sup_der',
+    'serrato_post_inf_izq', 'serrato_post_inf_der',
+    'redondo_menor_izq', 'redondo_menor_der'
 ];
 
 const ARTICULACIONES = [
@@ -148,6 +168,7 @@ function esMusculo(id) { return !esArticulacion(id); }
 
 let capaActual = 'superficial';
 let clicFiltro = 'todos';
+let musculoSeleccionado = null;
 
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
@@ -208,11 +229,12 @@ scene.add(gridHelper);
 
 const materialMusculo = new THREE.MeshStandardMaterial({ color: 0xaa3333, roughness: 0.6, metalness: 0.1 });
 const materialProfundo = new THREE.MeshStandardMaterial({ color: 0x772222, roughness: 0.6, metalness: 0.1 });
-const materialHueso = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.5, metalness: 0.1 });
+const materialHueso = new THREE.MeshStandardMaterial({ color: 0xd0d8e0, roughness: 0.5, metalness: 0.1 });
 const materialPrimary = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xaa0000, emissiveIntensity: 1.5, roughness: 0.3 });
 const materialSecondary = new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0x884400, emissiveIntensity: 1.0, roughness: 0.3 });
 const materialStabilizer = new THREE.MeshStandardMaterial({ color: 0xffdd00, emissive: 0x887700, emissiveIntensity: 0.8, roughness: 0.3 });
 const materialJoint = new THREE.MeshStandardMaterial({ color: 0x00ccff, emissive: 0x006688, emissiveIntensity: 1.0, roughness: 0.3 });
+const materialSeleccion = new THREE.MeshStandardMaterial({ color: 0x1a3d8f, emissive: 0x0a1a4a, emissiveIntensity: 1.2, roughness: 0.4 });
 
 const partes = {};
 function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = null, escala = {x:1, y:1, z:1}) {
@@ -271,6 +293,8 @@ crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.15), {x:-0.4, y:2.25, z:-0.15}, '
 crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.15), {x:0.4, y:2.25, z:-0.15}, 'infraespinoso_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.5, y:2.1, z:-0.1}, 'redondo_mayor_izq');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.5, y:2.1, z:-0.1}, 'redondo_mayor_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.08, 0.08), {x:-0.45, y:2.25, z:-0.15}, 'redondo_menor_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.08, 0.08), {x:0.45, y:2.25, z:-0.15}, 'redondo_menor_der');
 crearParte(new THREE.BoxGeometry(0.2, 0.1, 0.2), {x:-0.25, y:2.55, z:-0.1}, 'trapecio_sup_izq', {z:0.3});
 crearParte(new THREE.BoxGeometry(0.2, 0.1, 0.2), {x:0.25, y:2.55, z:-0.1}, 'trapecio_sup_der', {z:-0.3});
 crearParte(new THREE.BoxGeometry(0.25, 0.15, 0.2), {x:-0.35, y:2.35, z:-0.15}, 'trapecio_med_izq');
@@ -283,6 +307,12 @@ crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.1), {x:-0.35, y:2.3, z:-0.1}, 'su
 crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.1), {x:0.35, y:2.3, z:-0.1}, 'subescapular_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.5, y:2.45, z:-0.05}, 'supraespinoso_izq');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.5, y:2.45, z:-0.05}, 'supraespinoso_der');
+crearParte(new THREE.BoxGeometry(0.08, 0.08, 0.06), {x:-0.35, y:2.3, z:-0.22}, 'serrato_post_sup_izq');
+crearParte(new THREE.BoxGeometry(0.08, 0.08, 0.06), {x:0.35, y:2.3, z:-0.22}, 'serrato_post_sup_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.1, 0.1), {x:-0.15, y:1.5, z:-0.22}, 'cuadrado_lumbar_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.1, 0.1), {x:0.15, y:1.5, z:-0.22}, 'cuadrado_lumbar_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.08, 0.06), {x:-0.35, y:1.75, z:-0.22}, 'serrato_post_inf_izq');
+crearParte(new THREE.BoxGeometry(0.1, 0.08, 0.06), {x:0.35, y:1.75, z:-0.22}, 'serrato_post_inf_der');
 
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:-0.6, y:2.35, z:0.1}, 'deltoides_ant_izq');
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.2), {x:0.6, y:2.35, z:0.1}, 'deltoides_ant_der');
@@ -368,18 +398,18 @@ crearParte(new THREE.BoxGeometry(0.18, 0.1, 0.3), {x:0.25, y:-0.9, z:0.08}, 'pie
 crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:-0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_izq');
 crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_der');
 
-crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:-0.7, y:2.35, z:0}, 'hombro_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:0.7, y:2.35, z:0}, 'hombro_der', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.1, 16, 16), {x:-0.7, y:1.7, z:0}, 'codo_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.1, 16, 16), {x:0.7, y:1.7, z:0}, 'codo_der', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.07, 16, 16), {x:-0.7, y:1.2, z:0.05}, 'muneca_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.07, 16, 16), {x:0.7, y:1.2, z:0.05}, 'muneca_der', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.14, 16, 16), {x:-0.3, y:0.9, z:0}, 'cadera_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.14, 16, 16), {x:0.3, y:0.9, z:0}, 'cadera_der', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:-0.25, y:0.1, z:0}, 'rodilla_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.12, 16, 16), {x:0.25, y:0.1, z:0}, 'rodilla_der', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.08, 16, 16), {x:-0.25, y:-0.8, z:0}, 'tobillo_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.SphereGeometry(0.08, 16, 16), {x:0.25, y:-0.8, z:0}, 'tobillo_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.15, 20, 20), {x:-0.7, y:2.35, z:0}, 'hombro_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.15, 20, 20), {x:0.7, y:2.35, z:0}, 'hombro_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.12, 20, 20), {x:-0.7, y:1.7, z:0}, 'codo_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.12, 20, 20), {x:0.7, y:1.7, z:0}, 'codo_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.09, 20, 20), {x:-0.7, y:1.2, z:0.05}, 'muneca_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.09, 20, 20), {x:0.7, y:1.2, z:0.05}, 'muneca_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.17, 20, 20), {x:-0.3, y:0.9, z:0}, 'cadera_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.17, 20, 20), {x:0.3, y:0.9, z:0}, 'cadera_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.15, 20, 20), {x:-0.25, y:0.1, z:0}, 'rodilla_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.15, 20, 20), {x:0.25, y:0.1, z:0}, 'rodilla_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.11, 20, 20), {x:-0.25, y:-0.8, z:0}, 'tobillo_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.SphereGeometry(0.11, 20, 20), {x:0.25, y:-0.8, z:0}, 'tobillo_der', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.CylinderGeometry(0.06, 0.06, 0.4, 8), {x:0, y:2.55, z:-0.05}, 'columna_cervical', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8), {x:0, y:1.95, z:-0.1}, 'columna_toracica', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 8), {x:0, y:1.4, z:-0.1}, 'columna_lumbar', {x:0, y:0, z:0}, materialHueso);
@@ -407,6 +437,30 @@ function aplicarCapa() {
             }
         }
     });
+    aplicarSeleccion();
+}
+
+function aplicarSeleccion() {
+    if (musculoSeleccionado && partes[musculoSeleccionado]) {
+        partes[musculoSeleccionado].userData.materialAntes = partes[musculoSeleccionado].material;
+        partes[musculoSeleccionado].material = materialSeleccion;
+    }
+}
+
+function seleccionarMusculo(id) {
+    if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
+        partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
+    }
+    if (musculoSeleccionado === id) {
+        musculoSeleccionado = null;
+        return;
+    }
+    const mesh = partes[id];
+    if (mesh) {
+        mesh.userData.materialAntes = mesh.material;
+        mesh.material = materialSeleccion;
+        musculoSeleccionado = id;
+    }
 }
 
 const raycaster = new THREE.Raycaster();
@@ -432,6 +486,15 @@ function buscarEjerciciosDeMusculo(idMusculo) {
     return ejercicios;
 }
 
+function listaConBotones(arr) {
+    if (arr.length === 0) return "";
+    let html = "";
+    arr.forEach(e => {
+        html += `<div class="info-lista"><button class="btn-ejercicio-mini" data-ejercicio="${e}">${e}</button></div>`;
+    });
+    return html;
+}
+
 renderer.domElement.addEventListener('click', (event) => {
     const rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -444,6 +507,8 @@ renderer.domElement.addEventListener('click', (event) => {
         const idMusculo = hit.name;
         if (clicFiltro === 'musculo' && !esMusculo(idMusculo)) return;
         if (clicFiltro === 'articulacion' && !esArticulacion(idMusculo)) return;
+
+        seleccionarMusculo(idMusculo);
 
         const nombreMostrar = nombresMusculos[idMusculo] || idMusculo;
         const esArt = esArticulacion(idMusculo);
@@ -470,13 +535,20 @@ renderer.domElement.addEventListener('click', (event) => {
         }
 
         const ej = buscarEjerciciosDeMusculo(idMusculo);
-        if (ej.primary.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#ff0000;">Primario en</span>`; ej.primary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
-        if (ej.secondary.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>`; ej.secondary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
-        if (ej.stabilizers.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>`; ej.stabilizers.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
-        if (ej.articulacion.length > 0) { html += `<div class="info-seccion"><span class="info-label" style="color:#00ccff;">Participa en</span>`; ej.articulacion.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; }); html += `</div>`; }
+        if (ej.primary.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ff0000;">Primario en</span>${listaConBotones(ej.primary)}</div>`;
+        if (ej.secondary.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>${listaConBotones(ej.secondary)}</div>`;
+        if (ej.stabilizers.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>${listaConBotones(ej.stabilizers)}</div>`;
+        if (ej.articulacion.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#00ccff;">Participa en</span>${listaConBotones(ej.articulacion)}</div>`;
 
         infoContenido.innerHTML = html;
         infoPanel.style.display = 'block';
+
+        infoContenido.querySelectorAll('.btn-ejercicio-mini').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTexto(btn.getAttribute('data-ejercicio'));
+                entrenar();
+            });
+        });
     } else {
         popup.style.display = 'none';
     }
@@ -494,7 +566,6 @@ function limpiar() {
         else if (esProfundo(parte.name)) parte.material = materialProfundo;
         else parte.material = materialMusculo;
     });
-    aplicarCapa();
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
     document.getElementById("resultado").style.color = "#aaa";
 }
@@ -548,6 +619,8 @@ function entrenar() {
         resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
         resultadoDiv.style.color = "#ff4444";
     }
+    aplicarCapa();
+    aplicarSeleccion();
 }
 
 function togglePanel() {
