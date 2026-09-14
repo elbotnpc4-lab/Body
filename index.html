@@ -9,15 +9,15 @@
         #canvas-container { width: 100vw; height: 100vh; display: block; }
         #toggle-btn { position: absolute; top: 15px; left: 15px; z-index: 20; background-color: #222; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; }
         #toggle-btn:hover { background-color: #333; }
-        .panel { position: absolute; top: 60px; left: 15px; background-color: rgba(26, 26, 26, 0.95); padding: 20px; border-radius: 6px; width: 350px; border: 1px solid #333; z-index: 10; box-sizing: border-box; display: block; max-height: 80vh; overflow-y: auto; }
+        .panel { position: absolute; top: 60px; left: 15px; background-color: rgba(26, 26, 26, 0.95); padding: 20px; border-radius: 6px; width: 360px; border: 1px solid #333; z-index: 10; box-sizing: border-box; display: block; max-height: 82vh; overflow-y: auto; }
         .panel h2 { margin-top: 0; font-size: 16px; font-weight: normal; color: white; border-bottom: 1px solid #333; padding-bottom: 10px; }
         input { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background-color: #222; color: white; box-sizing: border-box; font-size: 14px; margin-bottom: 10px; outline: none; }
         input:focus { border-color: #888; }
         button { width: 100%; padding: 8px; background-color: #333; color: white; border: 1px solid #555; border-radius: 4px; font-size: 14px; cursor: pointer; margin-bottom: 6px; }
         button:hover { background-color: #444; }
-        .filtro { display: flex; gap: 6px; margin-bottom: 10px; }
-        .filtro button { margin-bottom: 0; font-size: 12px; padding: 6px; }
-        .filtro button.activo { background-color: #666; border-color: #888; }
+        .grupo-filtro { display: flex; gap: 6px; margin-bottom: 10px; }
+        .grupo-filtro button { margin-bottom: 0; font-size: 12px; padding: 6px; }
+        .grupo-filtro button.activo { background-color: #666; border-color: #888; }
         .seccion-titulo { font-size: 11px; color: #888; margin-top: 10px; margin-bottom: 5px; }
         .btn-ejemplo { font-size: 12px; padding: 5px; background-color: #222; text-align: left; }
         .btn-ejemplo:hover { background-color: #333; }
@@ -27,8 +27,11 @@
         #resultado .musculo { padding-left: 10px; }
         #resultado .movimiento { margin-top: 6px; padding-top: 6px; border-top: 1px solid #333; }
 
-        #info-panel { position: absolute; top: 60px; right: 15px; background-color: rgba(26, 26, 26, 0.97); padding: 18px 20px; border-radius: 6px; width: 300px; border: 1px solid #333; z-index: 15; box-sizing: border-box; display: none; max-height: 80vh; overflow-y: auto; font-size: 12px; line-height: 1.5; }
+        #info-panel { position: absolute; top: 60px; right: 15px; background-color: rgba(26, 26, 26, 0.97); padding: 18px 20px; border-radius: 6px; width: 310px; border: 1px solid #333; z-index: 15; box-sizing: border-box; display: none; max-height: 82vh; overflow-y: auto; font-size: 12px; line-height: 1.5; }
         #info-panel h3 { margin: 0 0 10px 0; font-size: 14px; color: #ff6666; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
+        #info-panel .tipo-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-bottom: 8px; text-transform: uppercase; }
+        #info-panel .tipo-musculo { background-color: #553333; color: #ff9999; }
+        #info-panel .tipo-articulacion { background-color: #335566; color: #99ddff; }
         #info-panel .info-seccion { margin-bottom: 10px; }
         #info-panel .info-label { color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; display: block; }
         #info-panel .info-texto { color: #ddd; }
@@ -38,7 +41,7 @@
 
         #muscle-popup { position: fixed; background: rgba(20, 20, 20, 0.95); color: white; padding: 7px 10px; border: 1px solid #444; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 30; display: none; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); white-space: nowrap; }
 
-        .leyenda { position: absolute; bottom: 15px; left: 15px; background-color: rgba(26, 26, 26, 0.9); padding: 10px 15px; border-radius: 6px; border: 1px solid #333; font-size: 12px; display: flex; gap: 15px; z-index: 10; }
+        .leyenda { position: absolute; bottom: 15px; left: 15px; background-color: rgba(26, 26, 26, 0.9); padding: 10px 15px; border-radius: 6px; border: 1px solid #333; font-size: 12px; display: flex; gap: 15px; flex-wrap: wrap; z-index: 10; }
         .leyenda-item { display: flex; align-items: center; gap: 5px; }
         .color-box { width: 12px; height: 12px; border-radius: 2px; }
     </style>
@@ -52,14 +55,28 @@
     <input type="text" id="inputEjercicio" placeholder="Escribe un ejercicio...">
     <button id="btnEntrenar">Entrenar</button>
 
-    <div class="filtro" style="margin-top: 12px;">
+    <p class="seccion-titulo">FILTRAR EJERCICIOS</p>
+    <div class="grupo-filtro">
         <button class="filtro-btn activo" data-filtro="todos">Todos</button>
         <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
         <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
     </div>
 
-    <div id="listaBotones"></div>
+    <p class="seccion-titulo">CAPAS DEL CUERPO</p>
+    <div class="grupo-filtro">
+        <button class="capa-btn activo" data-capa="superficial">Superficial</button>
+        <button class="capa-btn" data-capa="profundo">Profundo</button>
+        <button class="capa-btn" data-capa="todos">Todos</button>
+    </div>
 
+    <p class="seccion-titulo">SELECCIÓN AL CLIC</p>
+    <div class="grupo-filtro">
+        <button class="clic-btn activo" data-clic="todos">Todos</button>
+        <button class="clic-btn" data-clic="musculo">Músculos</button>
+        <button class="clic-btn" data-clic="articulacion">Articulaciones</button>
+    </div>
+
+    <div id="listaBotones"></div>
     <div id="resultado">Escribe un ejercicio...</div>
 </div>
 
@@ -99,6 +116,32 @@ const [nombresMusculos, infoMusculos, baseDatos] = await Promise.all([
     fetch(BASE_URL + 'musculos.json').then(r => r.json()),
     fetch(BASE_URL + 'ejercicios.json').then(r => r.json())
 ]);
+
+const PROFUNDOS = [
+    'transverso_abdominal',
+    'psoas_iliaco_izq', 'psoas_iliaco_der',
+    'subescapular_izq', 'subescapular_der',
+    'oblicuo_int_izq', 'oblicuo_int_der',
+    'gluteo_menor_izq', 'gluteo_menor_der',
+    'piriforme_izq', 'piriforme_der',
+    'vastointermedio_izq', 'vastointermedio_der',
+    'popliteo_izq', 'popliteo_der',
+    'intrinsecos_pie_izq', 'intrinsecos_pie_der'
+];
+
+const ARTICULACIONES = [
+    'cabeza', 'cuello',
+    'rodilla_izq', 'rodilla_der',
+    'mano_izq', 'mano_der',
+    'pie_izq', 'pie_der'
+];
+
+function esProfundo(id) { return PROFUNDOS.includes(id); }
+function esArticulacion(id) { return ARTICULACIONES.includes(id); }
+function esMusculo(id) { return !esArticulacion(id); }
+
+let capaActual = 'superficial';
+let clicFiltro = 'todos';
 
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
@@ -158,6 +201,7 @@ gridHelper.position.y = -1.49;
 scene.add(gridHelper);
 
 const materialMusculo = new THREE.MeshStandardMaterial({ color: 0xaa3333, roughness: 0.6, metalness: 0.1 });
+const materialProfundo = new THREE.MeshStandardMaterial({ color: 0x772222, roughness: 0.6, metalness: 0.1 });
 const materialHueso = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.5, metalness: 0.1 });
 const materialPrimary = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xaa0000, emissiveIntensity: 1.5, roughness: 0.3 });
 const materialSecondary = new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0x884400, emissiveIntensity: 1.0, roughness: 0.3 });
@@ -165,7 +209,8 @@ const materialStabilizer = new THREE.MeshStandardMaterial({ color: 0xffdd00, emi
 const materialJoint = new THREE.MeshStandardMaterial({ color: 0x00ccff, emissive: 0x006688, emissiveIntensity: 1.0, roughness: 0.3 });
 
 const partes = {};
-function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = materialMusculo, escala = {x:1, y:1, z:1}) {
+function crearParte(geometria, posicion, nombre, rotacion = {x:0, y:0, z:0}, material = null, escala = {x:1, y:1, z:1}) {
+    if (!material) material = esProfundo(nombre) ? materialProfundo : materialMusculo;
     const mesh = new THREE.Mesh(geometria, material);
     mesh.position.set(posicion.x, posicion.y, posicion.z);
     mesh.rotation.set(rotacion.x, rotacion.y, rotacion.z);
@@ -320,6 +365,31 @@ crearParte(new THREE.BoxGeometry(0.18, 0.1, 0.3), {x:0.25, y:-0.9, z:0.08}, 'pie
 crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:-0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_izq');
 crearParte(new THREE.BoxGeometry(0.12, 0.05, 0.1), {x:0.25, y:-0.92, z:0.25}, 'intrinsecos_pie_der');
 
+function aplicarCapa() {
+    Object.values(partes).forEach(parte => {
+        const id = parte.name;
+        const esProf = esProfundo(id);
+        if (capaActual === 'superficial') {
+            parte.visible = !esProf;
+        } else if (capaActual === 'profundo') {
+            parte.visible = true;
+            if (esProf) {
+                parte.material.opacity = 1;
+                parte.material.transparent = false;
+            } else if (!esArticulacion(id)) {
+                parte.material.opacity = 0.35;
+                parte.material.transparent = true;
+            }
+        } else {
+            parte.visible = true;
+            if (!esArticulacion(id)) {
+                parte.material.opacity = 1;
+                parte.material.transparent = false;
+            }
+        }
+    });
+}
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const popup = document.getElementById('muscle-popup');
@@ -332,15 +402,17 @@ function cerrarInfo() { infoPanel.style.display = 'none'; }
 window.cerrarInfo = cerrarInfo;
 
 function buscarEjerciciosDeMusculo(idMusculo) {
-    const ejercicios = [];
+    const ejercicios = { primary: [], secondary: [], stabilizers: [] };
     for (const clave in baseDatos) {
         const datos = baseDatos[clave];
-        const todasCategorias = [...(datos.primary || []), ...(datos.secondary || []), ...(datos.stabilizers || []), ...(datos.joints || [])];
-        for (const grupo of todasCategorias) {
-            if (grupo.meshes.includes(idMusculo)) {
-                if (!ejercicios.includes(clave)) ejercicios.push(clave);
-                break;
-            }
+        for (const grupo of (datos.primary || [])) {
+            if (grupo.meshes.includes(idMusculo) && !ejercicios.primary.includes(clave)) ejercicios.primary.push(clave);
+        }
+        for (const grupo of (datos.secondary || [])) {
+            if (grupo.meshes.includes(idMusculo) && !ejercicios.secondary.includes(clave)) ejercicios.secondary.push(clave);
+        }
+        for (const grupo of (datos.stabilizers || [])) {
+            if (grupo.meshes.includes(idMusculo) && !ejercicios.stabilizers.includes(clave)) ejercicios.stabilizers.push(clave);
         }
     }
     return ejercicios;
@@ -351,11 +423,19 @@ renderer.domElement.addEventListener('click', (event) => {
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(Object.values(partes));
+
+    const partesVisibles = Object.values(partes).filter(p => p.visible);
+    const intersects = raycaster.intersectObjects(partesVisibles);
+
     if (intersects.length > 0) {
         const hit = intersects[0].object;
         const idMusculo = hit.name;
+
+        if (clicFiltro === 'musculo' && !esMusculo(idMusculo)) return;
+        if (clicFiltro === 'articulacion' && !esArticulacion(idMusculo)) return;
+
         const nombreMostrar = nombresMusculos[idMusculo] || idMusculo;
+        const esArt = esArticulacion(idMusculo);
 
         popup.innerText = nombreMostrar;
         popup.style.left = (event.clientX + 15) + 'px';
@@ -365,9 +445,10 @@ renderer.domElement.addEventListener('click', (event) => {
         popupTimeout = setTimeout(() => { popup.style.display = 'none'; }, 2000);
 
         const info = infoMusculos[idMusculo];
+        infoNombre.innerText = info ? info.nombre : nombreMostrar;
+        let html = `<div class="tipo-badge ${esArt ? 'tipo-articulacion' : 'tipo-musculo'}">${esArt ? 'Articulación' : 'Músculo'}</div>`;
+
         if (info) {
-            infoNombre.innerText = info.nombre;
-            let html = "";
             if (info.funciones) {
                 html += `<div class="info-seccion"><span class="info-label">Función</span>`;
                 info.funciones.forEach(f => { html += `<div class="info-lista">• ${f}</div>`; });
@@ -379,19 +460,27 @@ renderer.domElement.addEventListener('click', (event) => {
             if (info.ubicacion) {
                 html += `<div class="info-seccion"><span class="info-label">Ubicación</span><div class="info-texto">${info.ubicacion}</div></div>`;
             }
-            const ejercicios = buscarEjerciciosDeMusculo(idMusculo);
-            if (ejercicios.length > 0) {
-                html += `<div class="info-seccion"><span class="info-label">Ejercicios</span>`;
-                ejercicios.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
-                html += `</div>`;
-            }
-            infoContenido.innerHTML = html;
-            infoPanel.style.display = 'block';
-        } else {
-            infoNombre.innerText = nombreMostrar;
-            infoContenido.innerHTML = `<div class="info-texto" style="color:#888;">Sin información detallada para este músculo.</div>`;
-            infoPanel.style.display = 'block';
         }
+
+        const ej = buscarEjerciciosDeMusculo(idMusculo);
+        if (ej.primary.length > 0) {
+            html += `<div class="info-seccion"><span class="info-label" style="color:#ff0000;">Primario en</span>`;
+            ej.primary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
+            html += `</div>`;
+        }
+        if (ej.secondary.length > 0) {
+            html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>`;
+            ej.secondary.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
+            html += `</div>`;
+        }
+        if (ej.stabilizers.length > 0) {
+            html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>`;
+            ej.stabilizers.forEach(e => { html += `<div class="info-lista">• ${e}</div>`; });
+            html += `</div>`;
+        }
+
+        infoContenido.innerHTML = html;
+        infoPanel.style.display = 'block';
     } else {
         popup.style.display = 'none';
     }
@@ -405,12 +494,15 @@ function setTexto(texto) { document.getElementById("inputEjercicio").value = tex
 
 function limpiar() {
     Object.values(partes).forEach(parte => {
-        if (parte.name.includes('rodilla') || parte.name.includes('mano') || parte.name.includes('pie') || parte.name === 'cabeza' || parte.name === 'cuello') {
+        if (esArticulacion(parte.name)) {
             parte.material = materialHueso;
+        } else if (esProfundo(parte.name)) {
+            parte.material = materialProfundo;
         } else {
             parte.material = materialMusculo;
         }
     });
+    aplicarCapa();
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
     document.getElementById("resultado").style.color = "#aaa";
 }
@@ -524,8 +616,24 @@ document.querySelectorAll(".filtro-btn").forEach(btn => {
         renderizarBotones(this.getAttribute("data-filtro"));
     });
 });
+document.querySelectorAll(".capa-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+        document.querySelectorAll(".capa-btn").forEach(b => b.classList.remove("activo"));
+        this.classList.add("activo");
+        capaActual = this.getAttribute("data-capa");
+        aplicarCapa();
+    });
+});
+document.querySelectorAll(".clic-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+        document.querySelectorAll(".clic-btn").forEach(b => b.classList.remove("activo"));
+        this.classList.add("activo");
+        clicFiltro = this.getAttribute("data-clic");
+    });
+});
 
 renderizarBotones("todos");
+aplicarCapa();
 
 function animate() {
     requestAnimationFrame(animate);
