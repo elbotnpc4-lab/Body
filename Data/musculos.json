@@ -109,8 +109,6 @@
     "sartorio_der": { "nombre": "Sartorio", "funciones": ["Flexión de cadera", "Abducción de cadera", "Rotación externa de cadera", "Flexión de rodilla"], "cruza": ["Cadera", "Rodilla"], "ubicacion": "Cara anterior del muslo, en diagonal" },
     "tfl_izq": { "nombre": "Tensor de la fascia lata", "funciones": ["Flexión de cadera", "Abducción de cadera", "Rotación interna", "Estabilización de rodilla"], "cruza": ["Cadera", "Rodilla (vía fascia lata)"], "ubicacion": "Cara anterolateral de la cadera" },
     "tfl_der": { "nombre": "Tensor de la fascia lata", "funciones": ["Flexión de cadera", "Abducción de cadera", "Rotación interna", "Estabilización de rodilla"], "cruza": ["Cadera", "Rodilla (vía fascia lata)"], "ubicacion": "Cara anterolateral de la cadera" },
-    "rodilla_izq": { "nombre": "Rodilla izquierda (articulación)", "funciones": ["Flexión/extensión", "Estabilidad en carga"], "cruza": ["Fémur", "Tibia", "Rótula"], "ubicacion": "Unión entre muslo y pierna izquierda" },
-    "rodilla_der": { "nombre": "Rodilla derecha (articulación)", "funciones": ["Flexión/extensión", "Estabilidad en carga"], "cruza": ["Fémur", "Tibia", "Rótula"], "ubicacion": "Unión entre muslo y pierna derecha" },
     "gastrocnemio_izq": { "nombre": "Gastrocnemio", "funciones": ["Flexión plantar de tobillo", "Flexión de rodilla"], "cruza": ["Rodilla", "Tobillo"], "ubicacion": "Parte posterior de la pierna, superficial" },
     "gastrocnemio_der": { "nombre": "Gastrocnemio", "funciones": ["Flexión plantar de tobillo", "Flexión de rodilla"], "cruza": ["Rodilla", "Tobillo"], "ubicacion": "Parte posterior de la pierna, superficial" },
     "soleo_izq": { "nombre": "Sóleo", "funciones": ["Flexión plantar de tobillo"], "cruza": ["Tobillo"], "ubicacion": "Parte posterior de la pierna, profundo" },
@@ -128,5 +126,21 @@
     "pie_izq": { "nombre": "Pie izquierdo", "funciones": ["Soporte del peso", "Propulsión al caminar/correr", "Equilibrio"], "cruza": ["Tobillo", "Dedos del pie"], "ubicacion": "Extremo distal de la pierna izquierda" },
     "pie_der": { "nombre": "Pie derecho", "funciones": ["Soporte del peso", "Propulsión al caminar/correr", "Equilibrio"], "cruza": ["Tobillo", "Dedos del pie"], "ubicacion": "Extremo distal de la pierna derecha" },
     "intrinsecos_pie_izq": { "nombre": "Músculos intrínsecos del pie", "funciones": ["Movimiento fino de los dedos", "Soporte del arco plantar"], "cruza": ["Dedos del pie"], "ubicacion": "Dentro del pie izquierdo" },
-    "intrinsecos_pie_der": { "nombre": "Músculos intrínsecos del pie", "funciones": ["Movimiento fino de los dedos", "Soporte del arco plantar"], "cruza": ["Dedos del pie"], "ubicacion": "Dentro del pie derecho" }
+    "intrinsecos_pie_der": { "nombre": "Músculos intrínsecos del pie", "funciones": ["Movimiento fino de los dedos", "Soporte del arco plantar"], "cruza": ["Dedos del pie"], "ubicacion": "Dentro del pie derecho" },
+
+    "hombro_izq": { "nombre": "Hombro izquierdo (articulación)", "funciones": ["Flexión/extensión", "Abducción/aducción", "Rotación interna/externa", "Circunducción"], "cruza": ["Húmero", "Escápula"], "ubicacion": "Unión entre brazo y tronco" },
+    "hombro_der": { "nombre": "Hombro derecho (articulación)", "funciones": ["Flexión/extensión", "Abducción/aducción", "Rotación interna/externa", "Circunducción"], "cruza": ["Húmero", "Escápula"], "ubicacion": "Unión entre brazo y tronco" },
+    "codo_izq": { "nombre": "Codo izquierdo (articulación)", "funciones": ["Flexión/extensión", "Pronosupinación (con radio/ulna)"], "cruza": ["Húmero", "Radio", "Cúbito"], "ubicacion": "Unión entre brazo y antebrazo" },
+    "codo_der": { "nombre": "Codo derecho (articulación)", "funciones": ["Flexión/extensión", "Pronosupinación (con radio/ulna)"], "cruza": ["Húmero", "Radio", "Cúbito"], "ubicacion": "Unión entre brazo y antebrazo" },
+    "muneca_izq": { "nombre": "Muñeca izquierda (articulación)", "funciones": ["Flexión/extensión", "Desviación radial/ulnar", "Circunducción"], "cruza": ["Radio", "Cúbito", "Carpo"], "ubicacion": "Unión entre antebrazo y mano" },
+    "muneca_der": { "nombre": "Muñeca derecha (articulación)", "funciones": ["Flexión/extensión", "Desviación radial/ulnar", "Circunducción"], "cruza": ["Radio", "Cúbito", "Carpo"], "ubicacion": "Unión entre antebrazo y mano" },
+    "cadera_izq": { "nombre": "Cadera izquierda (articulación)", "funciones": ["Flexión/extensión", "Abducción/aducción", "Rotación interna/externa", "Circunducción"], "cruza": ["Fémur", "Pelvis"], "ubicacion": "Unión entre muslo y pelvis" },
+    "cadera_der": { "nombre": "Cadera derecha (articulación)", "funciones": ["Flexión/extensión", "Abducción/adducción", "Rotación interna/externa", "Circunducción"], "cruza": ["Fémur", "Pelvis"], "ubicacion": "Unión entre muslo y pelvis" },
+    "rodilla_izq": { "nombre": "Rodilla izquierda (articulación)", "funciones": ["Flexión/extensión", "Estabilidad en carga"], "cruza": ["Fémur", "Tibia", "Rótula"], "ubicacion": "Unión entre muslo y pierna izquierda" },
+    "rodilla_der": { "nombre": "Rodilla derecha (articulación)", "funciones": ["Flexión/extensión", "Estabilidad en carga"], "cruza": ["Fémur", "Tibia", "Rótula"], "ubicacion": "Unión entre muslo y pierna derecha" },
+    "tobillo_izq": { "nombre": "Tobillo izquierdo (articulación)", "funciones": ["Dorsiflexión/flexión plantar", "Inversión/eversión"], "cruza": ["Tibia", "Peroné", "Astrágalo"], "ubicacion": "Unión entre pierna y pie" },
+    "tobillo_der": { "nombre": "Tobillo derecho (articulación)", "funciones": ["Dorsiflexión/flexión plantar", "Inversión/eversión"], "cruza": ["Tibia", "Peroné", "Astrágalo"], "ubicacion": "Unión entre pierna y pie" },
+    "columna_cervical": { "nombre": "Columna cervical (región)", "funciones": ["Flexión/extensión", "Rotación", "Inclinación lateral"], "cruza": ["Cráneo", "Tórax"], "ubicacion": "Porción superior de la columna vertebral" },
+    "columna_toracica": { "nombre": "Columna torácica (región)", "funciones": ["Flexión/extensión (limitada)", "Rotación", "Inclinación lateral"], "cruza": ["Costillas", "Lumbar"], "ubicacion": "Porción media de la columna vertebral" },
+    "columna_lumbar": { "nombre": "Columna lumbar (región)", "funciones": ["Flexión/extensión", "Inclinación lateral", "Estabilidad en carga"], "cruza": ["Tórax", "Sacro"], "ubicacion": "Porción inferior de la columna vertebral" }
 }
