@@ -40,29 +40,17 @@
         #info-panel .cerrar { position: absolute; top: 12px; right: 15px; cursor: pointer; color: #888; font-size: 16px; background: none; border: none; padding: 0; width: auto; }
         #info-panel .cerrar:hover { color: white; background: none; }
 
-        .btn-ejercicio-mini {
-            display: inline-block;
-            width: auto;
-            padding: 3px 8px;
-            margin: 2px 0;
-            font-size: 11px;
-            background-color: #2a4a8a;
-            border: 1px solid #4a6aaa;
-            border-radius: 3px;
-            color: white;
-            cursor: pointer;
-            text-align: left;
-        }
+        .btn-ejercicio-mini { display: inline-block; width: auto; padding: 3px 8px; margin: 2px 0; font-size: 11px; background-color: #2a4a8a; border: 1px solid #4a6aaa; border-radius: 3px; color: white; cursor: pointer; text-align: left; }
         .btn-ejercicio-mini:hover { background-color: #3a5a9a; }
 
         #muscle-popup { position: fixed; background: rgba(20, 20, 20, 0.95); color: white; padding: 7px 10px; border: 1px solid #444; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 30; display: none; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); white-space: nowrap; }
 
-        .leyenda { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background-color: rgba(26, 26, 26, 0.92); padding: 6px 12px; border-radius: 6px; border: 1px solid #333; font-size: 11px; display: flex; gap: 12px; flex-wrap: wrap; z-index: 10; align-items: center; }
+        .leyenda { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); background-color: rgba(26, 26, 26, 0.92); padding: 6px 12px; border-radius: 6px; border: 1px solid #333; font-size: 11px; display: flex; gap: 12px; flex-wrap: wrap; z-index: 10; align-items: center; cursor: move; user-select: none; }
         .leyenda-item { display: flex; align-items: center; gap: 4px; }
         .color-box { width: 10px; height: 10px; border-radius: 2px; }
         #legend-help { width: 22px; height: 22px; padding: 0; background-color: #333; border: 1px solid #555; border-radius: 50%; font-size: 12px; line-height: 1; cursor: pointer; color: white; margin-left: 5px; }
 
-        #legend-modal { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background-color: rgba(20, 20, 20, 0.98); padding: 16px 20px; border-radius: 6px; border: 1px solid #444; z-index: 40; display: none; font-size: 12px; width: 380px; max-width: 90vw; line-height: 1.6; }
+        #legend-modal { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); background-color: rgba(20, 20, 20, 0.98); padding: 16px 20px; border-radius: 6px; border: 1px solid #444; z-index: 40; display: none; font-size: 12px; width: 380px; max-width: 90vw; line-height: 1.6; }
         #legend-modal h3 { margin: 0 0 10px 0; font-size: 14px; color: white; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
         #legend-modal p { margin: 8px 0; }
         #legend-modal .legend-cierre { position: absolute; top: 10px; right: 14px; cursor: pointer; color: #888; font-size: 16px; background: none; border: none; padding: 0; width: auto; }
@@ -87,13 +75,6 @@
         <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
     </div>
 
-    <p class="seccion-titulo">CAPAS DEL CUERPO</p>
-    <div class="grupo-filtro">
-        <button class="capa-btn activo" data-capa="superficial">Superficial</button>
-        <button class="capa-btn" data-capa="profundo">Profundo</button>
-        <button class="capa-btn" data-capa="todos">Todos</button>
-    </div>
-
     <p class="seccion-titulo">SELECCIÓN AL CLIC</p>
     <div class="grupo-filtro">
         <button class="clic-btn activo" data-clic="todos">Todos</button>
@@ -112,7 +93,7 @@
     <div id="info-contenido"></div>
 </div>
 
-<div class="leyenda">
+<div class="leyenda" id="leyendaFlotante">
     <div class="leyenda-item"><div class="color-box" style="background:#ff0000;"></div> Primario</div>
     <div class="leyenda-item"><div class="color-box" style="background:#ff8800;"></div> Secundario</div>
     <div class="leyenda-item"><div class="color-box" style="background:#ffdd00;"></div> Estabilizador</div>
@@ -166,7 +147,12 @@ const PROFUNDOS = [
     'cuadrado_lumbar_izq', 'cuadrado_lumbar_der',
     'serrato_post_sup_izq', 'serrato_post_sup_der',
     'serrato_post_inf_izq', 'serrato_post_inf_der',
-    'redondo_menor_izq', 'redondo_menor_der'
+    'redondo_menor_izq', 'redondo_menor_der',
+    'coracobraquial_izq', 'coracobraquial_der',
+    'anconeo_izq', 'anconeo_der',
+    'espinoso_izq', 'espinoso_der',
+    'intercostal_izq_0', 'intercostal_izq_1', 'intercostal_izq_2', 'intercostal_izq_3',
+    'intercostal_der_0', 'intercostal_der_1', 'intercostal_der_2', 'intercostal_der_3'
 ];
 
 const ARTICULACIONES = [
@@ -182,6 +168,18 @@ const ARTICULACIONES = [
 const ESTRUCTURAS = ['cabeza', 'cuello', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der'];
 
 const MUSCULOS_RELACIONADOS = {
+    'elevador_escapula_izq': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
+    'elevador_escapula_der': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
+    'coracobraquial_izq': ['Bíceps Cabeza Corta', 'Pectoral Mayor', 'Deltoides Anterior'],
+    'coracobraquial_der': ['Bíceps Cabeza Corta', 'Pectoral Mayor', 'Deltoides Anterior'],
+    'anconeo_izq': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial'],
+    'anconeo_der': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial'],
+    'iliocostal_izq': ['Longísimo', 'Espinoso', 'Cuadrado Lumbar'],
+    'iliocostal_der': ['Longísimo', 'Espinoso', 'Cuadrado Lumbar'],
+    'longisimo_izq': ['Iliocostal', 'Espinoso', 'Semispinal'],
+    'longisimo_der': ['Iliocostal', 'Espinoso', 'Semispinal'],
+    'espinoso_izq': ['Iliocostal', 'Longísimo'],
+    'espinoso_der': ['Iliocostal', 'Longísimo'],
     'cuadriceps_recto_izq': ['Vasto Lateral', 'Vasto Medial', 'Vasto Intermedio', 'Sartorio'],
     'cuadriceps_recto_der': ['Vasto Lateral', 'Vasto Medial', 'Vasto Intermedio', 'Sartorio'],
     'vastolateral_izq': ['Recto Femoral', 'Vasto Medial', 'Vasto Intermedio'],
@@ -200,18 +198,18 @@ const MUSCULOS_RELACIONADOS = {
     'gluteo_mayor_der': ['Glúteo Medio', 'Glúteo Menor', 'Piriforme'],
     'gluteo_med_izq': ['Glúteo Mayor', 'Glúteo Menor', 'Tensor Fascia Lata'],
     'gluteo_med_der': ['Glúteo Mayor', 'Glúteo Menor', 'Tensor Fascia Lata'],
-    'biceps_corto_izq': ['Bíceps Cabeza Larga', 'Braquial'],
-    'biceps_corto_der': ['Bíceps Cabeza Larga', 'Braquial'],
+    'biceps_corto_izq': ['Bíceps Cabeza Larga', 'Braquial', 'Coracobraquial'],
+    'biceps_corto_der': ['Bíceps Cabeza Larga', 'Braquial', 'Coracobraquial'],
     'biceps_largo_izq': ['Bíceps Cabeza Corta', 'Braquial'],
     'biceps_largo_der': ['Bíceps Cabeza Corta', 'Braquial'],
-    'triceps_largo_izq': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial'],
-    'triceps_largo_der': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial'],
-    'triceps_lat_izq': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Medial'],
-    'triceps_lat_der': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Medial'],
+    'triceps_largo_izq': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial', 'Ancóneo'],
+    'triceps_largo_der': ['Tríceps Cabeza Lateral', 'Tríceps Cabeza Medial', 'Ancóneo'],
+    'triceps_lat_izq': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Medial', 'Ancóneo'],
+    'triceps_lat_der': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Medial', 'Ancóneo'],
     'triceps_med_izq': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Lateral'],
     'triceps_med_der': ['Tríceps Cabeza Larga', 'Tríceps Cabeza Lateral'],
-    'deltoides_ant_izq': ['Deltoides Lateral', 'Deltoides Posterior', 'Pectoral Mayor'],
-    'deltoides_ant_der': ['Deltoides Lateral', 'Deltoides Posterior', 'Pectoral Mayor'],
+    'deltoides_ant_izq': ['Deltoides Lateral', 'Deltoides Posterior', 'Pectoral Mayor', 'Coracobraquial'],
+    'deltoides_ant_der': ['Deltoides Lateral', 'Deltoides Posterior', 'Pectoral Mayor', 'Coracobraquial'],
     'deltoides_lat_izq': ['Deltoides Anterior', 'Deltoides Posterior', 'Supraespinoso'],
     'deltoides_lat_der': ['Deltoides Anterior', 'Deltoides Posterior', 'Supraespinoso'],
     'deltoides_post_izq': ['Deltoides Anterior', 'Deltoides Lateral', 'Infraespinoso'],
@@ -236,12 +234,12 @@ const MUSCULOS_RELACIONADOS = {
     'subescapular_der': ['Supraespinoso', 'Infraespinoso', 'Redondo Mayor'],
     'redondo_mayor_izq': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
     'redondo_mayor_der': ['Redondo Menor', 'Infraespinoso', 'Dorsal Ancho'],
-    'romboides_izq': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho'],
-    'romboides_der': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho'],
+    'romboides_izq': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho', 'Elevador de la Escápula'],
+    'romboides_der': ['Trapecio Medio', 'Trapecio Inferior', 'Dorsal Ancho', 'Elevador de la Escápula'],
     'abdomen_1_izq': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
     'abdomen_1_der': ['Oblicuo Externo', 'Oblicuo Interno', 'Transverso del Abdomen'],
-    'oblicuo_ext_izq': ['Oblicuo Interno', 'Recto Abdominal', 'Transverso del Abdomen'],
-    'oblicuo_ext_der': ['Oblicuo Interno', 'Recto Abdominal', 'Transverso del Abdomen'],
+    'oblicuo_ext_izq': ['Oblicuo Interno', 'Recto Abdominal', 'Intercostales'],
+    'oblicuo_ext_der': ['Oblicuo Interno', 'Recto Abdominal', 'Intercostales'],
     'oblicuo_int_izq': ['Oblicuo Externo', 'Recto Abdominal', 'Transverso del Abdomen'],
     'oblicuo_int_der': ['Oblicuo Externo', 'Recto Abdominal', 'Transverso del Abdomen'],
     'gastrocnemio_izq': ['Sóleo', 'Tibial Posterior', 'Peroneos'],
@@ -250,10 +248,8 @@ const MUSCULOS_RELACIONADOS = {
     'soleo_der': ['Gastrocnemio', 'Tibial Posterior', 'Peroneos'],
     'psoas_iliaco_izq': ['Cuadrado Lumbar', 'Recto Abdominal', 'Glúteo Mayor'],
     'psoas_iliaco_der': ['Cuadrado Lumbar', 'Recto Abdominal', 'Glúteo Mayor'],
-    'cuadrado_lumbar_izq': ['Psoas Ilíaco', 'Erector Espinal', 'Oblicuo Interno'],
-    'cuadrado_lumbar_der': ['Psoas Ilíaco', 'Erector Espinal', 'Oblicuo Interno'],
-    'erector_espinal_izq': ['Cuadrado Lumbar', 'Transverso del Abdomen', 'Glúteo Mayor'],
-    'erector_espinal_der': ['Cuadrado Lumbar', 'Transverso del Abdomen', 'Glúteo Mayor'],
+    'cuadrado_lumbar_izq': ['Psoas Ilíaco', 'Iliocostal', 'Oblicuo Interno'],
+    'cuadrado_lumbar_der': ['Psoas Ilíaco', 'Iliocostal', 'Oblicuo Interno'],
     'sartorio_izq': ['Recto Femoral', 'Grácil', 'Aductor Largo'],
     'sartorio_der': ['Recto Femoral', 'Grácil', 'Aductor Largo'],
     'tfl_izq': ['Glúteo Medio', 'Glúteo Menor', 'Sartorio'],
@@ -266,8 +262,8 @@ const MUSCULOS_RELACIONADOS = {
     'aductor_mayor_der': ['Aductor Largo', 'Grácil', 'Isquiotibiales'],
     'gracil_izq': ['Aductor Largo', 'Aductor Mayor', 'Sartorio'],
     'gracil_der': ['Aductor Largo', 'Aductor Mayor', 'Sartorio'],
-    'braquial_izq': ['Bíceps Braquial', 'Braquiorradial', 'Tríceps'],
-    'braquial_der': ['Bíceps Braquial', 'Braquiorradial', 'Tríceps'],
+    'braquial_izq': ['Bíceps Braquial', 'Braquiorradial', 'Coracobraquial'],
+    'braquial_der': ['Bíceps Braquial', 'Braquiorradial', 'Coracobraquial'],
     'braquiorradial_izq': ['Braquial', 'Flexores del Antebrazo', 'Extensores del Antebrazo'],
     'braquiorradial_der': ['Braquial', 'Flexores del Antebrazo', 'Extensores del Antebrazo']
 };
@@ -277,7 +273,6 @@ function esArticulacion(id) { return ARTICULACIONES.includes(id); }
 function esEstructura(id) { return ESTRUCTURAS.includes(id); }
 function esMusculo(id) { return !esArticulacion(id) && !esEstructura(id); }
 
-let capaActual = 'superficial';
 let clicFiltro = 'todos';
 let musculoSeleccionado = null;
 
@@ -303,7 +298,6 @@ controls.update();
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
 scene.add(ambientLight);
-
 const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
 dirLight.position.set(5, 10, 5);
 dirLight.castShadow = true;
@@ -316,24 +310,18 @@ dirLight.shadow.camera.right = 6;
 dirLight.shadow.camera.top = 6;
 dirLight.shadow.camera.bottom = -6;
 scene.add(dirLight);
-
 const fillLight = new THREE.DirectionalLight(0xaaccff, 0.8);
 fillLight.position.set(-5, 5, 2);
 scene.add(fillLight);
-
 const rimLight = new THREE.DirectionalLight(0xffffff, 1.0);
 rimLight.position.set(-2, 3, -5);
 scene.add(rimLight);
 
-const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 20),
-    new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.8, metalness: 0.2 })
-);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.8, metalness: 0.2 }));
 floor.rotation.x = -Math.PI / 2;
 floor.position.y = -1.5;
 floor.receiveShadow = true;
 scene.add(floor);
-
 const gridHelper = new THREE.GridHelper(20, 20, 0x333333, 0x222222);
 gridHelper.position.y = -1.49;
 scene.add(gridHelper);
@@ -370,12 +358,20 @@ crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.18, y:2.95, z:0.15}, 'mas
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.18, y:2.95, z:0.15}, 'masetero_der');
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.1), {x:0, y:3.1, z:-0.2}, 'occipital');
 
+crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:-0.32, y:2.62, z:-0.02}, 'elevador_escapula_izq', {z:0.2});
+crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:0.32, y:2.62, z:-0.02}, 'elevador_escapula_der', {z:-0.2});
+
 crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:-0.28, y:2.3, z:0.15}, 'pectoral_sup_izq');
 crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:0.28, y:2.3, z:0.15}, 'pectoral_sup_der');
 crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:-0.28, y:2.05, z:0.15}, 'pectoral_inf_izq');
 crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:0.28, y:2.05, z:0.15}, 'pectoral_inf_der');
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.15), {x:-0.2, y:2.05, z:0.05}, 'pectoral_menor_izq');
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.15), {x:0.2, y:2.05, z:0.05}, 'pectoral_menor_der');
+
+for(let i=0; i<4; i++) {
+    crearParte(new THREE.BoxGeometry(0.05, 0.05, 0.15), {x:-0.5, y:2.05 - i*0.13, z:0.05}, `intercostal_izq_${i}`);
+    crearParte(new THREE.BoxGeometry(0.05, 0.05, 0.15), {x:0.5, y:2.05 - i*0.13, z:0.05}, `intercostal_der_${i}`);
+}
 
 for(let i=0; i<3; i++) {
     crearParte(new THREE.BoxGeometry(0.08, 0.08, 0.1), {x:-0.52, y:2.15 - i*0.1, z:0.1}, `serrato_izq_${i}`, {z:0.3});
@@ -398,8 +394,14 @@ crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.08), {x:0.08, y:1.3, z:-0.05}, 'ps
 
 crearParte(new THREE.BoxGeometry(0.35, 0.5, 0.2), {x:-0.35, y:2.1, z:-0.2}, 'dorsal_izq', {z:-0.2});
 crearParte(new THREE.BoxGeometry(0.35, 0.5, 0.2), {x:0.35, y:2.1, z:-0.2}, 'dorsal_der', {z:0.2});
-crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:-0.1, y:1.85, z:-0.2}, 'erector_espinal_izq');
-crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:0.1, y:1.85, z:-0.2}, 'erector_espinal_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:-0.19, y:1.85, z:-0.2}, 'iliocostal_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:0.19, y:1.85, z:-0.2}, 'iliocostal_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:-0.1, y:1.85, z:-0.2}, 'longisimo_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:0.1, y:1.85, z:-0.2}, 'longisimo_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:-0.02, y:1.85, z:-0.2}, 'espinoso_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:0.02, y:1.85, z:-0.2}, 'espinoso_der');
+crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:0, y:1.85, z:-0.25}, 'erector_espinal_izq', {x:0, y:0, z:0}, null, {x:0.01, y:0.01, z:0.01});
+crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:0, y:1.85, z:-0.25}, 'erector_espinal_der', {x:0, y:0, z:0}, null, {x:0.01, y:0.01, z:0.01});
 crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.15), {x:-0.4, y:2.25, z:-0.15}, 'infraespinoso_izq');
 crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.15), {x:0.4, y:2.25, z:-0.15}, 'infraespinoso_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.5, y:2.1, z:-0.1}, 'redondo_mayor_izq');
@@ -432,6 +434,9 @@ crearParte(new THREE.BoxGeometry(0.22, 0.18, 0.22), {x:0.8, y:2.4, z:0.05}, 'del
 crearParte(new THREE.BoxGeometry(0.22, 0.18, 0.22), {x:-0.68, y:2.4, z:-0.12}, 'deltoides_post_izq');
 crearParte(new THREE.BoxGeometry(0.22, 0.18, 0.22), {x:0.68, y:2.4, z:-0.12}, 'deltoides_post_der');
 
+crearParte(new THREE.BoxGeometry(0.08, 0.2, 0.1), {x:-0.63, y:2.18, z:0.08}, 'coracobraquial_izq', {z:0.15});
+crearParte(new THREE.BoxGeometry(0.08, 0.2, 0.1), {x:0.63, y:2.18, z:0.08}, 'coracobraquial_der', {z:-0.15});
+
 crearParte(new THREE.BoxGeometry(0.13, 0.25, 0.15), {x:-0.72, y:1.95, z:0.05}, 'biceps_corto_izq');
 crearParte(new THREE.BoxGeometry(0.13, 0.25, 0.15), {x:0.72, y:1.95, z:0.05}, 'biceps_corto_der');
 crearParte(new THREE.BoxGeometry(0.13, 0.25, 0.15), {x:-0.83, y:1.95, z:0.05}, 'biceps_largo_izq');
@@ -444,6 +449,8 @@ crearParte(new THREE.BoxGeometry(0.1, 0.2, 0.1), {x:-0.88, y:1.9, z:-0.05}, 'tri
 crearParte(new THREE.BoxGeometry(0.1, 0.2, 0.1), {x:0.88, y:1.9, z:-0.05}, 'triceps_lat_der');
 crearParte(new THREE.BoxGeometry(0.08, 0.15, 0.1), {x:-0.68, y:1.9, z:-0.1}, 'triceps_med_izq');
 crearParte(new THREE.BoxGeometry(0.08, 0.15, 0.1), {x:0.68, y:1.9, z:-0.1}, 'triceps_med_der');
+crearParte(new THREE.BoxGeometry(0.07, 0.08, 0.07), {x:-0.78, y:1.68, z:-0.1}, 'anconeo_izq');
+crearParte(new THREE.BoxGeometry(0.07, 0.08, 0.07), {x:0.78, y:1.68, z:-0.1}, 'anconeo_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.3, 0.12), {x:-0.78, y:1.45, z:0.05}, 'antebrazo_flex_izq');
 crearParte(new THREE.BoxGeometry(0.1, 0.3, 0.12), {x:0.78, y:1.45, z:0.05}, 'antebrazo_flex_der');
 crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:-0.78, y:1.45, z:-0.05}, 'antebrazo_ext_izq');
@@ -527,19 +534,9 @@ crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 8), {x:0, y:1.4, z:-0.1},
 
 function aplicarCapa() {
     Object.values(partes).forEach(parte => {
-        const id = parte.name;
-        const esProf = esProfundo(id);
         parte.visible = true;
         parte.material.opacity = 1;
         parte.material.transparent = false;
-        if (capaActual === 'superficial') {
-            parte.visible = !esProf;
-        } else if (capaActual === 'profundo') {
-            if (!esProf && !esArticulacion(id) && !esEstructura(id)) {
-                parte.material.opacity = 0.35;
-                parte.material.transparent = true;
-            }
-        }
     });
     aplicarSeleccion();
 }
@@ -780,22 +777,62 @@ document.querySelectorAll(".filtro-btn").forEach(btn => btn.addEventListener("cl
     this.classList.add("activo");
     renderizarBotones(this.getAttribute("data-filtro"));
 }));
-document.querySelectorAll(".capa-btn").forEach(btn => btn.addEventListener("click", function() {
-    document.querySelectorAll(".capa-btn").forEach(b => b.classList.remove("activo"));
-    this.classList.add("activo");
-    capaActual = this.getAttribute("data-capa");
-    aplicarCapa();
-}));
 document.querySelectorAll(".clic-btn").forEach(btn => btn.addEventListener("click", function() {
     document.querySelectorAll(".clic-btn").forEach(b => b.classList.remove("activo"));
     this.classList.add("activo");
     clicFiltro = this.getAttribute("data-clic");
 }));
 
-document.getElementById("legend-help").addEventListener("click", function() {
+document.getElementById("legend-help").addEventListener("click", function(e) {
+    e.stopPropagation();
     const modal = document.getElementById("legend-modal");
     modal.style.display = modal.style.display === "block" ? "none" : "block";
 });
+
+const leyendaEl = document.getElementById("leyendaFlotante");
+let isDraggingLegend = false;
+let startX, startY, initialLeft, initialTop;
+function getPos(el) { return el.getBoundingClientRect(); }
+
+function iniciarArrastre(clientX, clientY) {
+    const rect = getPos(leyendaEl);
+    isDraggingLegend = true;
+    startX = clientX;
+    startY = clientY;
+    initialLeft = rect.left;
+    initialTop = rect.top;
+    leyendaEl.style.transform = 'none';
+    leyendaEl.style.left = rect.left + 'px';
+    leyendaEl.style.top = rect.top + 'px';
+    leyendaEl.style.bottom = 'auto';
+}
+function moverArrastre(clientX, clientY) {
+    if (!isDraggingLegend) return;
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+    leyendaEl.style.left = (initialLeft + dx) + 'px';
+    leyendaEl.style.top = (initialTop + dy) + 'px';
+}
+function soltarArrastre() { isDraggingLegend = false; }
+
+leyendaEl.addEventListener('mousedown', (e) => {
+    if (e.target.tagName === 'BUTTON') return;
+    e.preventDefault();
+    iniciarArrastre(e.clientX, e.clientY);
+});
+document.addEventListener('mousemove', (e) => moverArrastre(e.clientX, e.clientY));
+document.addEventListener('mouseup', soltarArrastre);
+leyendaEl.addEventListener('touchstart', (e) => {
+    if (e.target.tagName === 'BUTTON') return;
+    const t = e.touches[0];
+    iniciarArrastre(t.clientX, t.clientY);
+}, {passive: true});
+document.addEventListener('touchmove', (e) => {
+    if (!isDraggingLegend) return;
+    const t = e.touches[0];
+    moverArrastre(t.clientX, t.clientY);
+}, {passive: true});
+document.addEventListener('touchend', soltarArrastre);
 
 renderizarBotones("todos");
 aplicarCapa();
