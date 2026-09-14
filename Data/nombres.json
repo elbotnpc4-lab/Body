@@ -1,4 +1,3 @@
-
 {
     "cabeza": "Cabeza", "cuello": "Cuello",
     "masetero_izq": "Masetero Izq", "masetero_der": "Masetero Der",
@@ -55,7 +54,6 @@
     "gracil_izq": "Grácil Izq", "gracil_der": "Grácil Der",
     "sartorio_izq": "Sartorio Izq", "sartorio_der": "Sartorio Der",
     "tfl_izq": "Tensor Fascia Lata Izq", "tfl_der": "Tensor Fascia Lata Der",
-    "rodilla_izq": "Rodilla Izq", "rodilla_der": "Rodilla Der",
     "gastrocnemio_izq": "Gastrocnemio Izq", "gastrocnemio_der": "Gastrocnemio Der",
     "soleo_izq": "Sóleo Izq", "soleo_der": "Sóleo Der",
     "tibial_izq": "Tibial Anterior Izq", "tibial_der": "Tibial Anterior Der",
@@ -64,5 +62,15 @@
     "popliteo_izq": "Poplíteo Izq", "popliteo_der": "Poplíteo Der",
     "extensor_dedos_izq": "Extensor Dedos Izq", "extensor_dedos_der": "Extensor Dedos Der",
     "pie_izq": "Pie Izquierdo", "pie_der": "Pie Derecho",
-    "intrinsecos_pie_izq": "Músculos Intrínsecos Pie Izq", "intrinsecos_pie_der": "Músculos Intrínsecos Pie Der"
+    "intrinsecos_pie_izq": "Músculos Intrínsecos Pie Izq", "intrinsecos_pie_der": "Músculos Intrínsecos Pie Der",
+
+    "hombro_izq": "Hombro Izq", "hombro_der": "Hombro Der",
+    "codo_izq": "Codo Izq", "codo_der": "Codo Der",
+    "muneca_izq": "Muñeca Izq", "muneca_der": "Muñeca Der",
+    "cadera_izq": "Cadera Izq", "cadera_der": "Cadera Der",
+    "rodilla_izq": "Rodilla Izq", "rodilla_der": "Rodilla Der",
+    "tobillo_izq": "Tobillo Izq", "tobillo_der": "Tobillo Der",
+    "columna_cervical": "Columna Cervical",
+    "columna_toracica": "Columna Torácica",
+    "columna_lumbar": "Columna Lumbar"
 }
