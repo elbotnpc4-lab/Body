@@ -311,7 +311,7 @@
             { "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] },
             { "nombre": "Muñeca", "meshes": ["muneca_izq", "muneca_der"] }
         ],
-        "movement": { "subida": "Extensión de codo + flexión de hombro", "bajada": "Flexión de codo + extensión de hombro" }
+        "movement": { "subida": "Extensión de codo + aducción horizontal de hombro", "bajada": "Flexión de codo + abducción horizontal de hombro controlada" }
     },
     "dominadas": {
         "tipo": "cuerpo",
@@ -412,12 +412,12 @@
         "tipo": "cuerpo",
         "alias": ["zancadas sin peso", "zancadas libres", "bodyweight lunges"],
         "primary": [
-            { "nombre": "Cuádriceps", "meshes": ["cuadriceps_recto_izq", "cuadriceps_recto_der", "vastolateral_izq", "vastolateral_der", "vastomedial_izq", "vastomedial_der"] },
+            { "nombre": "Cuádriceps", "meshes": ["cuadriceps_recto_izq", "cuadriceps_recto_der", "vastolateral_izq", "vastolateral_der", "vastomedial_izq", "vastomedial_der", "vastointermedio_izq", "vastointermedio_der"] },
             { "nombre": "Glúteo Mayor", "meshes": ["gluteo_mayor_izq", "gluteo_mayor_der"] }
         ],
         "secondary": [
-            { "nombre": "Isquiotibiales", "meshes": ["biceps_femoral_izq", "biceps_femoral_der", "semitendinoso_izq", "semitendinoso_der"] },
-            { "nombre": "Aductores", "meshes": ["aductor_mayor_izq", "aductor_mayor_der"] }
+            { "nombre": "Isquiotibiales", "meshes": ["biceps_femoral_izq", "biceps_femoral_der", "semitendinoso_izq", "semitendinoso_der", "semimembranoso_izq", "semimembranoso_der"] },
+            { "nombre": "Aductores", "meshes": ["aductor_mayor_izq", "aductor_mayor_der", "aductor_largo_izq", "aductor_largo_der"] }
         ],
         "stabilizers": [
             { "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] },
@@ -456,7 +456,8 @@
             { "nombre": "Tibial Posterior", "meshes": ["tibial_posterior_izq", "tibial_posterior_der"] },
             { "nombre": "Peroneos", "meshes": ["peroneo_izq", "peroneo_der"] },
             { "nombre": "Tibial Anterior", "meshes": ["tibial_izq", "tibial_der"] },
-            { "nombre": "Músculos Intrínsecos del Pie", "meshes": ["intrinsecos_pie_izq", "intrinsecos_pie_der", "extensor_dedos_izq", "extensor_dedos_der"] }
+            { "nombre": "Extensor de los Dedos", "meshes": ["extensor_dedos_izq", "extensor_dedos_der"] },
+            { "nombre": "Músculos Intrínsecos del Pie", "meshes": ["intrinsecos_pie_izq", "intrinsecos_pie_der"] }
         ],
         "joints": [{ "nombre": "Tobillo", "meshes": ["tobillo_izq", "tobillo_der"] }],
         "movement": { "subida": "Flexión plantar", "bajada": "Dorsiflexión controlada" }
