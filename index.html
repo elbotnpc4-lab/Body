@@ -156,7 +156,7 @@ const ARTICULACIONES = [
     'columna_cervical', 'columna_toracica', 'columna_lumbar'
 ];
 
-const ESTRUCTURAS = ['cabeza', 'cuello', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der', 'occipital'];
+const ESTRUCTURAS = ['cabeza', 'cuello', 'occipital', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der'];
 
 const MUSCULOS_RELACIONADOS = {
     'elevador_escapula_izq': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
@@ -329,11 +329,6 @@ const materialSeleccionBase = { color: 0x1a3d8f, emissive: 0x0a1a4a, emissiveInt
 const materialMusculo = new THREE.MeshStandardMaterial(materialMusculoBase);
 const materialProfundo = new THREE.MeshStandardMaterial(materialProfundoBase);
 const materialHueso = new THREE.MeshStandardMaterial(materialHuesoBase);
-const materialPrimary = new THREE.MeshStandardMaterial(materialPrimaryBase);
-const materialSecondary = new THREE.MeshStandardMaterial(materialSecondaryBase);
-const materialStabilizer = new THREE.MeshStandardMaterial(materialStabilizerBase);
-const materialJoint = new THREE.MeshStandardMaterial(materialJointBase);
-const materialSeleccion = new THREE.MeshStandardMaterial(materialSeleccionBase);
 
 const materialOutline = new THREE.LineBasicMaterial({ color: 0x000000 });
 
@@ -564,6 +559,27 @@ function validarDatos() {
 }
 validarDatos();
 
+function validarCoberturaInfo() {
+    const faltantesNombre = [];
+    const faltantesInfo = [];
+    Object.keys(partes).forEach(id => {
+        if (!nombresMusculos[id]) faltantesNombre.push(id);
+        if (!infoMusculos[id]) faltantesInfo.push(id);
+    });
+    if (faltantesNombre.length > 0) {
+        console.warn(`⚠ ${faltantesNombre.length} meshes sin entrada en nombres.json:`);
+        faltantesNombre.forEach(n => console.warn('  - ' + n));
+    }
+    if (faltantesInfo.length > 0) {
+        console.warn(`⚠ ${faltantesInfo.length} meshes sin entrada en musculos.json:`);
+        faltantesInfo.forEach(n => console.warn('  - ' + n));
+    }
+    if (faltantesNombre.length === 0 && faltantesInfo.length === 0) {
+        console.log('✓ Todos los meshes tienen nombre e info anatómica.');
+    }
+}
+validarCoberturaInfo();
+
 function aplicarSeleccion() {
     if (musculoSeleccionado && partes[musculoSeleccionado] && partes[musculoSeleccionado].userData.materialAntes) {
         partes[musculoSeleccionado].material = partes[musculoSeleccionado].userData.materialAntes;
@@ -625,7 +641,7 @@ renderer.domElement.addEventListener('click', (event) => {
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     const partesVisibles = Object.values(partes).filter(p => p.visible);
-    const intersects = raycaster.intersectObjects(partesVisibles);
+    const intersects = raycaster.intersectObjects(partesVisibles, false);
     if (intersects.length > 0) {
         const hit = intersects[0].object;
         const idMusculo = hit.name;
@@ -713,7 +729,7 @@ function limpiar() {
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
     document.getElementById("resultado").style.color = "#aaa";
 }
-    
+
 function aplicarMaterial(grupoMusculos, materialBase) {
     grupoMusculos.forEach(grupo => grupo.meshes.forEach(id => {
         if (partes[id]) partes[id].material = new THREE.MeshStandardMaterial(materialBase);
@@ -818,7 +834,8 @@ function renderizarBotones(filtro = "todos") {
 
 document.getElementById("toggle-btn").addEventListener("click", togglePanel);
 document.getElementById("btnEntrenar").addEventListener("click", entrenar);
-document.getElementById("btnRutinaCompleta").addEventListener("click", rutinaCompleta);
+const btnRC = document.getElementById("btnRutinaCompleta");
+if (btnRC) btnRC.addEventListener("click", rutinaCompleta);
 document.getElementById("inputEjercicio").addEventListener("keypress", function(event) { if (event.key === "Enter") entrenar(); });
 document.querySelectorAll(".filtro-btn").forEach(btn => btn.addEventListener("click", function() {
     document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("activo"));
