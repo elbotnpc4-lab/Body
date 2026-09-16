@@ -636,5 +636,319 @@
         "stabilizers": [],
         "joints": [{ "nombre": "Columna Cervical", "meshes": ["columna_cervical"] }],
         "movement": { "subida": "Extensión cervical", "bajada": "Retorno controlado" }
-    }
+    },
+    "remo con barra": {
+    "tipo": "barra",
+    "alias": ["remo con barra", "barbell row", "remo barra"],
+    "primary": [
+        { "nombre": "Dorsal Ancho", "meshes": ["dorsal_izq", "dorsal_der"] },
+        { "nombre": "Trapecio Medio e Inferior", "meshes": ["trapecio_med_izq", "trapecio_med_der", "trapecio_inf_izq", "trapecio_inf_der"] },
+        { "nombre": "Romboides", "meshes": ["romboides_izq", "romboides_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Bíceps", "meshes": ["biceps_corto_izq", "biceps_corto_der", "biceps_largo_izq", "biceps_largo_der"] },
+        { "nombre": "Braquial", "meshes": ["braquial_izq", "braquial_der"] },
+        { "nombre": "Infraespinoso", "meshes": ["infraespinoso_izq", "infraespinoso_der"] },
+        { "nombre": "Redondo Mayor", "meshes": ["redondo_mayor_izq", "redondo_mayor_der"] }
+    ],
+    "stabilizers": [
+        { "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] },
+        { "nombre": "Deltoides Posterior", "meshes": ["deltoides_post_izq", "deltoides_post_der"] }
+    ],
+    "joints": [
+        { "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] },
+        { "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] },
+        { "nombre": "Columna Lumbar", "meshes": ["columna_lumbar"] }
+    ],
+    "movement": { "subida": "Extensión de hombro + retracción escapular", "bajada": "Flexión de hombro controlada" }
+},
+"peso muerto con barra": {
+    "tipo": "barra",
+    "alias": ["peso muerto con barra", "deadlift barra", "deadlift"],
+    "primary": [
+        { "nombre": "Glúteo Mayor", "meshes": ["gluteo_mayor_izq", "gluteo_mayor_der"] },
+        { "nombre": "Isquiotibiales", "meshes": ["biceps_femoral_izq", "biceps_femoral_der", "semitendinoso_izq", "semitendinoso_der", "semimembranoso_izq", "semimembranoso_der"] },
+        { "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Cuádriceps", "meshes": ["cuadriceps_recto_izq", "cuadriceps_recto_der", "vastointermedio_izq", "vastointermedio_der"] },
+        { "nombre": "Trapecio", "meshes": ["trapecio_sup_izq", "trapecio_sup_der", "trapecio_med_izq", "trapecio_med_der"] },
+        { "nombre": "Dorsal Ancho", "meshes": ["dorsal_izq", "dorsal_der"] },
+        { "nombre": "Aductor Mayor", "meshes": ["aductor_mayor_izq", "aductor_mayor_der"] }
+    ],
+    "stabilizers": [
+        { "nombre": "Core", "meshes": ["transverso_abdominal", "oblicuo_ext_izq", "oblicuo_ext_der", "oblicuo_int_izq", "oblicuo_int_der"] },
+        { "nombre": "Antebrazo (Agarre)", "meshes": ["antebrazo_flex_izq", "antebrazo_flex_der"] }
+    ],
+    "joints": [
+        { "nombre": "Cadera", "meshes": ["cadera_izq", "cadera_der"] },
+        { "nombre": "Rodilla", "meshes": ["rodilla_izq", "rodilla_der"] },
+        { "nombre": "Columna Lumbar", "meshes": ["columna_lumbar"] }
+    ],
+    "movement": { "subida": "Extensión de cadera y rodilla", "bajada": "Flexión de cadera y rodilla controlada" }
+},
+"press militar con barra": {
+    "tipo": "barra",
+    "alias": ["press militar con barra", "military press barra", "ohp barra"],
+    "primary": [
+        { "nombre": "Deltoides Anterior", "meshes": ["deltoides_ant_izq", "deltoides_ant_der"] },
+        { "nombre": "Deltoides Lateral", "meshes": ["deltoides_lat_izq", "deltoides_lat_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Tríceps", "meshes": ["triceps_largo_izq", "triceps_largo_der", "triceps_lat_izq", "triceps_lat_der", "triceps_med_izq", "triceps_med_der"] },
+        { "nombre": "Trapecio Superior", "meshes": ["trapecio_sup_izq", "trapecio_sup_der"] },
+        { "nombre": "Serrato Anterior", "meshes": ["serrato_izq_0", "serrato_izq_1", "serrato_izq_2", "serrato_der_0", "serrato_der_1", "serrato_der_2"] }
+    ],
+    "stabilizers": [
+        { "nombre": "Core", "meshes": ["transverso_abdominal", "oblicuo_ext_izq", "oblicuo_ext_der", "oblicuo_int_izq", "oblicuo_int_der"] }
+    ],
+    "joints": [
+        { "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] },
+        { "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] }
+    ],
+    "movement": { "subida": "Elevación del brazo + extensión de codo", "bajada": "Descenso del brazo + flexión de codo controlada" }
+},
+"sentadilla frontal": {
+    "tipo": "barra",
+    "alias": ["sentadilla frontal", "front squat"],
+    "primary": [
+        { "nombre": "Cuádriceps", "meshes": ["cuadriceps_recto_izq", "cuadriceps_recto_der", "vastolateral_izq", "vastolateral_der", "vastomedial_izq", "vastomedial_der", "vastointermedio_izq", "vastointermedio_der"] },
+        { "nombre": "Glúteo Mayor", "meshes": ["gluteo_mayor_izq", "gluteo_mayor_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] },
+        { "nombre": "Core", "meshes": ["transverso_abdominal", "oblicuo_ext_izq", "oblicuo_ext_der"] }
+    ],
+    "stabilizers": [],
+    "joints": [
+        { "nombre": "Cadera", "meshes": ["cadera_izq", "cadera_der"] },
+        { "nombre": "Rodilla", "meshes": ["rodilla_izq", "rodilla_der"] },
+        { "nombre": "Tobillo", "meshes": ["tobillo_izq", "tobillo_der"] }
+    ],
+    "movement": { "subida": "Extensión de rodilla y cadera", "bajada": "Flexión de rodilla y cadera controlada" }
+},
+"curl predicador": {
+    "tipo": "barra",
+    "alias": ["curl predicador", "preacher curl", "curl scott"],
+    "primary": [{ "nombre": "Bíceps Braquial", "meshes": ["biceps_corto_izq", "biceps_corto_der", "biceps_largo_izq", "biceps_largo_der"] }],
+    "secondary": [{ "nombre": "Braquial", "meshes": ["braquial_izq", "braquial_der"] }],
+    "stabilizers": [{ "nombre": "Flexores del Antebrazo", "meshes": ["antebrazo_flex_izq", "antebrazo_flex_der"] }],
+    "joints": [{ "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] }],
+    "movement": { "subida": "Flexión de codo aislada", "bajada": "Extensión de codo controlada" }
+},
+"elevaciones frontales": {
+    "tipo": "mancuerna",
+    "alias": ["elevaciones frontales", "front raise", "elevacion frontal"],
+    "primary": [{ "nombre": "Deltoides Anterior", "meshes": ["deltoides_ant_izq", "deltoides_ant_der"] }],
+    "secondary": [
+        { "nombre": "Pectoral Superior", "meshes": ["pectoral_sup_izq", "pectoral_sup_der"] },
+        { "nombre": "Trapecio Superior", "meshes": ["trapecio_sup_izq", "trapecio_sup_der"] }
+    ],
+    "stabilizers": [{ "nombre": "Core", "meshes": ["transverso_abdominal", "oblicuo_ext_izq", "oblicuo_ext_der"] }],
+    "joints": [{ "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] }],
+    "movement": { "subida": "Flexión de hombro", "bajada": "Extensión de hombro controlada" }
+},
+"pajaros": {
+    "tipo": "mancuerna",
+    "alias": ["pajaros", "rear delt fly", "elevaciones posteriores", "posteriores"],
+    "primary": [{ "nombre": "Deltoides Posterior", "meshes": ["deltoides_post_izq", "deltoides_post_der"] }],
+    "secondary": [
+        { "nombre": "Trapecio Medio", "meshes": ["trapecio_med_izq", "trapecio_med_der"] },
+        { "nombre": "Romboides", "meshes": ["romboides_izq", "romboides_der"] },
+        { "nombre": "Infraespinoso", "meshes": ["infraespinoso_izq", "infraespinoso_der"] }
+    ],
+    "stabilizers": [{ "nombre": "Core", "meshes": ["transverso_abdominal"] }],
+    "joints": [{ "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] }],
+    "movement": { "subida": "Abducción horizontal de hombro", "bajada": "Aducción horizontal controlada" }
+},
+"aperturas con mancuernas": {
+    "tipo": "mancuerna",
+    "alias": ["aperturas con mancuernas", "dumbbell fly", "aperturas"],
+    "primary": [{ "nombre": "Pectoral Mayor", "meshes": ["pectoral_sup_izq", "pectoral_sup_der", "pectoral_inf_izq", "pectoral_inf_der"] }],
+    "secondary": [
+        { "nombre": "Deltoides Anterior", "meshes": ["deltoides_ant_izq", "deltoides_ant_der"] },
+        { "nombre": "Serrato Anterior", "meshes": ["serrato_izq_0", "serrato_izq_1", "serrato_izq_2", "serrato_der_0", "serrato_der_1", "serrato_der_2"] }
+    ],
+    "stabilizers": [{ "nombre": "Bíceps (estabiliza)", "meshes": ["biceps_corto_izq", "biceps_corto_der"] }],
+    "joints": [{ "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] }],
+    "movement": { "subida": "Aducción horizontal de hombro", "bajada": "Abducción horizontal controlada" }
+},
+"pullover con mancuerna": {
+    "tipo": "mancuerna",
+    "alias": ["pullover con mancuerna", "pullover", "pull over"],
+    "primary": [
+        { "nombre": "Dorsal Ancho", "meshes": ["dorsal_izq", "dorsal_der"] },
+        { "nombre": "Pectoral Mayor", "meshes": ["pectoral_sup_izq", "pectoral_sup_der", "pectoral_inf_izq", "pectoral_inf_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Redondo Mayor", "meshes": ["redondo_mayor_izq", "redondo_mayor_der"] },
+        { "nombre": "Tríceps Cabeza Larga", "meshes": ["triceps_largo_izq", "triceps_largo_der"] }
+    ],
+    "stabilizers": [{ "nombre": "Core", "meshes": ["transverso_abdominal"] }],
+    "joints": [{ "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] }],
+    "movement": { "subida": "Extensión de hombro", "bajada": "Flexión de hombro controlada" }
+},
+"patada de triceps": {
+    "tipo": "mancuerna",
+    "alias": ["patada de triceps", "triceps kickback", "kickback triceps"],
+    "primary": [{ "nombre": "Tríceps", "meshes": ["triceps_largo_izq", "triceps_largo_der", "triceps_lat_izq", "triceps_lat_der", "triceps_med_izq", "triceps_med_der"] }],
+    "secondary": [{ "nombre": "Extensores del Antebrazo", "meshes": ["antebrazo_ext_izq", "antebrazo_ext_der"] }],
+    "stabilizers": [
+        { "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] },
+        { "nombre": "Core", "meshes": ["transverso_abdominal"] }
+    ],
+    "joints": [{ "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] }],
+    "movement": { "subida": "Extensión de codo", "bajada": "Flexión de codo controlada" }
+},
+"fondos en paralelas": {
+    "tipo": "cuerpo",
+    "alias": ["fondos en paralelas", "parallel bar dips", "dips en paralelas"],
+    "primary": [
+        { "nombre": "Tríceps", "meshes": ["triceps_largo_izq", "triceps_largo_der", "triceps_lat_izq", "triceps_lat_der", "triceps_med_izq", "triceps_med_der"] },
+        { "nombre": "Pectoral Inferior", "meshes": ["pectoral_inf_izq", "pectoral_inf_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Deltoides Anterior", "meshes": ["deltoides_ant_izq", "deltoides_ant_der"] },
+        { "nombre": "Serrato Anterior", "meshes": ["serrato_izq_0", "serrato_izq_1", "serrato_izq_2", "serrato_der_0", "serrato_der_1", "serrato_der_2"] }
+    ],
+    "stabilizers": [{ "nombre": "Core", "meshes": ["transverso_abdominal", "oblicuo_ext_izq", "oblicuo_ext_der"] }],
+    "joints": [
+        { "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] },
+        { "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] }
+    ],
+    "movement": { "subida": "Extensión de codo", "bajada": "Flexión de codo controlada" }
+},
+"dominadas supinas": {
+    "tipo": "cuerpo",
+    "alias": ["dominadas supinas", "chin ups", "chin up", "dominadas agarre supino"],
+    "primary": [
+        { "nombre": "Dorsal Ancho", "meshes": ["dorsal_izq", "dorsal_der"] },
+        { "nombre": "Bíceps", "meshes": ["biceps_corto_izq", "biceps_corto_der", "biceps_largo_izq", "biceps_largo_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Romboides", "meshes": ["romboides_izq", "romboides_der"] },
+        { "nombre": "Trapecio Medio e Inferior", "meshes": ["trapecio_med_izq", "trapecio_med_der", "trapecio_inf_izq", "trapecio_inf_der"] },
+        { "nombre": "Braquial", "meshes": ["braquial_izq", "braquial_der"] },
+        { "nombre": "Infraespinoso", "meshes": ["infraespinoso_izq", "infraespinoso_der"] }
+    ],
+    "stabilizers": [
+        { "nombre": "Core", "meshes": ["transverso_abdominal", "oblicuo_ext_izq", "oblicuo_ext_der"] },
+        { "nombre": "Antebrazo (Agarre)", "meshes": ["antebrazo_flex_izq", "antebrazo_flex_der"] }
+    ],
+    "joints": [
+        { "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] },
+        { "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] }
+    ],
+    "movement": { "subida": "Aducción/extensión de hombro + flexión de codo", "bajada": "Descenso controlado" }
+},
+"plancha lateral": {
+    "tipo": "cuerpo",
+    "alias": ["plancha lateral", "side plank"],
+    "primary": [
+        { "nombre": "Oblicuos", "meshes": ["oblicuo_ext_izq", "oblicuo_ext_der", "oblicuo_int_izq", "oblicuo_int_der"] },
+        { "nombre": "Transverso del Abdomen", "meshes": ["transverso_abdominal"] }
+    ],
+    "secondary": [
+        { "nombre": "Cuadrado Lumbar", "meshes": ["cuadrado_lumbar_izq", "cuadrado_lumbar_der"] },
+        { "nombre": "Deltoides Lateral", "meshes": ["deltoides_lat_izq", "deltoides_lat_der"] }
+    ],
+    "stabilizers": [
+        { "nombre": "Glúteo Medio", "meshes": ["gluteo_med_izq", "gluteo_med_der"] },
+        { "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] }
+    ],
+    "joints": [
+        { "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] },
+        { "nombre": "Columna Lumbar", "meshes": ["columna_lumbar"] }
+    ],
+    "movement": { "subida": "Isometría lateral", "bajada": "Isometría sostenida" }
+},
+"elevacion de piernas colgado": {
+    "tipo": "cuerpo",
+    "alias": ["elevacion de piernas colgado", "hanging leg raise", "leg raise"],
+    "primary": [
+        { "nombre": "Recto Abdominal", "meshes": ["abdomen_1_izq", "abdomen_1_der", "abdomen_2_izq", "abdomen_2_der", "abdomen_3_izq", "abdomen_3_der"] },
+        { "nombre": "Psoas Ilíaco", "meshes": ["psoas_iliaco_izq", "psoas_iliaco_der"] }
+    ],
+    "secondary": [{ "nombre": "Oblicuos", "meshes": ["oblicuo_ext_izq", "oblicuo_ext_der", "oblicuo_int_izq", "oblicuo_int_der"] }],
+    "stabilizers": [
+        { "nombre": "Antebrazo (Agarre)", "meshes": ["antebrazo_flex_izq", "antebrazo_flex_der"] },
+        { "nombre": "Dorsal Ancho", "meshes": ["dorsal_izq", "dorsal_der"] }
+    ],
+    "joints": [
+        { "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] },
+        { "nombre": "Cadera", "meshes": ["cadera_izq", "cadera_der"] }
+    ],
+    "movement": { "subida": "Flexión de cadera + flexión de columna", "bajada": "Descenso controlado" }
+},
+"sentadilla bulgara": {
+    "tipo": "cuerpo",
+    "alias": ["sentadilla bulgara", "bulgarian split squat", "sentadilla búlgara"],
+    "primary": [
+        { "nombre": "Cuádriceps", "meshes": ["cuadriceps_recto_izq", "cuadriceps_recto_der", "vastolateral_izq", "vastolateral_der", "vastomedial_izq", "vastomedial_der", "vastointermedio_izq", "vastointermedio_der"] },
+        { "nombre": "Glúteo Mayor", "meshes": ["gluteo_mayor_izq", "gluteo_mayor_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Isquiotibiales", "meshes": ["biceps_femoral_izq", "biceps_femoral_der", "semitendinoso_izq", "semitendinoso_der", "semimembranoso_izq", "semimembranoso_der"] },
+        { "nombre": "Aductores", "meshes": ["aductor_mayor_izq", "aductor_mayor_der", "aductor_largo_izq", "aductor_largo_der"] }
+    ],
+    "stabilizers": [
+        { "nombre": "Core", "meshes": ["transverso_abdominal", "oblicuo_ext_izq", "oblicuo_ext_der"] },
+        { "nombre": "Glúteo Medio", "meshes": ["gluteo_med_izq", "gluteo_med_der"] }
+    ],
+    "joints": [
+        { "nombre": "Cadera", "meshes": ["cadera_izq", "cadera_der"] },
+        { "nombre": "Rodilla", "meshes": ["rodilla_izq", "rodilla_der"] }
+    ],
+    "movement": { "subida": "Extensión unilateral de rodilla y cadera", "bajada": "Flexión unilateral de rodilla y cadera" }
+},
+"remo en polea baja": {
+    "tipo": "maquina",
+    "alias": ["remo en polea baja", "seated cable row", "remo sentado"],
+    "primary": [
+        { "nombre": "Dorsal Ancho", "meshes": ["dorsal_izq", "dorsal_der"] },
+        { "nombre": "Trapecio Medio e Inferior", "meshes": ["trapecio_med_izq", "trapecio_med_der", "trapecio_inf_izq", "trapecio_inf_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Romboides", "meshes": ["romboides_izq", "romboides_der"] },
+        { "nombre": "Bíceps", "meshes": ["biceps_corto_izq", "biceps_corto_der", "biceps_largo_izq", "biceps_largo_der"] },
+        { "nombre": "Infraespinoso", "meshes": ["infraespinoso_izq", "infraespinoso_der"] }
+    ],
+    "stabilizers": [{ "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] }],
+    "joints": [
+        { "nombre": "Hombro", "meshes": ["hombro_izq", "hombro_der"] },
+        { "nombre": "Codo", "meshes": ["codo_izq", "codo_der"] }
+    ],
+    "movement": { "subida": "Extensión de hombro + retracción escapular", "bajada": "Flexión de hombro controlada" }
+},
+"prensa de piernas": {
+    "tipo": "maquina",
+    "alias": ["prensa de piernas", "leg press"],
+    "primary": [
+        { "nombre": "Cuádriceps", "meshes": ["cuadriceps_recto_izq", "cuadriceps_recto_der", "vastolateral_izq", "vastolateral_der", "vastomedial_izq", "vastomedial_der", "vastointermedio_izq", "vastointermedio_der"] },
+        { "nombre": "Glúteo Mayor", "meshes": ["gluteo_mayor_izq", "gluteo_mayor_der"] }
+    ],
+    "secondary": [
+        { "nombre": "Isquiotibiales", "meshes": ["biceps_femoral_izq", "biceps_femoral_der", "semitendinoso_izq", "semitendinoso_der", "semimembranoso_izq", "semimembranoso_der"] },
+        { "nombre": "Aductores", "meshes": ["aductor_mayor_izq", "aductor_mayor_der", "aductor_largo_izq", "aductor_largo_der"] }
+    ],
+    "stabilizers": [],
+    "joints": [
+        { "nombre": "Cadera", "meshes": ["cadera_izq", "cadera_der"] },
+        { "nombre": "Rodilla", "meshes": ["rodilla_izq", "rodilla_der"] },
+        { "nombre": "Tobillo", "meshes": ["tobillo_izq", "tobillo_der"] }
+    ],
+    "movement": { "subida": "Extensión de rodilla y cadera", "bajada": "Flexión de rodilla y cadera controlada" }
+},
+"hiperextensiones": {
+    "tipo": "maquina",
+    "alias": ["hiperextensiones", "hyperextension", "extension lumbar"],
+    "primary": [{ "nombre": "Erectores Espinales", "meshes": ["erector_espinal_izq", "erector_espinal_der"] }],
+    "secondary": [
+        { "nombre": "Glúteo Mayor", "meshes": ["gluteo_mayor_izq", "gluteo_mayor_der"] },
+        { "nombre": "Isquiotibiales", "meshes": ["biceps_femoral_izq", "biceps_femoral_der", "semitendinoso_izq", "semitendinoso_der"] }
+    ],
+    "stabilizers": [{ "nombre": "Core", "meshes": ["transverso_abdominal"] }],
+    "joints": [{ "nombre": "Columna Lumbar", "meshes": ["columna_lumbar"] }],
+    "movement": { "subida": "Extensión de columna lumbar y cadera", "bajada": "Flexión controlada" }
+}
 }
