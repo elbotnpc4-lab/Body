@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muscular 3D</title>
+    <title>Mapa Muscular 3D</title>
     <style>
         body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background-color: #0a0a0a; color: white; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
@@ -69,7 +69,7 @@
     <button id="btnEntrenar">Entrenar</button>
     <button id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">RUTINA COMPLETA (todo el cuerpo)</button>
 
-    <p class="seccion-titulo">FILTRAR EJERCICIOS</p>
+    <p class="seccion-titulo">FILTRAR POR EQUIPO</p>
     <div class="grupo-filtro">
         <button class="filtro-btn activo" data-filtro="todos">Todos</button>
         <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
@@ -78,12 +78,22 @@
         <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
     </div>
 
-    <p class="seccion-titulo">SELECCIÓN AL CLIC</p>
-    <div class="grupo-filtro">
-        <button class="clic-btn activo" data-clic="todos">Todos</button>
-        <button class="clic-btn" data-clic="musculo">Músculos</button>
-        <button class="clic-btn" data-clic="articulacion">Articulaciones</button>
-        <button class="clic-btn" data-clic="estructura">Estructuras</button>
+    <p class="seccion-titulo">POR MÚSCULO</p>
+    <div class="grupo-filtro" id="filtroGrupoMuscular">
+        <button class="grupo-btn activo" data-grupo="todos">Todos</button>
+        <button class="grupo-btn" data-grupo="hombro">Hombro</button>
+        <button class="grupo-btn" data-grupo="pecho">Pecho</button>
+        <button class="grupo-btn" data-grupo="espalda">Espalda</button>
+        <button class="grupo-btn" data-grupo="biceps">Bíceps</button>
+        <button class="grupo-btn" data-grupo="triceps">Tríceps</button>
+        <button class="grupo-btn" data-grupo="antebrazo">Antebrazo</button>
+        <button class="grupo-btn" data-grupo="cuello">Cuello</button>
+        <button class="grupo-btn" data-grupo="core">Core</button>
+        <button class="grupo-btn" data-grupo="gluteo">Glúteo</button>
+        <button class="grupo-btn" data-grupo="cuadriceps">Cuádriceps</button>
+        <button class="grupo-btn" data-grupo="isquio">Isquios</button>
+        <button class="grupo-btn" data-grupo="pantorrilla">Pantorrilla</button>
+        <button class="grupo-btn" data-grupo="aductor">Aductor</button>
     </div>
 
     <div id="listaBotones"></div>
@@ -150,7 +160,14 @@ const PROFUNDOS = [
     'intercostal_der_0', 'intercostal_der_1', 'intercostal_der_2', 'intercostal_der_3',
     'largo_cuello_izq', 'largo_cuello_der',
     'largo_cabeza_izq', 'largo_cabeza_der',
-    'recto_ant_cabeza_izq', 'recto_ant_cabeza_der'
+    'recto_ant_cabeza_izq', 'recto_ant_cabeza_der',
+    'gemino_sup_izq', 'gemino_sup_der', 'gemino_inf_izq', 'gemino_inf_der',
+    'cuadrado_femoral_izq', 'cuadrado_femoral_der',
+    'pectineo_izq', 'pectineo_der',
+    'aductor_corto_izq', 'aductor_corto_der',
+    'esplenio_izq', 'esplenio_der',
+    'oblicuo_sup_cabeza_izq', 'oblicuo_sup_cabeza_der',
+    'oblicuo_inf_cabeza_izq', 'oblicuo_inf_cabeza_der'
 ];
 
 const ARTICULACIONES = [
@@ -273,7 +290,32 @@ function esArticulacion(id) { return ARTICULACIONES.includes(id); }
 function esEstructura(id) { return ESTRUCTURAS.includes(id); }
 function esMusculo(id) { return !esArticulacion(id) && !esEstructura(id); }
 
-let clicFiltro = 'todos';
+const GRUPOS_MUSCULARES = {
+    hombro: ['deltoides', 'supraespinoso', 'infraespinoso', 'subescapular', 'redondo_menor'],
+    pecho: ['pectoral'],
+    espalda: ['dorsal', 'trapecio_med', 'trapecio_inf', 'romboides', 'erector', 'iliocostal', 'longisimo', 'espinoso', 'redondo_mayor'],
+    biceps: ['biceps', 'braquial', 'coracobraquial'],
+    triceps: ['triceps', 'anconeo'],
+    antebrazo: ['antebrazo', 'braquiorradial'],
+    cuello: ['esternocleidomastoideo', 'largo_cuello', 'largo_cabeza', 'recto_ant', 'esplenio', 'oblicuo_sup_cabeza', 'oblicuo_inf_cabeza', 'trapecio_sup', 'elevador'],
+    core: ['abdomen', 'oblicuo', 'transverso'],
+    gluteo: ['gluteo', 'piriforme', 'gemino', 'cuadrado_femoral'],
+    cuadriceps: ['cuadriceps', 'vastolateral', 'vastomedial', 'vastointermedio'],
+    isquio: ['biceps_femoral', 'semitendinoso', 'semimembranoso'],
+    pantorrilla: ['gastrocnemio', 'soleo', 'tibial', 'peroneo'],
+    aductor: ['aductor', 'gracil', 'pectineo', 'sartorio']
+};
+
+function obtenerGrupoMuscular(ejercicio) {
+    const primarios = (ejercicio.primary || []).flatMap(g => g.meshes);
+    for (const grupo in GRUPOS_MUSCULARES) {
+        if (primarios.some(m => GRUPOS_MUSCULARES[grupo].some(p => m.includes(p)))) return grupo;
+    }
+    return 'otros';
+}
+
+let filtroEquipo = 'todos';
+let filtroGrupo = 'todos';
 let musculoSeleccionado = null;
 
 const container = document.getElementById('canvas-container');
@@ -388,6 +430,12 @@ crearParte(new THREE.BoxGeometry(0.04, 0.06, 0.04), {x:0.03, y:2.80, z:0.04}, 'r
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.18, y:2.95, z:0.15}, 'masetero_izq');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.18, y:2.95, z:0.15}, 'masetero_der');
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.1), {x:0, y:3.1, z:-0.2}, 'occipital');
+crearParte(new THREE.BoxGeometry(0.06, 0.15, 0.06), {x:-0.08, y:2.68, z:-0.08}, 'esplenio_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.15, 0.06), {x:0.08, y:2.68, z:-0.08}, 'esplenio_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:-0.05, y:2.88, z:-0.04}, 'oblicuo_sup_cabeza_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:0.05, y:2.88, z:-0.04}, 'oblicuo_sup_cabeza_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:-0.05, y:2.85, z:-0.06}, 'oblicuo_inf_cabeza_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:0.05, y:2.85, z:-0.06}, 'oblicuo_inf_cabeza_der');
 
 crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:-0.32, y:2.62, z:-0.02}, 'elevador_escapula_izq', {z:0.2});
 crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:0.32, y:2.62, z:-0.02}, 'elevador_escapula_der', {z:-0.2});
@@ -499,6 +547,12 @@ crearParte(new THREE.BoxGeometry(0.15, 0.1, 0.1), {x:-0.3, y:1.1, z:-0.2}, 'glut
 crearParte(new THREE.BoxGeometry(0.15, 0.1, 0.1), {x:0.3, y:1.1, z:-0.2}, 'gluteo_menor_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:-0.3, y:1.0, z:-0.3}, 'piriforme_izq');
 crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:0.3, y:1.0, z:-0.3}, 'piriforme_der');
+crearParte(new THREE.BoxGeometry(0.05, 0.05, 0.05), {x:-0.3, y:1.02, z:-0.35}, 'gemino_sup_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.05, 0.05), {x:0.3, y:1.02, z:-0.35}, 'gemino_sup_der');
+crearParte(new THREE.BoxGeometry(0.05, 0.05, 0.05), {x:-0.3, y:0.96, z:-0.35}, 'gemino_inf_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.05, 0.05), {x:0.3, y:0.96, z:-0.35}, 'gemino_inf_der');
+crearParte(new THREE.BoxGeometry(0.06, 0.08, 0.06), {x:-0.35, y:0.9, z:-0.32}, 'cuadrado_femoral_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.08, 0.06), {x:0.35, y:0.9, z:-0.32}, 'cuadrado_femoral_der');
 
 crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:-0.25, y:0.5, z:0.15}, 'cuadriceps_recto_izq');
 crearParte(new THREE.BoxGeometry(0.15, 0.5, 0.15), {x:0.25, y:0.5, z:0.15}, 'cuadriceps_recto_der');
@@ -520,6 +574,10 @@ crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.1), {x:-0.05, y:0.5, z:0.0}, 'aduc
 crearParte(new THREE.BoxGeometry(0.08, 0.4, 0.1), {x:0.05, y:0.5, z:0.0}, 'aductor_largo_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.4, 0.1), {x:-0.12, y:0.45, z:0.05}, 'aductor_mayor_izq');
 crearParte(new THREE.BoxGeometry(0.1, 0.4, 0.1), {x:0.12, y:0.45, z:0.05}, 'aductor_mayor_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.15, 0.05), {x:-0.08, y:0.6, z:0.03}, 'aductor_corto_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.15, 0.05), {x:0.08, y:0.6, z:0.03}, 'aductor_corto_der');
+crearParte(new THREE.BoxGeometry(0.05, 0.1, 0.06), {x:-0.02, y:0.7, z:0.08}, 'pectineo_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.1, 0.06), {x:0.02, y:0.7, z:0.08}, 'pectineo_der');
 crearParte(new THREE.BoxGeometry(0.06, 0.45, 0.06), {x:-0.2, y:0.5, z:0.05}, 'gracil_izq');
 crearParte(new THREE.BoxGeometry(0.06, 0.45, 0.06), {x:0.2, y:0.5, z:0.05}, 'gracil_der');
 crearParte(new THREE.BoxGeometry(0.05, 0.6, 0.05), {x:-0.35, y:0.6, z:0.15}, 'sartorio_izq');
@@ -669,9 +727,6 @@ renderer.domElement.addEventListener('click', (event) => {
         const hit = intersects[0].object;
         const idMusculo = hit.name;
         if (!partes[idMusculo]) return;
-        if (clicFiltro === 'musculo' && !esMusculo(idMusculo)) return;
-        if (clicFiltro === 'articulacion' && !esArticulacion(idMusculo)) return;
-        if (clicFiltro === 'estructura' && !esEstructura(idMusculo)) return;
 
         seleccionarMusculo(idMusculo);
 
@@ -820,35 +875,45 @@ function togglePanel() {
     }
 }
 
-function renderizarBotones(filtro = "todos") {
+function renderizarBotones() {
     const cont = document.getElementById("listaBotones");
     cont.innerHTML = "";
     const grupos = {};
+    const nombresGrupos = { mancuerna: "MANCUERNAS", barra: "BARRA", maquina: "MÁQUINAS", cuerpo: "PESO CORPORAL" };
+
     for (const clave in baseDatos) {
-        const tipo = baseDatos[clave].tipo || "cuerpo";
+        const datos = baseDatos[clave];
+        if (filtroEquipo !== 'todos' && datos.tipo !== filtroEquipo) continue;
+        if (filtroGrupo !== 'todos' && obtenerGrupoMuscular(datos) !== filtroGrupo) continue;
+        const tipo = datos.tipo || "cuerpo";
         if (!grupos[tipo]) grupos[tipo] = [];
         grupos[tipo].push(clave);
     }
-    const nombresGrupos = { mancuerna: "MANCUERNAS", barra: "BARRA", maquina: "MÁQUINAS", cuerpo: "PESO CORPORAL" };
-    const agregarGrupo = (titulo, claves) => {
-        if (claves.length === 0) return;
-        const tituloEl = document.createElement("div");
-        tituloEl.className = "seccion-titulo";
-        tituloEl.innerText = titulo;
-        cont.appendChild(tituloEl);
-        claves.forEach(clave => {
-            const btn = document.createElement("button");
-            btn.className = "btn-ejemplo";
-            btn.innerText = clave;
-            btn.addEventListener("click", () => { setTexto(clave); entrenar(); });
-            cont.appendChild(btn);
-        });
-    };
+
     const orden = ["mancuerna", "barra", "maquina", "cuerpo"];
-    if (filtro === "todos") {
-        orden.forEach(t => { if (grupos[t]) agregarGrupo(nombresGrupos[t] || t.toUpperCase(), grupos[t]); });
-    } else {
-        if (grupos[filtro]) agregarGrupo(nombresGrupos[filtro] || filtro.toUpperCase(), grupos[filtro]);
+    let total = 0;
+    orden.forEach(t => {
+        if (grupos[t] && grupos[t].length > 0) {
+            const tituloEl = document.createElement("div");
+            tituloEl.className = "seccion-titulo";
+            tituloEl.innerText = nombresGrupos[t] || t.toUpperCase();
+            cont.appendChild(tituloEl);
+            grupos[t].forEach(clave => {
+                const btn = document.createElement("button");
+                btn.className = "btn-ejemplo";
+                btn.innerText = clave;
+                btn.addEventListener("click", () => { setTexto(clave); entrenar(); });
+                cont.appendChild(btn);
+                total++;
+            });
+        }
+    });
+
+    if (total === 0) {
+        const vacio = document.createElement("div");
+        vacio.className = "seccion-titulo";
+        vacio.innerText = "Sin ejercicios para este filtro";
+        cont.appendChild(vacio);
     }
 }
 
@@ -857,15 +922,19 @@ document.getElementById("btnEntrenar").addEventListener("click", entrenar);
 const btnRC = document.getElementById("btnRutinaCompleta");
 if (btnRC) btnRC.addEventListener("click", rutinaCompleta);
 document.getElementById("inputEjercicio").addEventListener("keypress", function(event) { if (event.key === "Enter") entrenar(); });
+
 document.querySelectorAll(".filtro-btn").forEach(btn => btn.addEventListener("click", function() {
     document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("activo"));
     this.classList.add("activo");
-    renderizarBotones(this.getAttribute("data-filtro"));
+    filtroEquipo = this.getAttribute("data-filtro");
+    renderizarBotones();
 }));
-document.querySelectorAll(".clic-btn").forEach(btn => btn.addEventListener("click", function() {
-    document.querySelectorAll(".clic-btn").forEach(b => b.classList.remove("activo"));
+
+document.querySelectorAll(".grupo-btn").forEach(btn => btn.addEventListener("click", function() {
+    document.querySelectorAll(".grupo-btn").forEach(b => b.classList.remove("activo"));
     this.classList.add("activo");
-    clicFiltro = this.getAttribute("data-clic");
+    filtroGrupo = this.getAttribute("data-grupo");
+    renderizarBotones();
 }));
 
 document.getElementById("legend-help").addEventListener("click", function(e) {
@@ -918,7 +987,7 @@ document.addEventListener('touchmove', (e) => {
 }, {passive: true});
 document.addEventListener('touchend', soltarArrastre);
 
-renderizarBotones("todos");
+renderizarBotones();
 
 function animate() {
     requestAnimationFrame(animate);
