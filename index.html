@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Muscular 3D</title>
+    <title>Muscular 3D</title>
     <style>
         body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background-color: #0a0a0a; color: white; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
@@ -147,7 +147,10 @@ const PROFUNDOS = [
     'redondo_menor_izq', 'redondo_menor_der', 'coracobraquial_izq', 'coracobraquial_der',
     'anconeo_izq', 'anconeo_der', 'espinoso_izq', 'espinoso_der',
     'intercostal_izq_0', 'intercostal_izq_1', 'intercostal_izq_2', 'intercostal_izq_3',
-    'intercostal_der_0', 'intercostal_der_1', 'intercostal_der_2', 'intercostal_der_3'
+    'intercostal_der_0', 'intercostal_der_1', 'intercostal_der_2', 'intercostal_der_3',
+    'largo_cuello_izq', 'largo_cuello_der',
+    'largo_cabeza_izq', 'largo_cabeza_der',
+    'recto_ant_cabeza_izq', 'recto_ant_cabeza_der'
 ];
 
 const ARTICULACIONES = [
@@ -159,6 +162,12 @@ const ARTICULACIONES = [
 const ESTRUCTURAS = ['cabeza', 'cuello', 'occipital', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der'];
 
 const MUSCULOS_RELACIONADOS = {
+    'largo_cuello_izq': ['Largo de la Cabeza', 'Recto Anterior de la Cabeza', 'Esternocleidomastoideo'],
+    'largo_cuello_der': ['Largo de la Cabeza', 'Recto Anterior de la Cabeza', 'Esternocleidomastoideo'],
+    'largo_cabeza_izq': ['Largo del Cuello', 'Recto Anterior de la Cabeza'],
+    'largo_cabeza_der': ['Largo del Cuello', 'Recto Anterior de la Cabeza'],
+    'recto_ant_cabeza_izq': ['Largo de la Cabeza', 'Largo del Cuello'],
+    'recto_ant_cabeza_der': ['Largo de la Cabeza', 'Largo del Cuello'],
     'elevador_escapula_izq': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
     'elevador_escapula_der': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
     'coracobraquial_izq': ['Bíceps Cabeza Corta', 'Pectoral Mayor', 'Deltoides Anterior'],
@@ -370,6 +379,12 @@ crearParte(new THREE.BoxGeometry(0.45, 0.55, 0.45), {x:0, y:3.0, z:0}, 'cabeza',
 crearParte(new THREE.BoxGeometry(0.2, 0.2, 0.2), {x:0, y:2.65, z:0}, 'cuello', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:-0.12, y:2.6, z:0.1}, 'esternocleidomastoideo_izq', {z:0.2});
 crearParte(new THREE.BoxGeometry(0.08, 0.25, 0.08), {x:0.12, y:2.6, z:0.1}, 'esternocleidomastoideo_der', {z:-0.2});
+crearParte(new THREE.BoxGeometry(0.05, 0.18, 0.04), {x:-0.04, y:2.58, z:0.02}, 'largo_cuello_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.18, 0.04), {x:0.04, y:2.58, z:0.02}, 'largo_cuello_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.12, 0.04), {x:-0.04, y:2.72, z:0.03}, 'largo_cabeza_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.12, 0.04), {x:0.04, y:2.72, z:0.03}, 'largo_cabeza_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.06, 0.04), {x:-0.03, y:2.80, z:0.04}, 'recto_ant_cabeza_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.06, 0.04), {x:0.03, y:2.80, z:0.04}, 'recto_ant_cabeza_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:-0.18, y:2.95, z:0.15}, 'masetero_izq');
 crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.18, y:2.95, z:0.15}, 'masetero_der');
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.1), {x:0, y:3.1, z:-0.2}, 'occipital');
