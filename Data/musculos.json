@@ -191,5 +191,17 @@
     "tobillo_der": { "nombre": "Tobillo derecho (articulación)", "funciones": ["Dorsiflexión/flexión plantar", "Inversión/eversión"], "cruza": ["Tibia", "Peroné", "Astrágalo"], "ubicacion": "Unión entre pierna y pie" },
     "columna_cervical": { "nombre": "Columna cervical (región)", "funciones": ["Flexión/extensión", "Rotación", "Inclinación lateral"], "cruza": ["Cráneo", "Tórax"], "ubicacion": "Porción superior de la columna vertebral" },
     "columna_toracica": { "nombre": "Columna torácica (región)", "funciones": ["Flexión/extensión (limitada)", "Rotación", "Inclinación lateral"], "cruza": ["Costillas", "Lumbar"], "ubicacion": "Porción media de la columna vertebral" },
-    "columna_lumbar": { "nombre": "Columna lumbar (región)", "funciones": ["Flexión/extensión", "Inclinación lateral", "Estabilidad en carga"], "cruza": ["Tórax", "Sacro"], "ubicacion": "Porción inferior de la columna vertebral" }
+    "columna_lumbar": { "nombre": "Columna lumbar (región)", "funciones": ["Flexión/extensión", "Inclinación lateral", "Estabilidad en carga"], "cruza": ["Tórax", "Sacro"], "ubicacion": "Porción inferior de la columna vertebral" },
+    "subclavio_izq": { "nombre": "Subclavio", "funciones": ["Depresión de la clavícula", "Estabilización de la articulación esternoclavicular"], "cruza": ["Hombro"], "ubicacion": "Debajo de la clavícula, entre la primera costilla y la clavícula" },
+"subclavio_der": { "nombre": "Subclavio", "funciones": ["Depresión de la clavícula", "Estabilización de la articulación esternoclavicular"], "cruza": ["Hombro"], "ubicacion": "Debajo de la clavícula, entre la primera costilla y la clavícula" },
+"flexor_dedos_mano_izq": { "nombre": "Flexor de los dedos", "funciones": ["Flexión de los dedos", "Agarre fuerte"], "cruza": ["Muñeca", "Dedos"], "ubicacion": "Antebrazo y mano izquierda" },
+"flexor_dedos_mano_der": { "nombre": "Flexor de los dedos", "funciones": ["Flexión de los dedos", "Agarre fuerte"], "cruza": ["Muñeca", "Dedos"], "ubicacion": "Antebrazo y mano derecha" },
+"extensor_dedos_mano_izq": { "nombre": "Extensor de los dedos", "funciones": ["Extensión de los dedos", "Apertura de la mano"], "cruza": ["Muñeca", "Dedos"], "ubicacion": "Antebrazo y mano izquierda" },
+"extensor_dedos_mano_der": { "nombre": "Extensor de los dedos", "funciones": ["Extensión de los dedos", "Apertura de la mano"], "cruza": ["Muñeca", "Dedos"], "ubicacion": "Antebrazo y mano derecha" },
+"oponente_pulgar_izq": { "nombre": "Oponente del pulgar", "funciones": ["Oposición del pulgar", "Pinza fina"], "cruza": ["Muñeca"], "ubicacion": "Base del pulgar izquierdo" },
+"oponente_pulgar_der": { "nombre": "Oponente del pulgar", "funciones": ["Oposición del pulgar", "Pinza fina"], "cruza": ["Muñeca"], "ubicacion": "Base del pulgar derecho" },
+"flexor_corto_pulgar_izq": { "nombre": "Flexor corto del pulgar", "funciones": ["Flexión del pulgar", "Agarre"], "cruza": ["Muñeca"], "ubicacion": "Base del pulgar izquierdo" },
+"flexor_corto_pulgar_der": { "nombre": "Flexor corto del pulgar", "funciones": ["Flexión del pulgar", "Agarre"], "cruza": ["Muñeca"], "ubicacion": "Base del pulgar derecho" },
+"abductor_corto_pulgar_izq": { "nombre": "Abductor corto del pulgar", "funciones": ["Abducción del pulgar", "Agarre"], "cruza": ["Muñeca"], "ubicacion": "Base del pulgar izquierdo" },
+"abductor_corto_pulgar_der": { "nombre": "Abductor corto del pulgar", "funciones": ["Abducción del pulgar", "Agarre"], "cruza": ["Muñeca"], "ubicacion": "Base del pulgar derecho" }
 }
