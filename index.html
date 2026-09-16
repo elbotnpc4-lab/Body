@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Musculos</title>
+    <title>Mapa Muscular 3D</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,46 +11,60 @@
 <button id="toggle-btn">Mostrar Menú</button>
 
 <div class="panel" id="panelControl">
-    <h2>Músculos</h2>
+    <h2>Mapa Muscular 3D</h2>
 
-    <p class="seccion-titulo">BUSCAR EJERCICIO</p>
-    <input type="text" id="inputEjercicio" placeholder="Ej: sentadilla, curl, dominadas...">
-    <button id="btnEntrenar">Entrenar</button>
-    <button id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">RUTINA COMPLETA (todo el cuerpo)</button>
-
-    <p class="seccion-titulo">BUSCAR MÚSCULO</p>
-    <input type="text" id="inputMusculo" placeholder="Ej: bíceps, dorsal, cuádriceps..." autocomplete="off">
-    <div id="sugerenciasMusculo"></div>
-
-    <p class="seccion-titulo">FILTRAR POR EQUIPO</p>
-    <div class="grupo-filtro">
-        <button class="filtro-btn activo" data-filtro="todos">Todos</button>
-        <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
-        <button class="filtro-btn" data-filtro="barra">Barra</button>
-        <button class="filtro-btn" data-filtro="maquina">Máquinas</button>
-        <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
+    <div class="seccion">
+        <p class="seccion-titulo">Buscar ejercicio</p>
+        <input type="text" id="inputEjercicio" placeholder="Ej: sentadilla, curl, dominadas...">
+        <button class="btn-accion" id="btnEntrenar">Entrenar</button>
+        <button class="btn-accion" id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">Rutina completa (todo el cuerpo)</button>
     </div>
 
-    <p class="seccion-titulo">FILTRAR POR GRUPO MUSCULAR</p>
-    <div class="grupo-filtro" id="filtroGrupoMuscular">
-        <button class="grupo-btn activo" data-grupo="todos">Todos</button>
-        <button class="grupo-btn" data-grupo="hombro">Hombro</button>
-        <button class="grupo-btn" data-grupo="pecho">Pecho</button>
-        <button class="grupo-btn" data-grupo="espalda">Espalda</button>
-        <button class="grupo-btn" data-grupo="biceps">Bíceps</button>
-        <button class="grupo-btn" data-grupo="triceps">Tríceps</button>
-        <button class="grupo-btn" data-grupo="antebrazo">Antebrazo</button>
-        <button class="grupo-btn" data-grupo="cuello">Cuello</button>
-        <button class="grupo-btn" data-grupo="core">Core</button>
-        <button class="grupo-btn" data-grupo="gluteo">Glúteo</button>
-        <button class="grupo-btn" data-grupo="cuadriceps">Cuádriceps</button>
-        <button class="grupo-btn" data-grupo="isquio">Isquios</button>
-        <button class="grupo-btn" data-grupo="pantorrilla">Pantorrilla</button>
-        <button class="grupo-btn" data-grupo="aductor">Aductor</button>
+    <div class="seccion">
+        <p class="seccion-titulo">Buscar músculo</p>
+        <input type="text" id="inputMusculo" placeholder="Ej: bíceps, dorsal, cuádriceps..." autocomplete="off">
+        <div id="sugerenciasMusculo"></div>
     </div>
 
-    <div id="listaBotones"></div>
-    <div id="resultado">Escribe un ejercicio...</div>
+    <div class="seccion">
+        <p class="seccion-titulo">Filtrar por equipo</p>
+        <div class="grupo-filtro">
+            <button class="filtro-btn activo" data-filtro="todos">Todos</button>
+            <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
+            <button class="filtro-btn" data-filtro="barra">Barra</button>
+            <button class="filtro-btn" data-filtro="maquina">Máquinas</button>
+            <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
+        </div>
+    </div>
+
+    <div class="seccion">
+        <p class="seccion-titulo">Filtrar por grupo muscular</p>
+        <div class="grupo-filtro" id="filtroGrupoMuscular">
+            <button class="grupo-btn activo" data-grupo="todos">Todos</button>
+            <button class="grupo-btn" data-grupo="hombro">Hombro</button>
+            <button class="grupo-btn" data-grupo="pecho">Pecho</button>
+            <button class="grupo-btn" data-grupo="espalda">Espalda</button>
+            <button class="grupo-btn" data-grupo="biceps">Bíceps</button>
+            <button class="grupo-btn" data-grupo="triceps">Tríceps</button>
+            <button class="grupo-btn" data-grupo="antebrazo">Antebrazo</button>
+            <button class="grupo-btn" data-grupo="cuello">Cuello</button>
+            <button class="grupo-btn" data-grupo="core">Core</button>
+            <button class="grupo-btn" data-grupo="gluteo">Glúteo</button>
+            <button class="grupo-btn" data-grupo="cuadriceps">Cuádriceps</button>
+            <button class="grupo-btn" data-grupo="isquio">Isquios</button>
+            <button class="grupo-btn" data-grupo="pantorrilla">Pantorrilla</button>
+            <button class="grupo-btn" data-grupo="aductor">Aductor</button>
+        </div>
+    </div>
+
+    <div class="seccion">
+        <div id="listaBotones"></div>
+    </div>
+
+    <div class="seccion">
+        <p class="seccion-titulo">Resultado</p>
+        <div id="resultado">Escribe un ejercicio...</div>
+    </div>
 </div>
 
 <div id="info-panel">
@@ -70,10 +84,10 @@
 <div id="legend-modal">
     <button class="legend-cierre" onclick="document.getElementById('legend-modal').style.display='none'">×</button>
     <h3>¿Qué significa cada categoría?</h3>
-    <p><strong style="color:#ff0000;">■ Primario (agonista):</strong> Músculo que genera la mayor parte de la fuerza en el movimiento.</p>
-    <p><strong style="color:#ff8800;">■ Secundario (sinergista):</strong> Músculo que asiste al movimiento principal.</p>
-    <p><strong style="color:#ffdd00;">■ Estabilizador:</strong> Músculo que mantiene la postura y fija las articulaciones.</p>
-    <p><strong style="color:#00ccff;">■ Articulación:</strong> Punto de unión entre dos o más huesos donde ocurre el movimiento.</p>
+    <p><strong style="color:#ff0000;">■ Primario (agonista):</strong> Músculo que genera la mayor parte de la fuerza en el movimiento. Es el protagonista del ejercicio.</p>
+    <p><strong style="color:#ff8800;">■ Secundario (sinergista):</strong> Músculo que asiste al movimiento principal. Ayuda a completar la acción pero no es el motor principal.</p>
+    <p><strong style="color:#ffdd00;">■ Estabilizador:</strong> Músculo que mantiene la postura y fija las articulaciones para que el movimiento principal sea seguro y eficiente.</p>
+    <p><strong style="color:#00ccff;">■ Articulación:</strong> Punto de unión entre dos o más huesos donde ocurre el movimiento (no es un músculo).</p>
 </div>
 
 <div id="muscle-popup"></div>
