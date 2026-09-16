@@ -3,60 +3,464 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muscula</title>
+    <title>Mapa Muscular 3D</title>
     <style>
-        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background-color: #0a0a0a; color: white; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #0a0a0a; color: #e8e8e8; font-size: 14px; line-height: 1.5; }
+
         #canvas-container { width: 100vw; height: 100vh; display: block; }
-        #toggle-btn { position: absolute; top: 15px; left: 15px; z-index: 20; background-color: #222; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; }
-        #toggle-btn:hover { background-color: #333; }
-        .panel { position: absolute; top: 60px; left: 15px; background-color: rgba(26, 26, 26, 0.95); padding: 20px; border-radius: 6px; width: 360px; border: 1px solid #333; z-index: 10; box-sizing: border-box; display: none; max-height: 82vh; overflow-y: auto; }
-        .panel h2 { margin-top: 0; font-size: 16px; font-weight: normal; color: white; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        input { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #444; background-color: #222; color: white; box-sizing: border-box; font-size: 14px; margin-bottom: 10px; outline: none; }
-        input:focus { border-color: #888; }
-        button { width: 100%; padding: 8px; background-color: #333; color: white; border: 1px solid #555; border-radius: 4px; font-size: 14px; cursor: pointer; margin-bottom: 6px; }
-        button:hover { background-color: #444; }
-        .grupo-filtro { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-        .grupo-filtro button { margin-bottom: 0; font-size: 11px; padding: 5px 6px; flex: 1; min-width: 0; }
-        .grupo-filtro button.activo { background-color: #666; border-color: #888; }
-        .seccion-titulo { font-size: 11px; color: #888; margin-top: 10px; margin-bottom: 5px; }
-        .btn-ejemplo { font-size: 12px; padding: 5px; background-color: #222; text-align: left; }
-        .btn-ejemplo:hover { background-color: #333; }
-        #resultado { font-size: 12px; color: #aaa; margin-top: 10px; line-height: 1.6; }
-        #resultado .cat { margin-bottom: 8px; }
-        #resultado .cat-titulo { font-weight: bold; display: block; margin-bottom: 2px; }
-        #resultado .musculo { padding-left: 10px; }
-        #resultado .movimiento { margin-top: 6px; padding-top: 6px; border-top: 1px solid #333; }
-        #sugerenciasMusculo { max-height: 180px; overflow-y: auto; margin-bottom: 6px; }
-        .sugerencia-item { padding: 6px 10px; font-size: 12px; background-color: #1a1a1a; border: 1px solid #333; border-radius: 3px; margin-bottom: 3px; cursor: pointer; color: #ddd; }
-        .sugerencia-item:hover { background-color: #2a4a8a; border-color: #4a6aaa; color: white; }
-        .sugerencia-item .sug-tipo { color: #666; font-size: 10px; margin-left: 6px; }
-        .sugerencia-vacia { font-size: 11px; color: #666; padding: 4px; }
-        #info-panel { position: absolute; top: 60px; right: 15px; background-color: rgba(26, 26, 26, 0.97); padding: 18px 20px; border-radius: 6px; width: 320px; border: 1px solid #333; z-index: 15; box-sizing: border-box; display: none; max-height: 82vh; overflow-y: auto; font-size: 12px; line-height: 1.5; }
-        #info-panel h3 { margin: 0 0 10px 0; font-size: 14px; color: #ff6666; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
-        #info-panel .tipo-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-bottom: 8px; text-transform: uppercase; }
-        #info-panel .tipo-musculo { background-color: #553333; color: #ff9999; }
-        #info-panel .tipo-articulacion { background-color: #335566; color: #99ddff; }
-        #info-panel .tipo-estructura { background-color: #445544; color: #99dd99; }
-        #info-panel .info-seccion { margin-bottom: 10px; }
-        #info-panel .info-label { color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; display: block; }
-        #info-panel .info-texto { color: #ddd; }
-        #info-panel .info-lista { color: #ddd; padding-left: 4px; }
-        #info-panel .cerrar { position: absolute; top: 12px; right: 15px; cursor: pointer; color: #888; font-size: 16px; background: none; border: none; padding: 0; width: auto; }
-        #info-panel .cerrar:hover { color: white; background: none; }
-        #info-panel .tecnica-peso { background-color: #1a2a3a; border-left: 3px solid #4a9aff; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; line-height: 1.5; }
-        #info-panel .tecnica-peso strong { color: #6abaff; }
-        .btn-ejercicio-mini { display: inline-block; width: auto; padding: 3px 8px; margin: 2px 0; font-size: 11px; background-color: #2a4a8a; border: 1px solid #4a6aaa; border-radius: 3px; color: white; cursor: pointer; text-align: left; }
-        .btn-ejercicio-mini:hover { background-color: #3a5a9a; }
-        #muscle-popup { position: fixed; background: rgba(20, 20, 20, 0.95); color: white; padding: 7px 10px; border: 1px solid #444; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 30; display: none; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); white-space: nowrap; }
-        .leyenda { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); background-color: rgba(26, 26, 26, 0.92); padding: 6px 12px; border-radius: 6px; border: 1px solid #333; font-size: 11px; display: flex; gap: 12px; flex-wrap: wrap; z-index: 10; align-items: center; cursor: move; user-select: none; }
-        .leyenda-item { display: flex; align-items: center; gap: 4px; }
+
+        #toggle-btn {
+            position: absolute; top: 20px; left: 20px; z-index: 20;
+            background-color: rgba(30, 30, 30, 0.95);
+            color: #e8e8e8; border: 1px solid #3a3a3a;
+            padding: 10px 16px; border-radius: 8px;
+            cursor: pointer; font-size: 13px; font-weight: 500;
+            transition: all 0.15s ease;
+            backdrop-filter: blur(10px);
+        }
+        #toggle-btn:hover { background-color: #2a2a2a; border-color: #4a4a4a; }
+
+        .panel {
+            position: absolute; top: 70px; left: 20px;
+            background-color: rgba(18, 18, 18, 0.96);
+            padding: 0;
+            border-radius: 12px;
+            width: 380px;
+            border: 1px solid #2a2a2a;
+            z-index: 10;
+            display: none;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .panel-header {
+            padding: 20px 24px 16px 24px;
+            border-bottom: 1px solid #2a2a2a;
+            position: sticky; top: 0;
+            background-color: rgba(18, 18, 18, 0.98);
+            z-index: 2;
+            border-radius: 12px 12px 0 0;
+        }
+        .panel-header h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-header h1::before {
+            content: "";
+            width: 8px; height: 8px;
+            background-color: #ff4444;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+        }
+
+        .panel-body { padding: 20px 24px 24px 24px; }
+
+        .section {
+            margin-bottom: 24px;
+        }
+        .section:last-child { margin-bottom: 0; }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6a6a6a;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background-color: #1c1c1c;
+            color: #e8e8e8;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+        .input-group input::placeholder { color: #555; }
+        .input-group input:focus {
+            border-color: #4a7ac8;
+            background-color: #202020;
+            box-shadow: 0 0 0 3px rgba(74, 122, 200, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1px solid #3a3a3a;
+            background-color: #2a2a2a;
+            color: #e8e8e8;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+            margin-bottom: 6px;
+        }
+        .btn:hover { background-color: #353535; border-color: #4a4a4a; }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary {
+            background-color: #3a5a9a;
+            border-color: #4a6aaa;
+            color: #ffffff;
+        }
+        .btn-primary:hover { background-color: #4a6aaa; border-color: #5a7aba; }
+
+        .btn-accent {
+            background-color: #6a3030;
+            border-color: #8a4040;
+            color: #ffcccc;
+        }
+        .btn-accent:hover { background-color: #8a4040; border-color: #aa5050; }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .chip {
+            padding: 7px 12px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background-color: #1c1c1c;
+            color: #b8b8b8;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+            flex: 0 0 auto;
+            width: auto;
+            margin: 0;
+        }
+        .chip:hover { background-color: #2a2a2a; border-color: #444; color: #e8e8e8; }
+        .chip.activo {
+            background-color: #3a5a9a;
+            border-color: #4a6aaa;
+            color: #ffffff;
+        }
+
+        #sugerenciasMusculo { margin-top: 8px; max-height: 200px; overflow-y: auto; }
+        .sugerencia-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            background-color: #1c1c1c;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            color: #d0d0d0;
+            transition: all 0.12s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .sugerencia-item:hover {
+            background-color: #2a4a8a;
+            border-color: #4a6aaa;
+            color: #ffffff;
+        }
+        .sugerencia-item .sug-tipo {
+            color: #6a6a6a;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .sugerencia-item:hover .sug-tipo { color: #b8d0ff; }
+        .sugerencia-vacia {
+            font-size: 12px;
+            color: #555;
+            padding: 12px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        #listaBotones .seccion-titulo {
+            font-size: 10px;
+            font-weight: 600;
+            color: #6a6a6a;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        #listaBotones .seccion-titulo:first-child { margin-top: 0; }
+
+        .btn-ejemplo {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 13px;
+            background-color: #1c1c1c;
+            color: #d0d0d0;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.12s ease;
+            font-family: inherit;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .btn-ejemplo:hover {
+            background-color: #2a2a2a;
+            border-color: #3a3a3a;
+            color: #ffffff;
+        }
+        .btn-ejemplo::before {
+            content: "→ ";
+            color: #555;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .btn-ejemplo:hover::before { color: #6a9aee; }
+
+        #resultado {
+            font-size: 13px;
+            color: #b8b8b8;
+            margin-top: 12px;
+            padding: 14px;
+            background-color: #151515;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+            line-height: 1.6;
+            min-height: 40px;
+        }
+        #resultado .cat { margin-bottom: 12px; }
+        #resultado .cat:last-child { margin-bottom: 0; }
+        #resultado .cat-titulo {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        #resultado .musculo {
+            padding-left: 12px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        #resultado .movimiento {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        #info-panel {
+            position: absolute; top: 70px; right: 20px;
+            background-color: rgba(18, 18, 18, 0.96);
+            padding: 24px;
+            border-radius: 12px;
+            width: 340px;
+            border: 1px solid #2a2a2a;
+            z-index: 15;
+            display: none;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.55;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+        #info-panel h3 {
+            margin: 0 0 14px 0;
+            font-size: 17px;
+            font-weight: 600;
+            color: #ffffff;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #2a2a2a;
+            letter-spacing: -0.2px;
+            padding-right: 30px;
+        }
+        #info-panel .tipo-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        #info-panel .tipo-musculo { background-color: #4a2020; color: #ff9999; }
+        #info-panel .tipo-articulacion { background-color: #1a3a55; color: #99ddff; }
+        #info-panel .tipo-estructura { background-color: #2a3a2a; color: #99dd99; }
+        #info-panel .info-seccion { margin-bottom: 16px; }
+        #info-panel .info-label {
+            color: #6a6a6a;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 5px;
+            display: block;
+        }
+        #info-panel .info-texto { color: #d0d0d0; }
+        #info-panel .info-lista { color: #d0d0d0; padding-left: 0; }
+        #info-panel .cerrar {
+            position: absolute;
+            top: 18px; right: 18px;
+            cursor: pointer;
+            color: #6a6a6a;
+            font-size: 22px;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            line-height: 1;
+            transition: all 0.12s ease;
+        }
+        #info-panel .cerrar:hover { color: #ffffff; background-color: #2a2a2a; }
+        #info-panel .tecnica-peso {
+            background-color: #0f1a24;
+            border-left: 3px solid #4a9aff;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            line-height: 1.55;
+            border-radius: 0 8px 8px 0;
+            color: #b8c8d8;
+        }
+        #info-panel .tecnica-peso strong { color: #6abaff; display: block; margin-bottom: 4px; }
+
+        .btn-ejercicio-mini {
+            display: inline-block;
+            width: auto;
+            padding: 5px 10px;
+            margin: 3px 4px 3px 0;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: #2a4a8a;
+            border: 1px solid #4a6aaa;
+            border-radius: 5px;
+            color: #ffffff;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.12s ease;
+            font-family: inherit;
+        }
+        .btn-ejercicio-mini:hover { background-color: #3a5a9a; border-color: #5a7aba; }
+
+        #muscle-popup {
+            position: fixed;
+            background: rgba(20, 20, 20, 0.98);
+            color: #ffffff;
+            padding: 8px 12px;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            pointer-events: none;
+            z-index: 30;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+        }
+
+        .leyenda {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(18, 18, 18, 0.94);
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid #2a2a2a;
+            font-size: 11px;
+            font-weight: 500;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            z-index: 10;
+            align-items: center;
+            cursor: move;
+            user-select: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .leyenda-item { display: flex; align-items: center; gap: 5px; color: #b8b8b8; }
         .color-box { width: 10px; height: 10px; border-radius: 2px; }
-        #legend-help { width: 22px; height: 22px; padding: 0; background-color: #333; border: 1px solid #555; border-radius: 50%; font-size: 12px; line-height: 1; cursor: pointer; color: white; margin-left: 5px; }
-        #legend-modal { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); background-color: rgba(20, 20, 20, 0.98); padding: 16px 20px; border-radius: 6px; border: 1px solid #444; z-index: 40; display: none; font-size: 12px; width: 380px; max-width: 90vw; line-height: 1.6; }
-        #legend-modal h3 { margin: 0 0 10px 0; font-size: 14px; color: white; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
-        #legend-modal p { margin: 8px 0; }
-        #legend-modal .legend-cierre { position: absolute; top: 10px; right: 14px; cursor: pointer; color: #888; font-size: 16px; background: none; border: none; padding: 0; width: auto; }
-        #legend-modal .legend-cierre:hover { color: white; }
+        #legend-help {
+            width: 20px; height: 20px;
+            padding: 0;
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            color: #b8b8b8;
+            margin-left: 6px;
+            transition: all 0.12s ease;
+        }
+        #legend-help:hover { background-color: #3a3a3a; color: #ffffff; }
+
+        #legend-modal {
+            position: fixed; bottom: 80px; left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(18, 18, 18, 0.98);
+            padding: 20px 24px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            z-index: 40;
+            display: none;
+            font-size: 13px;
+            width: 420px;
+            max-width: 92vw;
+            line-height: 1.6;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+        #legend-modal h3 {
+            margin: 0 0 14px 0;
+            font-size: 15px;
+            color: #ffffff;
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 10px;
+            font-weight: 600;
+            padding-right: 30px;
+        }
+        #legend-modal p { margin: 10px 0; color: #c8c8c8; }
+        #legend-modal .legend-cierre {
+            position: absolute;
+            top: 16px; right: 16px;
+            cursor: pointer;
+            color: #6a6a6a;
+            font-size: 20px;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 24px; height: 24px;
+            line-height: 1;
+            border-radius: 6px;
+            transition: all 0.12s ease;
+        }
+        #legend-modal .legend-cierre:hover { color: #ffffff; background-color: #2a2a2a; }
     </style>
 </head>
 <body>
@@ -64,46 +468,68 @@
 <button id="toggle-btn">Mostrar Menú</button>
 
 <div class="panel" id="panelControl">
-    <h2>Mapa Muscular 3D</h2>
-
-    <p class="seccion-titulo">BUSCAR EJERCICIO</p>
-    <input type="text" id="inputEjercicio" placeholder="Ej: sentadilla, curl, dominadas...">
-    <button id="btnEntrenar">Entrenar</button>
-    <button id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">Rutina completa (todo el cuerpo)</button>
-
-    <p class="seccion-titulo">BUSCAR MÚSCULO</p>
-    <input type="text" id="inputMusculo" placeholder="Ej: bíceps, dorsal, cuádriceps..." autocomplete="off">
-    <div id="sugerenciasMusculo"></div>
-
-    <p class="seccion-titulo">FILTRAR EJERCICIOS POR EQUIPO</p>
-    <div class="grupo-filtro">
-        <button class="filtro-btn activo" data-filtro="todos">Todos</button>
-        <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
-        <button class="filtro-btn" data-filtro="barra">Barra</button>
-        <button class="filtro-btn" data-filtro="maquina">Máquinas</button>
-        <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
+    <div class="panel-header">
+        <h1>Mapa Muscular 3D</h1>
     </div>
 
-    <p class="seccion-titulo">FILTRAR POR GRUPO MUSCULAR</p>
-    <div class="grupo-filtro" id="filtroGrupoMuscular">
-        <button class="grupo-btn activo" data-grupo="todos">Todos</button>
-        <button class="grupo-btn" data-grupo="hombro">Hombro</button>
-        <button class="grupo-btn" data-grupo="pecho">Pecho</button>
-        <button class="grupo-btn" data-grupo="espalda">Espalda</button>
-        <button class="grupo-btn" data-grupo="biceps">Bíceps</button>
-        <button class="grupo-btn" data-grupo="triceps">Tríceps</button>
-        <button class="grupo-btn" data-grupo="antebrazo">Antebrazo</button>
-        <button class="grupo-btn" data-grupo="cuello">Cuello</button>
-        <button class="grupo-btn" data-grupo="core">Core</button>
-        <button class="grupo-btn" data-grupo="gluteo">Glúteo</button>
-        <button class="grupo-btn" data-grupo="cuadriceps">Cuádriceps</button>
-        <button class="grupo-btn" data-grupo="isquio">Isquios</button>
-        <button class="grupo-btn" data-grupo="pantorrilla">Pantorrilla</button>
-        <button class="grupo-btn" data-grupo="aductor">Aductor</button>
-    </div>
+    <div class="panel-body">
+        <div class="section">
+            <span class="section-label">Buscar ejercicio</span>
+            <div class="input-group">
+                <input type="text" id="inputEjercicio" placeholder="Ej: sentadilla, curl, dominadas...">
+            </div>
+            <button class="btn btn-primary" id="btnEntrenar">Entrenar</button>
+            <button class="btn btn-accent" id="btnRutinaCompleta">Rutina completa (todo el cuerpo)</button>
+        </div>
 
-    <div id="listaBotones"></div>
-    <div id="resultado">Escribe un ejercicio...</div>
+        <div class="section">
+            <span class="section-label">Buscar músculo</span>
+            <div class="input-group">
+                <input type="text" id="inputMusculo" placeholder="Ej: bíceps, dorsal, cuádriceps..." autocomplete="off">
+            </div>
+            <div id="sugerenciasMusculo"></div>
+        </div>
+
+        <div class="section">
+            <span class="section-label">Filtrar por equipo</span>
+            <div class="chips">
+                <button class="chip filtro-btn activo" data-filtro="todos">Todos</button>
+                <button class="chip filtro-btn" data-filtro="mancuerna">Mancuernas</button>
+                <button class="chip filtro-btn" data-filtro="barra">Barra</button>
+                <button class="chip filtro-btn" data-filtro="maquina">Máquinas</button>
+                <button class="chip filtro-btn" data-filtro="cuerpo">Peso corporal</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <span class="section-label">Filtrar por grupo muscular</span>
+            <div class="chips" id="filtroGrupoMuscular">
+                <button class="chip grupo-btn activo" data-grupo="todos">Todos</button>
+                <button class="chip grupo-btn" data-grupo="hombro">Hombro</button>
+                <button class="chip grupo-btn" data-grupo="pecho">Pecho</button>
+                <button class="chip grupo-btn" data-grupo="espalda">Espalda</button>
+                <button class="chip grupo-btn" data-grupo="biceps">Bíceps</button>
+                <button class="chip grupo-btn" data-grupo="triceps">Tríceps</button>
+                <button class="chip grupo-btn" data-grupo="antebrazo">Antebrazo</button>
+                <button class="chip grupo-btn" data-grupo="cuello">Cuello</button>
+                <button class="chip grupo-btn" data-grupo="core">Core</button>
+                <button class="chip grupo-btn" data-grupo="gluteo">Glúteo</button>
+                <button class="chip grupo-btn" data-grupo="cuadriceps">Cuádriceps</button>
+                <button class="chip grupo-btn" data-grupo="isquio">Isquios</button>
+                <button class="chip grupo-btn" data-grupo="pantorrilla">Pantorrilla</button>
+                <button class="chip grupo-btn" data-grupo="aductor">Aductor</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div id="listaBotones"></div>
+        </div>
+
+        <div class="section">
+            <span class="section-label">Resultado</span>
+            <div id="resultado">Escribe un ejercicio...</div>
+        </div>
+    </div>
 </div>
 
 <div id="info-panel">
@@ -544,19 +970,33 @@ crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:0.78, y:1.45, z:-0.05}, 'an
 crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:-0.73, y:1.55, z:0.1}, 'braquiorradial_izq');
 crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:0.73, y:1.55, z:0.1}, 'braquiorradial_der');
 
-crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:-0.78, y:1.06, z:0.05}, 'mano_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:0.78, y:1.06, z:0.05}, 'mano_der', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:-0.78, y:1.06, z:0.05}, 'mano_izq_palma', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:0.78, y:1.06, z:0.05}, 'mano_der_palma', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.18, 0.22, 0.09), {x:-0.78, y:1.04, z:0.05}, 'mano_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.18, 0.22, 0.09), {x:0.78, y:1.04, z:0.05}, 'mano_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.17, 0.20, 0.10), {x:-0.78, y:1.05, z:0.05}, 'mano_izq_palma', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.17, 0.20, 0.10), {x:0.78, y:1.05, z:0.05}, 'mano_der_palma', {x:0, y:0, z:0}, materialHueso);
 
-const posicionesDedos = [-0.03, 0, 0.03, 0.055];
-const alturasDedos = [0.13, 0.145, 0.13, 0.11];
-posicionesDedos.forEach((offset, i) => {
-    crearParte(new THREE.BoxGeometry(0.018, alturasDedos[i], 0.04), {x:-0.78 + offset, y:0.94 - alturasDedos[i]*0.5 + 0.13, z:0.05}, `mano_izq_dedo_${i}`, {x:0, y:0, z:0}, materialHueso);
-    crearParte(new THREE.BoxGeometry(0.018, alturasDedos[i], 0.04), {x:0.78 + offset, y:0.94 - alturasDedos[i]*0.5 + 0.13, z:0.05}, `mano_der_dedo_${i}`, {x:0, y:0, z:0}, materialHueso);
+const dedoOffsets = [-0.055, -0.018, 0.018, 0.055];
+const dedoAlturas = [0.14, 0.16, 0.15, 0.12];
+const dedoAncho = 0.032;
+const dedoLargo = 0.14;
+dedoOffsets.forEach((offset, i) => {
+    crearParte(
+        new THREE.BoxGeometry(dedoAncho, dedoLargo, 0.08),
+        {x:-0.78 + offset, y:1.04 - dedoAlturas[i]*0.5 - dedoLargo*0.45, z:0.05},
+        `mano_izq_dedo_${i}`,
+        {x:0, y:0, z:0},
+        materialHueso
+    );
+    crearParte(
+        new THREE.BoxGeometry(dedoAncho, dedoLargo, 0.08),
+        {x:0.78 + offset, y:1.04 - dedoAlturas[i]*0.5 - dedoLargo*0.45, z:0.05},
+        `mano_der_dedo_${i}`,
+        {x:0, y:0, z:0},
+        materialHueso
+    );
 });
-crearParte(new THREE.BoxGeometry(0.02, 0.06, 0.04), {x:-0.72, y:0.99, z:0.05}, 'mano_izq_pulgar', {x:0, y:0, z:0.5}, materialHueso);
-crearParte(new THREE.BoxGeometry(0.02, 0.06, 0.04), {x:0.72, y:0.99, z:0.05}, 'mano_der_pulgar', {x:0, y:0, z:-0.5}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.05, 0.10, 0.08), {x:-0.70, y:0.98, z:0.05}, 'mano_izq_pulgar', {x:0, y:0, z:0.5}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.05, 0.10, 0.08), {x:0.70, y:0.98, z:0.05}, 'mano_der_pulgar', {x:0, y:0, z:-0.5}, materialHueso);
 
 crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:-0.25, y:1.0, z:-0.15}, 'gluteo_mayor_izq');
 crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:0.25, y:1.0, z:-0.15}, 'gluteo_mayor_der');
@@ -655,10 +1095,10 @@ function validarDatos() {
         }
     }
     if (errores.length > 0) {
-        console.warn('=== VALIDACIÓN DE DATOS: ' + errores.length + ' errores ===');
+        console.warn('=== VALIDACIÓN: ' + errores.length + ' errores ===');
         errores.forEach(e => console.warn(e));
     } else {
-        console.log('✓ Validación OK: todos los meshes en ejercicios.json existen en el modelo.');
+        console.log('✓ Validación OK');
     }
 }
 validarDatos();
@@ -671,15 +1111,15 @@ function validarCoberturaInfo() {
         if (!infoMusculos[id]) faltantesInfo.push(id);
     });
     if (faltantesNombre.length > 0) {
-        console.warn(`⚠ ${faltantesNombre.length} meshes sin entrada en nombres.json:`);
+        console.warn(`⚠ ${faltantesNombre.length} meshes sin nombre:`);
         faltantesNombre.forEach(n => console.warn('  - ' + n));
     }
     if (faltantesInfo.length > 0) {
-        console.warn(`⚠ ${faltantesInfo.length} meshes sin entrada en musculos.json:`);
+        console.warn(`⚠ ${faltantesInfo.length} meshes sin info:`);
         faltantesInfo.forEach(n => console.warn('  - ' + n));
     }
     if (faltantesNombre.length === 0 && faltantesInfo.length === 0) {
-        console.log('✓ Todos los meshes tienen nombre e info anatómica.');
+        console.log('✓ Todos los meshes tienen nombre e info');
     }
 }
 validarCoberturaInfo();
@@ -745,7 +1185,7 @@ function mostrarInfoMusculo(id) {
 
     infoNombre.innerText = info ? info.nombre : nombreMostrar;
     let html = `<div class="tipo-badge ${tipoBadge}">${tipoTexto}</div>`;
-    html += `<div class="tecnica-peso"><strong>💡 Técnica &gt; Peso</strong><br>La técnica correcta es más importante que cargar mucho peso. Con mala forma: (1) el músculo objetivo no trabaja, (2) te lesionas, (3) progresas más lento. <strong>Primero domina el movimiento, después sube el peso.</strong></div>`;
+    html += `<div class="tecnica-peso"><strong>💡 Técnica &gt; Peso</strong>La técnica correcta es más importante que cargar mucho peso. Con mala forma: (1) el músculo objetivo no trabaja, (2) te lesionas, (3) progresas más lento. <strong style="display:inline; margin-top:6px;">Primero domina el movimiento, después sube el peso.</strong></div>`;
 
     if (info) {
         if (info.funciones) {
@@ -825,7 +1265,7 @@ function limpiar() {
         reemplazarMaterial(parte, crearMaterial(baseMat));
     });
     document.getElementById("resultado").innerHTML = "Escribe un ejercicio...";
-    document.getElementById("resultado").style.color = "#aaa";
+    document.getElementById("resultado").style.color = "#b8b8b8";
 }
 
 function aplicarMaterial(grupoMusculos, materialBase) {
@@ -849,8 +1289,8 @@ function rutinaCompleta() {
         }
     });
     const resultadoDiv = document.getElementById("resultado");
-    resultadoDiv.innerHTML = `<div class="cat"><span class="cat-titulo" style="color:#ff0000;">RUTINA COMPLETA</span><div class="musculo">Todo el cuerpo activado.</div><div class="musculo" style="margin-top:6px; color:#888;">Sugerencia de split semanal:</div><div class="musculo">• Lunes: Pecho + Tríceps</div><div class="musculo">• Martes: Espalda + Bíceps</div><div class="musculo">• Miércoles: Piernas</div><div class="musculo">• Jueves: Hombros + Core</div><div class="musculo">• Viernes: Full body</div></div>`;
-    resultadoDiv.style.color = "#aaa";
+    resultadoDiv.innerHTML = `<div class="cat"><span class="cat-titulo" style="color:#ff4444;">RUTINA COMPLETA</span><div class="musculo">Todo el cuerpo activado.</div><div class="musculo" style="margin-top:8px; color:#888; font-weight:600;">Split sugerido:</div><div class="musculo">• Lunes: Pecho + Tríceps</div><div class="musculo">• Martes: Espalda + Bíceps</div><div class="musculo">• Miércoles: Piernas</div><div class="musculo">• Jueves: Hombros + Core</div><div class="musculo">• Viernes: Full body</div></div>`;
+    resultadoDiv.style.color = "#b8b8b8";
 }
 
 function entrenar() {
@@ -869,7 +1309,7 @@ function entrenar() {
         }
     }
     const resultadoDiv = document.getElementById("resultado");
-    resultadoDiv.style.color = "#aaa";
+    resultadoDiv.style.color = "#b8b8b8";
     if (ejercicioEncontrado) {
         aplicarMaterial(ejercicioEncontrado.primary || [], materialPrimaryBase);
         aplicarMaterial(ejercicioEncontrado.secondary || [], materialSecondaryBase);
@@ -902,7 +1342,7 @@ function renderizarBotones() {
     const cont = document.getElementById("listaBotones");
     cont.innerHTML = "";
     const grupos = {};
-    const nombresGrupos = { mancuerna: "MANCUERNAS", barra: "BARRA", maquina: "MÁQUINAS", cuerpo: "PESO CORPORAL" };
+    const nombresGrupos = { mancuerna: "Mancuernas", barra: "Barra", maquina: "Máquinas", cuerpo: "Peso corporal" };
 
     for (const clave in baseDatos) {
         const datos = baseDatos[clave];
@@ -935,7 +1375,7 @@ function renderizarBotones() {
     if (total === 0) {
         const vacio = document.createElement("div");
         vacio.className = "seccion-titulo";
-        vacio.innerText = "Sin ejercicios para este filtro";
+        vacio.innerText = "Sin resultados";
         cont.appendChild(vacio);
     }
 }
@@ -976,7 +1416,7 @@ function mostrarSugerencias() {
     resultados.forEach(r => {
         const div = document.createElement('div');
         div.className = 'sugerencia-item';
-        div.innerHTML = `${r.nombre}<span class="sug-tipo">${r.tipo}</span>`;
+        div.innerHTML = `<span>${r.nombre}</span><span class="sug-tipo">${r.tipo}</span>`;
         div.addEventListener('click', () => {
             seleccionarMusculo(r.id);
             mostrarInfoMusculo(r.id);
