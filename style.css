@@ -20,7 +20,7 @@ body {
     background-color: #222;
     color: white;
     border: 1px solid #555;
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
@@ -31,22 +31,22 @@ body {
 
 .panel {
     position: absolute;
-    top: 60px;
+    top: 65px;
     left: 15px;
     background-color: rgba(26, 26, 26, 0.95);
-    padding: 16px;
+    padding: 18px;
     border-radius: 6px;
-    width: min(330px, calc(100vw - 30px));
+    width: min(340px, calc(100vw - 30px));
     border: 1px solid #333;
     z-index: 10;
     box-sizing: border-box;
     display: none;
-    max-height: 82vh;
+    max-height: calc(100vh - 90px);
     overflow-y: auto;
 }
 
 .panel h2 {
-    margin-top: 0;
+    margin: 0 0 14px 0;
     font-size: 16px;
     font-weight: normal;
     color: white;
@@ -54,25 +54,48 @@ body {
     padding-bottom: 10px;
 }
 
-input {
+.seccion {
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #222;
+}
+.seccion:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.seccion-titulo {
+    font-size: 11px;
+    color: #888;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+input[type="text"] {
     width: 100%;
-    padding: 8px;
+    padding: 9px 10px;
     border-radius: 4px;
     border: 1px solid #444;
     background-color: #222;
     color: white;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 13px;
     margin-bottom: 8px;
     outline: none;
+    font-family: inherit;
 }
-input:focus {
+input[type="text"]:focus {
     border-color: #888;
 }
+input[type="text"]::placeholder {
+    color: #666;
+}
 
-button {
+.btn-accion {
     width: 100%;
-    padding: 8px;
+    padding: 9px;
     background-color: #333;
     color: white;
     border: 1px solid #555;
@@ -80,95 +103,77 @@ button {
     font-size: 13px;
     cursor: pointer;
     margin-bottom: 6px;
+    font-family: inherit;
 }
-button:hover {
+.btn-accion:hover {
     background-color: #444;
+}
+.btn-accion:last-child {
+    margin-bottom: 0;
 }
 
 .grupo-filtro {
     display: flex;
-    gap: 4px;
-    margin-bottom: 10px;
+    gap: 5px;
+    margin-bottom: 0;
     flex-wrap: wrap;
 }
 .grupo-filtro button {
-    margin-bottom: 0;
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 60px;
+    padding: 6px 8px;
     font-size: 11px;
-    padding: 5px 6px;
-    flex: 1;
-    min-width: 0;
+    background-color: #222;
+    color: #ccc;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0;
+    font-family: inherit;
+}
+.grupo-filtro button:hover {
+    background-color: #2a2a2a;
 }
 .grupo-filtro button.activo {
-    background-color: #666;
-    border-color: #888;
-}
-
-.seccion-titulo {
-    font-size: 11px;
-    color: #888;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
-.btn-ejemplo {
-    font-size: 12px;
-    padding: 5px;
-    background-color: #222;
-    text-align: left;
-}
-.btn-ejemplo:hover {
-    background-color: #333;
-}
-
-#resultado {
-    font-size: 12px;
-    color: #aaa;
-    margin-top: 10px;
-    line-height: 1.6;
-}
-#resultado .cat {
-    margin-bottom: 8px;
-}
-#resultado .cat-titulo {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 2px;
-}
-#resultado .musculo {
-    padding-left: 10px;
-}
-#resultado .movimiento {
-    margin-top: 6px;
-    padding-top: 6px;
-    border-top: 1px solid #333;
+    background-color: #555;
+    border-color: #777;
+    color: white;
 }
 
 #sugerenciasMusculo {
-    max-height: 180px;
+    max-height: 200px;
     overflow-y: auto;
-    margin-bottom: 6px;
+    margin-top: 6px;
+    border: 1px solid #333;
+    border-radius: 4px;
+}
+#sugerenciasMusculo:empty {
+    border: none;
 }
 .sugerencia-item {
-    padding: 6px 10px;
+    padding: 8px 10px;
     font-size: 12px;
     background-color: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 3px;
-    margin-bottom: 3px;
+    border-bottom: 1px solid #2a2a2a;
     cursor: pointer;
     color: #ddd;
     display: flex;
     justify-content: space-between;
     gap: 6px;
+    align-items: center;
+}
+.sugerencia-item:last-child {
+    border-bottom: none;
 }
 .sugerencia-item:hover {
     background-color: #2a4a8a;
-    border-color: #4a6aaa;
     color: white;
 }
 .sugerencia-item .sug-tipo {
     color: #666;
     font-size: 10px;
+    flex-shrink: 0;
 }
 .sugerencia-item:hover .sug-tipo {
     color: #aac;
@@ -176,28 +181,91 @@ button:hover {
 .sugerencia-vacia {
     font-size: 11px;
     color: #666;
-    padding: 4px;
+    padding: 10px;
+    text-align: center;
+}
+
+#listaBotones .seccion-titulo {
+    margin-top: 14px;
+}
+#listaBotones .seccion-titulo:first-child {
+    margin-top: 0;
+}
+
+.btn-ejemplo {
+    width: 100%;
+    font-size: 12px;
+    padding: 7px 10px;
+    background-color: #222;
+    color: #ccc;
+    border: 1px solid #333;
+    border-radius: 4px;
+    text-align: left;
+    cursor: pointer;
+    margin-bottom: 4px;
+    font-family: inherit;
+}
+.btn-ejemplo:hover {
+    background-color: #333;
+    color: white;
+}
+.btn-ejemplo:last-child {
+    margin-bottom: 0;
+}
+
+#resultado {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 8px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border-radius: 4px;
+    border: 1px solid #2a2a2a;
+    line-height: 1.6;
+    min-height: 40px;
+}
+#resultado .cat {
+    margin-bottom: 8px;
+}
+#resultado .cat:last-child {
+    margin-bottom: 0;
+}
+#resultado .cat-titulo {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 3px;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+#resultado .musculo {
+    padding-left: 10px;
+    font-size: 12px;
+}
+#resultado .movimiento {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #333;
 }
 
 #info-panel {
     position: absolute;
-    top: 60px;
+    top: 65px;
     right: 15px;
     background-color: rgba(26, 26, 26, 0.97);
-    padding: 16px;
+    padding: 18px;
     border-radius: 6px;
-    width: min(300px, calc(100vw - 30px));
+    width: min(320px, calc(100vw - 30px));
     border: 1px solid #333;
     z-index: 15;
     box-sizing: border-box;
     display: none;
-    max-height: 82vh;
+    max-height: calc(100vh - 90px);
     overflow-y: auto;
     font-size: 12px;
     line-height: 1.5;
 }
 #info-panel h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 12px 0;
     font-size: 14px;
     color: #ff6666;
     border-bottom: 1px solid #333;
@@ -208,10 +276,11 @@ button:hover {
 #info-panel .tipo-badge {
     display: inline-block;
     font-size: 10px;
-    padding: 2px 6px;
+    padding: 3px 7px;
     border-radius: 3px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-transform: uppercase;
+    letter-spacing: 0.4px;
 }
 #info-panel .tipo-musculo {
     background-color: #553333;
@@ -226,14 +295,15 @@ button:hover {
     color: #99dd99;
 }
 #info-panel .info-seccion {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 #info-panel .info-label {
     color: #888;
     font-size: 11px;
     text-transform: uppercase;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     display: block;
+    letter-spacing: 0.4px;
 }
 #info-panel .info-texto {
     color: #ddd;
@@ -261,10 +331,10 @@ button:hover {
 #info-panel .tecnica-peso {
     background-color: #1a2a3a;
     border-left: 3px solid #4a9aff;
-    padding: 8px 10px;
-    margin-bottom: 10px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
     font-size: 11px;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 #info-panel .tecnica-peso strong {
     color: #6abaff;
@@ -273,8 +343,8 @@ button:hover {
 .btn-ejercicio-mini {
     display: inline-block;
     width: auto;
-    padding: 3px 8px;
-    margin: 2px 0;
+    padding: 4px 9px;
+    margin: 2px 3px 2px 0;
     font-size: 11px;
     background-color: #2a4a8a;
     border: 1px solid #4a6aaa;
@@ -282,6 +352,7 @@ button:hover {
     color: white;
     cursor: pointer;
     text-align: left;
+    font-family: inherit;
 }
 .btn-ejercicio-mini:hover {
     background-color: #3a5a9a;
@@ -304,11 +375,11 @@ button:hover {
 
 .leyenda {
     position: fixed;
-    bottom: 10px;
+    bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(26, 26, 26, 0.92);
-    padding: 6px 12px;
+    padding: 8px 14px;
     border-radius: 6px;
     border: 1px solid #333;
     font-size: 11px;
@@ -317,6 +388,7 @@ button:hover {
     flex-wrap: wrap;
     z-index: 10;
     align-items: center;
+    justify-content: center;
     cursor: move;
     user-select: none;
     max-width: calc(100vw - 20px);
@@ -325,7 +397,7 @@ button:hover {
 .leyenda-item {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
 }
 .color-box {
     width: 10px;
@@ -345,25 +417,28 @@ button:hover {
     color: white;
     margin-left: 5px;
 }
+#legend-help:hover {
+    background-color: #444;
+}
 
 #legend-modal {
     position: fixed;
-    bottom: 60px;
+    bottom: 70px;
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(20, 20, 20, 0.98);
-    padding: 16px 20px;
+    padding: 18px 22px;
     border-radius: 6px;
     border: 1px solid #444;
     z-index: 40;
     display: none;
     font-size: 12px;
-    width: min(380px, calc(100vw - 30px));
+    width: min(400px, calc(100vw - 30px));
     line-height: 1.6;
     box-sizing: border-box;
 }
 #legend-modal h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 12px 0;
     font-size: 14px;
     color: white;
     border-bottom: 1px solid #333;
@@ -376,8 +451,8 @@ button:hover {
 }
 #legend-modal .legend-cierre {
     position: absolute;
-    top: 10px;
-    right: 14px;
+    top: 12px;
+    right: 15px;
     cursor: pointer;
     color: #888;
     font-size: 16px;
@@ -392,19 +467,33 @@ button:hover {
 
 @media (max-width: 500px) {
     .panel {
-        top: 55px;
+        top: 58px;
         left: 10px;
-        padding: 12px;
+        padding: 14px;
         width: calc(100vw - 20px);
+        max-height: calc(100vh - 80px);
     }
     #info-panel {
-        top: 55px;
+        top: 58px;
         right: 10px;
+        padding: 14px;
         width: calc(100vw - 20px);
+        max-height: calc(100vh - 80px);
+    }
+    #toggle-btn {
+        top: 10px;
+        left: 10px;
+        padding: 8px 12px;
+        font-size: 13px;
     }
     .leyenda {
         gap: 8px;
         font-size: 10px;
-        padding: 5px 8px;
+        padding: 6px 10px;
+        bottom: 8px;
+    }
+    .grupo-filtro button {
+        font-size: 10px;
+        padding: 5px 6px;
     }
 }
