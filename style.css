@@ -14,16 +14,17 @@ body {
 
 #toggle-btn {
     position: absolute;
-    top: 15px;
-    left: 15px;
+    top: 20px;
+    left: 20px;
     z-index: 20;
     background-color: #222;
     color: white;
     border: 1px solid #555;
-    padding: 10px 14px;
-    border-radius: 4px;
+    padding: 12px 18px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: bold;
 }
 #toggle-btn:hover {
     background-color: #333;
@@ -31,32 +32,33 @@ body {
 
 .panel {
     position: absolute;
-    top: 65px;
-    left: 15px;
-    background-color: rgba(26, 26, 26, 0.95);
-    padding: 18px;
-    border-radius: 6px;
-    width: min(340px, calc(100vw - 30px));
+    top: 75px;
+    left: 20px;
+    background-color: rgba(26, 26, 26, 0.96);
+    padding: 22px;
+    border-radius: 8px;
+    width: min(370px, calc(100vw - 40px));
     border: 1px solid #333;
     z-index: 10;
     box-sizing: border-box;
     display: none;
-    max-height: calc(100vh - 90px);
+    max-height: calc(100vh - 100px);
     overflow-y: auto;
 }
 
 .panel h2 {
-    margin: 0 0 14px 0;
-    font-size: 16px;
-    font-weight: normal;
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: bold;
     color: white;
     border-bottom: 1px solid #333;
-    padding-bottom: 10px;
+    padding-bottom: 14px;
+    text-align: center;
 }
 
 .seccion {
-    margin-bottom: 18px;
-    padding-bottom: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
     border-bottom: 1px solid #222;
 }
 .seccion:last-child {
@@ -66,23 +68,24 @@ body {
 }
 
 .seccion-titulo {
-    font-size: 11px;
-    color: #888;
-    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 12px 0;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    font-weight: bold;
 }
 
 input[type="text"] {
     width: 100%;
-    padding: 9px 10px;
-    border-radius: 4px;
+    padding: 12px 14px;
+    border-radius: 6px;
     border: 1px solid #444;
     background-color: #222;
     color: white;
     box-sizing: border-box;
-    font-size: 13px;
-    margin-bottom: 8px;
+    font-size: 14px;
+    margin-bottom: 10px;
     outline: none;
     font-family: inherit;
 }
@@ -95,15 +98,16 @@ input[type="text"]::placeholder {
 
 .btn-accion {
     width: 100%;
-    padding: 9px;
+    padding: 12px 14px;
     background-color: #333;
     color: white;
     border: 1px solid #555;
-    border-radius: 4px;
-    font-size: 13px;
+    border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-family: inherit;
+    font-weight: bold;
 }
 .btn-accion:hover {
     background-color: #444;
@@ -114,23 +118,23 @@ input[type="text"]::placeholder {
 
 .grupo-filtro {
     display: flex;
-    gap: 5px;
-    margin-bottom: 0;
+    gap: 8px;
     flex-wrap: wrap;
 }
 .grupo-filtro button {
     width: auto;
     flex: 1 1 auto;
-    min-width: 60px;
-    padding: 6px 8px;
-    font-size: 11px;
+    min-width: 70px;
+    padding: 9px 12px;
+    font-size: 12px;
     background-color: #222;
     color: #ccc;
     border: 1px solid #444;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     margin: 0;
     font-family: inherit;
+    font-weight: bold;
 }
 .grupo-filtro button:hover {
     background-color: #2a2a2a;
@@ -142,25 +146,25 @@ input[type="text"]::placeholder {
 }
 
 #sugerenciasMusculo {
-    max-height: 200px;
+    max-height: 220px;
     overflow-y: auto;
-    margin-top: 6px;
+    margin-top: 8px;
     border: 1px solid #333;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 #sugerenciasMusculo:empty {
     border: none;
 }
 .sugerencia-item {
-    padding: 8px 10px;
-    font-size: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
     background-color: #1a1a1a;
     border-bottom: 1px solid #2a2a2a;
     cursor: pointer;
     color: #ddd;
     display: flex;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
 }
 .sugerencia-item:last-child {
@@ -172,21 +176,25 @@ input[type="text"]::placeholder {
 }
 .sugerencia-item .sug-tipo {
     color: #666;
-    font-size: 10px;
+    font-size: 11px;
     flex-shrink: 0;
+    font-weight: bold;
 }
 .sugerencia-item:hover .sug-tipo {
     color: #aac;
 }
 .sugerencia-vacia {
-    font-size: 11px;
+    font-size: 12px;
     color: #666;
-    padding: 10px;
+    padding: 14px;
     text-align: center;
 }
 
 #listaBotones .seccion-titulo {
-    margin-top: 14px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #2a2a2a;
 }
 #listaBotones .seccion-titulo:first-child {
     margin-top: 0;
@@ -194,15 +202,15 @@ input[type="text"]::placeholder {
 
 .btn-ejemplo {
     width: 100%;
-    font-size: 12px;
-    padding: 7px 10px;
+    font-size: 13px;
+    padding: 10px 14px;
     background-color: #222;
     color: #ccc;
     border: 1px solid #333;
-    border-radius: 4px;
+    border-radius: 6px;
     text-align: left;
     cursor: pointer;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     font-family: inherit;
 }
 .btn-ejemplo:hover {
@@ -214,18 +222,18 @@ input[type="text"]::placeholder {
 }
 
 #resultado {
-    font-size: 12px;
+    font-size: 13px;
     color: #aaa;
-    margin-top: 8px;
-    padding: 10px;
+    margin-top: 0;
+    padding: 14px;
     background-color: #1a1a1a;
-    border-radius: 4px;
+    border-radius: 6px;
     border: 1px solid #2a2a2a;
-    line-height: 1.6;
-    min-height: 40px;
+    line-height: 1.7;
+    min-height: 60px;
 }
 #resultado .cat {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 #resultado .cat:last-child {
     margin-bottom: 0;
@@ -233,54 +241,57 @@ input[type="text"]::placeholder {
 #resultado .cat-titulo {
     font-weight: bold;
     display: block;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
     font-size: 11px;
     text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 #resultado .musculo {
-    padding-left: 10px;
-    font-size: 12px;
+    padding-left: 12px;
+    font-size: 13px;
+    margin-bottom: 3px;
 }
 #resultado .movimiento {
-    margin-top: 8px;
-    padding-top: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid #333;
 }
 
 #info-panel {
     position: absolute;
-    top: 65px;
-    right: 15px;
+    top: 75px;
+    right: 20px;
     background-color: rgba(26, 26, 26, 0.97);
-    padding: 18px;
-    border-radius: 6px;
-    width: min(320px, calc(100vw - 30px));
+    padding: 22px;
+    border-radius: 8px;
+    width: min(340px, calc(100vw - 40px));
     border: 1px solid #333;
     z-index: 15;
     box-sizing: border-box;
     display: none;
-    max-height: calc(100vh - 90px);
+    max-height: calc(100vh - 100px);
     overflow-y: auto;
-    font-size: 12px;
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.6;
 }
 #info-panel h3 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
+    margin: 0 0 14px 0;
+    font-size: 16px;
     color: #ff6666;
     border-bottom: 1px solid #333;
-    padding-bottom: 8px;
-    font-weight: normal;
-    padding-right: 25px;
+    padding-bottom: 12px;
+    font-weight: bold;
+    padding-right: 30px;
 }
 #info-panel .tipo-badge {
     display: inline-block;
-    font-size: 10px;
-    padding: 3px 7px;
-    border-radius: 3px;
-    margin-bottom: 10px;
+    font-size: 11px;
+    padding: 4px 9px;
+    border-radius: 4px;
+    margin-bottom: 14px;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
+    font-weight: bold;
 }
 #info-panel .tipo-musculo {
     background-color: #553333;
@@ -295,34 +306,37 @@ input[type="text"]::placeholder {
     color: #99dd99;
 }
 #info-panel .info-seccion {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 #info-panel .info-label {
-    color: #888;
+    color: #999;
     font-size: 11px;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     display: block;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.8px;
+    font-weight: bold;
 }
 #info-panel .info-texto {
     color: #ddd;
 }
 #info-panel .info-lista {
     color: #ddd;
-    padding-left: 4px;
+    padding-left: 6px;
+    margin-bottom: 3px;
 }
 #info-panel .cerrar {
     position: absolute;
-    top: 12px;
-    right: 15px;
+    top: 14px;
+    right: 16px;
     cursor: pointer;
     color: #888;
-    font-size: 16px;
+    font-size: 20px;
     background: none;
     border: none;
     padding: 0;
     width: auto;
+    font-weight: bold;
 }
 #info-panel .cerrar:hover {
     color: white;
@@ -330,11 +344,12 @@ input[type="text"]::placeholder {
 }
 #info-panel .tecnica-peso {
     background-color: #1a2a3a;
-    border-left: 3px solid #4a9aff;
-    padding: 10px 12px;
-    margin-bottom: 12px;
-    font-size: 11px;
-    line-height: 1.55;
+    border-left: 4px solid #4a9aff;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    line-height: 1.6;
+    border-radius: 0 4px 4px 0;
 }
 #info-panel .tecnica-peso strong {
     color: #6abaff;
@@ -343,16 +358,17 @@ input[type="text"]::placeholder {
 .btn-ejercicio-mini {
     display: inline-block;
     width: auto;
-    padding: 4px 9px;
-    margin: 2px 3px 2px 0;
-    font-size: 11px;
+    padding: 6px 12px;
+    margin: 3px 4px 3px 0;
+    font-size: 12px;
     background-color: #2a4a8a;
     border: 1px solid #4a6aaa;
-    border-radius: 3px;
+    border-radius: 5px;
     color: white;
     cursor: pointer;
     text-align: left;
     font-family: inherit;
+    font-weight: bold;
 }
 .btn-ejercicio-mini:hover {
     background-color: #3a5a9a;
@@ -360,31 +376,32 @@ input[type="text"]::placeholder {
 
 #muscle-popup {
     position: fixed;
-    background: rgba(20, 20, 20, 0.95);
+    background: rgba(20, 20, 20, 0.98);
     color: white;
-    padding: 7px 10px;
+    padding: 10px 14px;
     border: 1px solid #444;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: bold;
     pointer-events: none;
     z-index: 30;
     display: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
     white-space: nowrap;
 }
 
 .leyenda {
     position: fixed;
-    bottom: 12px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(26, 26, 26, 0.92);
-    padding: 8px 14px;
-    border-radius: 6px;
+    background-color: rgba(26, 26, 26, 0.94);
+    padding: 12px 20px;
+    border-radius: 8px;
     border: 1px solid #333;
-    font-size: 11px;
+    font-size: 12px;
     display: flex;
-    gap: 12px;
+    gap: 18px;
     flex-wrap: wrap;
     z-index: 10;
     align-items: center;
@@ -397,25 +414,27 @@ input[type="text"]::placeholder {
 .leyenda-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    font-weight: bold;
 }
 .color-box {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
 }
 #legend-help {
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
     padding: 0;
     background-color: #333;
     border: 1px solid #555;
     border-radius: 50%;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1;
     cursor: pointer;
     color: white;
-    margin-left: 5px;
+    margin-left: 8px;
+    font-weight: bold;
 }
 #legend-help:hover {
     background-color: #444;
@@ -423,43 +442,45 @@ input[type="text"]::placeholder {
 
 #legend-modal {
     position: fixed;
-    bottom: 70px;
+    bottom: 90px;
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(20, 20, 20, 0.98);
-    padding: 18px 22px;
-    border-radius: 6px;
+    padding: 24px 28px;
+    border-radius: 8px;
     border: 1px solid #444;
     z-index: 40;
     display: none;
-    font-size: 12px;
-    width: min(400px, calc(100vw - 30px));
-    line-height: 1.6;
+    font-size: 13px;
+    width: min(440px, calc(100vw - 40px));
+    line-height: 1.7;
     box-sizing: border-box;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
 }
 #legend-modal h3 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
+    margin: 0 0 16px 0;
+    font-size: 16px;
     color: white;
     border-bottom: 1px solid #333;
-    padding-bottom: 8px;
-    font-weight: normal;
-    padding-right: 25px;
+    padding-bottom: 12px;
+    font-weight: bold;
+    padding-right: 30px;
 }
 #legend-modal p {
-    margin: 8px 0;
+    margin: 12px 0;
 }
 #legend-modal .legend-cierre {
     position: absolute;
-    top: 12px;
-    right: 15px;
+    top: 16px;
+    right: 18px;
     cursor: pointer;
     color: #888;
-    font-size: 16px;
+    font-size: 20px;
     background: none;
     border: none;
     padding: 0;
     width: auto;
+    font-weight: bold;
 }
 #legend-modal .legend-cierre:hover {
     color: white;
@@ -467,33 +488,60 @@ input[type="text"]::placeholder {
 
 @media (max-width: 500px) {
     .panel {
-        top: 58px;
+        top: 65px;
         left: 10px;
-        padding: 14px;
+        padding: 16px;
         width: calc(100vw - 20px);
-        max-height: calc(100vh - 80px);
+        max-height: calc(100vh - 85px);
+    }
+    .panel h2 {
+        font-size: 16px;
+        margin-bottom: 16px;
     }
     #info-panel {
-        top: 58px;
+        top: 65px;
         right: 10px;
-        padding: 14px;
+        padding: 16px;
         width: calc(100vw - 20px);
-        max-height: calc(100vh - 80px);
+        max-height: calc(100vh - 85px);
     }
     #toggle-btn {
-        top: 10px;
-        left: 10px;
-        padding: 8px 12px;
+        top: 12px;
+        left: 12px;
+        padding: 10px 14px;
         font-size: 13px;
     }
+    .seccion {
+        margin-bottom: 18px;
+        padding-bottom: 16px;
+    }
     .leyenda {
-        gap: 8px;
+        gap: 10px;
         font-size: 10px;
-        padding: 6px 10px;
-        bottom: 8px;
+        padding: 8px 12px;
+        bottom: 12px;
+    }
+    .leyenda-item {
+        gap: 4px;
+    }
+    .color-box {
+        width: 10px;
+        height: 10px;
+    }
+    .grupo-filtro {
+        gap: 6px;
     }
     .grupo-filtro button {
-        font-size: 10px;
-        padding: 5px 6px;
+        font-size: 11px;
+        padding: 7px 9px;
+        min-width: 55px;
+    }
+    .btn-accion {
+        padding: 11px 12px;
+        font-size: 13px;
+    }
+    .btn-ejemplo {
+        padding: 9px 12px;
+        font-size: 12px;
     }
 }
