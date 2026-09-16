@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Muscular 3D</title>
+    <title>Muscula</title>
     <style>
         body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background-color: #0a0a0a; color: white; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
@@ -26,7 +26,11 @@
         #resultado .cat-titulo { font-weight: bold; display: block; margin-bottom: 2px; }
         #resultado .musculo { padding-left: 10px; }
         #resultado .movimiento { margin-top: 6px; padding-top: 6px; border-top: 1px solid #333; }
-
+        #sugerenciasMusculo { max-height: 180px; overflow-y: auto; margin-bottom: 6px; }
+        .sugerencia-item { padding: 6px 10px; font-size: 12px; background-color: #1a1a1a; border: 1px solid #333; border-radius: 3px; margin-bottom: 3px; cursor: pointer; color: #ddd; }
+        .sugerencia-item:hover { background-color: #2a4a8a; border-color: #4a6aaa; color: white; }
+        .sugerencia-item .sug-tipo { color: #666; font-size: 10px; margin-left: 6px; }
+        .sugerencia-vacia { font-size: 11px; color: #666; padding: 4px; }
         #info-panel { position: absolute; top: 60px; right: 15px; background-color: rgba(26, 26, 26, 0.97); padding: 18px 20px; border-radius: 6px; width: 320px; border: 1px solid #333; z-index: 15; box-sizing: border-box; display: none; max-height: 82vh; overflow-y: auto; font-size: 12px; line-height: 1.5; }
         #info-panel h3 { margin: 0 0 10px 0; font-size: 14px; color: #ff6666; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
         #info-panel .tipo-badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-bottom: 8px; text-transform: uppercase; }
@@ -41,17 +45,13 @@
         #info-panel .cerrar:hover { color: white; background: none; }
         #info-panel .tecnica-peso { background-color: #1a2a3a; border-left: 3px solid #4a9aff; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; line-height: 1.5; }
         #info-panel .tecnica-peso strong { color: #6abaff; }
-
         .btn-ejercicio-mini { display: inline-block; width: auto; padding: 3px 8px; margin: 2px 0; font-size: 11px; background-color: #2a4a8a; border: 1px solid #4a6aaa; border-radius: 3px; color: white; cursor: pointer; text-align: left; }
         .btn-ejercicio-mini:hover { background-color: #3a5a9a; }
-
         #muscle-popup { position: fixed; background: rgba(20, 20, 20, 0.95); color: white; padding: 7px 10px; border: 1px solid #444; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 30; display: none; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); white-space: nowrap; }
-
         .leyenda { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); background-color: rgba(26, 26, 26, 0.92); padding: 6px 12px; border-radius: 6px; border: 1px solid #333; font-size: 11px; display: flex; gap: 12px; flex-wrap: wrap; z-index: 10; align-items: center; cursor: move; user-select: none; }
         .leyenda-item { display: flex; align-items: center; gap: 4px; }
         .color-box { width: 10px; height: 10px; border-radius: 2px; }
         #legend-help { width: 22px; height: 22px; padding: 0; background-color: #333; border: 1px solid #555; border-radius: 50%; font-size: 12px; line-height: 1; cursor: pointer; color: white; margin-left: 5px; }
-
         #legend-modal { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); background-color: rgba(20, 20, 20, 0.98); padding: 16px 20px; border-radius: 6px; border: 1px solid #444; z-index: 40; display: none; font-size: 12px; width: 380px; max-width: 90vw; line-height: 1.6; }
         #legend-modal h3 { margin: 0 0 10px 0; font-size: 14px; color: white; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: normal; }
         #legend-modal p { margin: 8px 0; }
@@ -65,11 +65,17 @@
 
 <div class="panel" id="panelControl">
     <h2>Mapa Muscular 3D</h2>
-    <input type="text" id="inputEjercicio" placeholder="Escribe un ejercicio...">
-    <button id="btnEntrenar">Entrenar</button>
-    <button id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">RUTINA COMPLETA (todo el cuerpo)</button>
 
-    <p class="seccion-titulo">FILTRAR POR EQUIPO</p>
+    <p class="seccion-titulo">BUSCAR EJERCICIO</p>
+    <input type="text" id="inputEjercicio" placeholder="Ej: sentadilla, curl, dominadas...">
+    <button id="btnEntrenar">Entrenar</button>
+    <button id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">Rutina completa (todo el cuerpo)</button>
+
+    <p class="seccion-titulo">BUSCAR MÚSCULO</p>
+    <input type="text" id="inputMusculo" placeholder="Ej: bíceps, dorsal, cuádriceps..." autocomplete="off">
+    <div id="sugerenciasMusculo"></div>
+
+    <p class="seccion-titulo">FILTRAR EJERCICIOS POR EQUIPO</p>
     <div class="grupo-filtro">
         <button class="filtro-btn activo" data-filtro="todos">Todos</button>
         <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
@@ -78,7 +84,7 @@
         <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
     </div>
 
-    <p class="seccion-titulo">POR MÚSCULO</p>
+    <p class="seccion-titulo">FILTRAR POR GRUPO MUSCULAR</p>
     <div class="grupo-filtro" id="filtroGrupoMuscular">
         <button class="grupo-btn activo" data-grupo="todos">Todos</button>
         <button class="grupo-btn" data-grupo="hombro">Hombro</button>
@@ -158,13 +164,11 @@ const PROFUNDOS = [
     'anconeo_izq', 'anconeo_der', 'espinoso_izq', 'espinoso_der',
     'intercostal_izq_0', 'intercostal_izq_1', 'intercostal_izq_2', 'intercostal_izq_3',
     'intercostal_der_0', 'intercostal_der_1', 'intercostal_der_2', 'intercostal_der_3',
-    'largo_cuello_izq', 'largo_cuello_der',
-    'largo_cabeza_izq', 'largo_cabeza_der',
+    'largo_cuello_izq', 'largo_cuello_der', 'largo_cabeza_izq', 'largo_cabeza_der',
     'recto_ant_cabeza_izq', 'recto_ant_cabeza_der',
     'gemino_sup_izq', 'gemino_sup_der', 'gemino_inf_izq', 'gemino_inf_der',
     'cuadrado_femoral_izq', 'cuadrado_femoral_der',
-    'pectineo_izq', 'pectineo_der',
-    'aductor_corto_izq', 'aductor_corto_der',
+    'pectineo_izq', 'pectineo_der', 'aductor_corto_izq', 'aductor_corto_der',
     'esplenio_izq', 'esplenio_der',
     'oblicuo_sup_cabeza_izq', 'oblicuo_sup_cabeza_der',
     'oblicuo_inf_cabeza_izq', 'oblicuo_inf_cabeza_der'
@@ -176,7 +180,11 @@ const ARTICULACIONES = [
     'columna_cervical', 'columna_toracica', 'columna_lumbar'
 ];
 
-const ESTRUCTURAS = ['cabeza', 'cuello', 'occipital', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der'];
+const ESTRUCTURAS = ['cabeza', 'cuello', 'occipital', 'mano_izq', 'mano_der', 'pie_izq', 'pie_der',
+    'mano_izq_palma', 'mano_der_palma',
+    'mano_izq_dedo_0', 'mano_izq_dedo_1', 'mano_izq_dedo_2', 'mano_izq_dedo_3',
+    'mano_der_dedo_0', 'mano_der_dedo_1', 'mano_der_dedo_2', 'mano_der_dedo_3',
+    'mano_izq_pulgar', 'mano_der_pulgar'];
 
 const MUSCULOS_RELACIONADOS = {
     'largo_cuello_izq': ['Largo de la Cabeza', 'Recto Anterior de la Cabeza', 'Esternocleidomastoideo'],
@@ -436,7 +444,6 @@ crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:-0.05, y:2.88, z:-0.04}, 
 crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:0.05, y:2.88, z:-0.04}, 'oblicuo_sup_cabeza_der');
 crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:-0.05, y:2.85, z:-0.06}, 'oblicuo_inf_cabeza_izq');
 crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:0.05, y:2.85, z:-0.06}, 'oblicuo_inf_cabeza_der');
-
 crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:-0.32, y:2.62, z:-0.02}, 'elevador_escapula_izq', {z:0.2});
 crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:0.32, y:2.62, z:-0.02}, 'elevador_escapula_der', {z:-0.2});
 
@@ -536,8 +543,20 @@ crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:-0.78, y:1.45, z:-0.05}, 'a
 crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:0.78, y:1.45, z:-0.05}, 'antebrazo_ext_der');
 crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:-0.73, y:1.55, z:0.1}, 'braquiorradial_izq');
 crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:0.73, y:1.55, z:0.1}, 'braquiorradial_der');
-crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:-0.78, y:1.15, z:0.05}, 'mano_izq', {x:0, y:0, z:0}, materialHueso);
-crearParte(new THREE.BoxGeometry(0.1, 0.15, 0.1), {x:0.78, y:1.15, z:0.05}, 'mano_der', {x:0, y:0, z:0}, materialHueso);
+
+crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:-0.78, y:1.06, z:0.05}, 'mano_izq', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:0.78, y:1.06, z:0.05}, 'mano_der', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:-0.78, y:1.06, z:0.05}, 'mano_izq_palma', {x:0, y:0, z:0}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.1, 0.13, 0.05), {x:0.78, y:1.06, z:0.05}, 'mano_der_palma', {x:0, y:0, z:0}, materialHueso);
+
+const posicionesDedos = [-0.03, 0, 0.03, 0.055];
+const alturasDedos = [0.13, 0.145, 0.13, 0.11];
+posicionesDedos.forEach((offset, i) => {
+    crearParte(new THREE.BoxGeometry(0.018, alturasDedos[i], 0.04), {x:-0.78 + offset, y:0.94 - alturasDedos[i]*0.5 + 0.13, z:0.05}, `mano_izq_dedo_${i}`, {x:0, y:0, z:0}, materialHueso);
+    crearParte(new THREE.BoxGeometry(0.018, alturasDedos[i], 0.04), {x:0.78 + offset, y:0.94 - alturasDedos[i]*0.5 + 0.13, z:0.05}, `mano_der_dedo_${i}`, {x:0, y:0, z:0}, materialHueso);
+});
+crearParte(new THREE.BoxGeometry(0.02, 0.06, 0.04), {x:-0.72, y:0.99, z:0.05}, 'mano_izq_pulgar', {x:0, y:0, z:0.5}, materialHueso);
+crearParte(new THREE.BoxGeometry(0.02, 0.06, 0.04), {x:0.72, y:0.99, z:0.05}, 'mano_der_pulgar', {x:0, y:0, z:-0.5}, materialHueso);
 
 crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:-0.25, y:1.0, z:-0.15}, 'gluteo_mayor_izq');
 crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:0.25, y:1.0, z:-0.15}, 'gluteo_mayor_der');
@@ -716,6 +735,50 @@ function listaConBotones(arr) {
     return html;
 }
 
+function mostrarInfoMusculo(id) {
+    const info = infoMusculos[id];
+    const nombreMostrar = nombresMusculos[id] || id;
+    const esArt = esArticulacion(id);
+    const esEst = esEstructura(id);
+    const tipoBadge = esArt ? 'tipo-articulacion' : (esEst ? 'tipo-estructura' : 'tipo-musculo');
+    const tipoTexto = esArt ? 'Articulación' : (esEst ? 'Estructura' : 'Músculo');
+
+    infoNombre.innerText = info ? info.nombre : nombreMostrar;
+    let html = `<div class="tipo-badge ${tipoBadge}">${tipoTexto}</div>`;
+    html += `<div class="tecnica-peso"><strong>💡 Técnica &gt; Peso</strong><br>La técnica correcta es más importante que cargar mucho peso. Con mala forma: (1) el músculo objetivo no trabaja, (2) te lesionas, (3) progresas más lento. <strong>Primero domina el movimiento, después sube el peso.</strong></div>`;
+
+    if (info) {
+        if (info.funciones) {
+            html += `<div class="info-seccion"><span class="info-label">Función</span>`;
+            info.funciones.forEach(f => { html += `<div class="info-lista">• ${f}</div>`; });
+            html += `</div>`;
+        }
+        if (info.cruza) html += `<div class="info-seccion"><span class="info-label">Cruza</span><div class="info-texto">${info.cruza.join(" · ")}</div></div>`;
+        if (info.ubicacion) html += `<div class="info-seccion"><span class="info-label">Ubicación</span><div class="info-texto">${info.ubicacion}</div></div>`;
+    }
+    const ej = buscarEjerciciosDeMusculo(id);
+    if (ej.primary.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ff0000;">Primario en</span>${listaConBotones(ej.primary)}</div>`;
+    if (ej.secondary.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>${listaConBotones(ej.secondary)}</div>`;
+    if (ej.stabilizers.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>${listaConBotones(ej.stabilizers)}</div>`;
+    if (ej.articulacion.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#00ccff;">Participa en</span>${listaConBotones(ej.articulacion)}</div>`;
+    const rel = MUSCULOS_RELACIONADOS[id];
+    if (rel && rel.length > 0) {
+        html += `<div class="info-seccion"><span class="info-label" style="color:#88dd88;">Músculos relacionados</span>`;
+        rel.forEach(r => { html += `<div class="info-lista">• ${r}</div>`; });
+        html += `</div>`;
+    }
+    infoContenido.innerHTML = html;
+    infoPanel.style.display = 'block';
+
+    infoContenido.querySelectorAll('.btn-ejercicio-mini').forEach(btn => {
+        btn.addEventListener('click', () => {
+            setTexto(btn.getAttribute('data-ejercicio'));
+            entrenar();
+            infoPanel.style.display = 'none';
+        });
+    });
+}
+
 renderer.domElement.addEventListener('click', (event) => {
     const rect = renderer.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -731,11 +794,6 @@ renderer.domElement.addEventListener('click', (event) => {
         seleccionarMusculo(idMusculo);
 
         const nombreMostrar = nombresMusculos[idMusculo] || idMusculo;
-        const esArt = esArticulacion(idMusculo);
-        const esEst = esEstructura(idMusculo);
-        const tipoBadge = esArt ? 'tipo-articulacion' : (esEst ? 'tipo-estructura' : 'tipo-musculo');
-        const tipoTexto = esArt ? 'Articulación' : (esEst ? 'Estructura' : 'Músculo');
-
         popup.innerText = nombreMostrar;
         popup.style.left = (event.clientX + 15) + 'px';
         popup.style.top = (event.clientY - 15) + 'px';
@@ -743,42 +801,7 @@ renderer.domElement.addEventListener('click', (event) => {
         clearTimeout(popupTimeout);
         popupTimeout = setTimeout(() => { popup.style.display = 'none'; }, 2000);
 
-        const info = infoMusculos[idMusculo];
-        infoNombre.innerText = info ? info.nombre : nombreMostrar;
-        let html = `<div class="tipo-badge ${tipoBadge}">${tipoTexto}</div>`;
-
-        html += `<div class="tecnica-peso"><strong>💡 Técnica &gt; Peso</strong><br>La técnica correcta es más importante que cargar mucho peso. Con mala forma: (1) el músculo objetivo no trabaja, (2) te lesionas, (3) progresas más lento. <strong>Primero domina el movimiento, después sube el peso.</strong></div>`;
-
-        if (info) {
-            if (info.funciones) {
-                html += `<div class="info-seccion"><span class="info-label">Función</span>`;
-                info.funciones.forEach(f => { html += `<div class="info-lista">• ${f}</div>`; });
-                html += `</div>`;
-            }
-            if (info.cruza) html += `<div class="info-seccion"><span class="info-label">Cruza</span><div class="info-texto">${info.cruza.join(" · ")}</div></div>`;
-            if (info.ubicacion) html += `<div class="info-seccion"><span class="info-label">Ubicación</span><div class="info-texto">${info.ubicacion}</div></div>`;
-        }
-        const ej = buscarEjerciciosDeMusculo(idMusculo);
-        if (ej.primary.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ff0000;">Primario en</span>${listaConBotones(ej.primary)}</div>`;
-        if (ej.secondary.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ff8800;">Secundario en</span>${listaConBotones(ej.secondary)}</div>`;
-        if (ej.stabilizers.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#ffdd00;">Estabilizador en</span>${listaConBotones(ej.stabilizers)}</div>`;
-        if (ej.articulacion.length > 0) html += `<div class="info-seccion"><span class="info-label" style="color:#00ccff;">Participa en</span>${listaConBotones(ej.articulacion)}</div>`;
-        const rel = MUSCULOS_RELACIONADOS[idMusculo];
-        if (rel && rel.length > 0) {
-            html += `<div class="info-seccion"><span class="info-label" style="color:#88dd88;">Músculos relacionados</span>`;
-            rel.forEach(r => { html += `<div class="info-lista">• ${r}</div>`; });
-            html += `</div>`;
-        }
-        infoContenido.innerHTML = html;
-        infoPanel.style.display = 'block';
-
-        infoContenido.querySelectorAll('.btn-ejercicio-mini').forEach(btn => {
-            btn.addEventListener('click', () => {
-                setTexto(btn.getAttribute('data-ejercicio'));
-                entrenar();
-                infoPanel.style.display = 'none';
-            });
-        });
+        mostrarInfoMusculo(idMusculo);
     } else {
         popup.style.display = 'none';
     }
@@ -916,6 +939,61 @@ function renderizarBotones() {
         cont.appendChild(vacio);
     }
 }
+
+const inputMusculo = document.getElementById('inputMusculo');
+const sugerenciasDiv = document.getElementById('sugerenciasMusculo');
+const nombresMusculosNormalizados = {};
+Object.keys(nombresMusculos).forEach(id => {
+    nombresMusculosNormalizados[id] = normalizar(nombresMusculos[id]);
+});
+
+function buscarMusculos(texto) {
+    const q = normalizar(texto);
+    if (q.length < 2) return [];
+    const resultados = [];
+    for (const id in nombresMusculos) {
+        const nombreNorm = nombresMusculosNormalizados[id];
+        if (nombreNorm.includes(q)) {
+            const tipo = esArticulacion(id) ? 'Articulación' : (esEstructura(id) ? 'Estructura' : 'Músculo');
+            resultados.push({ id, nombre: nombresMusculos[id], tipo, prioridad: nombreNorm.indexOf(q) });
+        }
+    }
+    resultados.sort((a, b) => a.prioridad - b.prioridad || a.nombre.length - b.nombre.length);
+    return resultados.slice(0, 12);
+}
+
+function mostrarSugerencias() {
+    const texto = inputMusculo.value.trim();
+    sugerenciasDiv.innerHTML = "";
+    if (texto.length < 2) return;
+
+    const resultados = buscarMusculos(texto);
+    if (resultados.length === 0) {
+        sugerenciasDiv.innerHTML = '<div class="sugerencia-vacia">Sin resultados</div>';
+        return;
+    }
+
+    resultados.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'sugerencia-item';
+        div.innerHTML = `${r.nombre}<span class="sug-tipo">${r.tipo}</span>`;
+        div.addEventListener('click', () => {
+            seleccionarMusculo(r.id);
+            mostrarInfoMusculo(r.id);
+            inputMusculo.value = "";
+            sugerenciasDiv.innerHTML = "";
+        });
+        sugerenciasDiv.appendChild(div);
+    });
+}
+
+inputMusculo.addEventListener('input', mostrarSugerencias);
+inputMusculo.addEventListener('focus', mostrarSugerencias);
+document.addEventListener('click', (e) => {
+    if (!inputMusculo.contains(e.target) && !sugerenciasDiv.contains(e.target)) {
+        sugerenciasDiv.innerHTML = "";
+    }
+});
 
 document.getElementById("toggle-btn").addEventListener("click", togglePanel);
 document.getElementById("btnEntrenar").addEventListener("click", entrenar);
