@@ -27,7 +27,19 @@ const PROFUNDOS = [
     'pectineo_izq', 'pectineo_der', 'aductor_corto_izq', 'aductor_corto_der',
     'esplenio_izq', 'esplenio_der',
     'oblicuo_sup_cabeza_izq', 'oblicuo_sup_cabeza_der',
-    'oblicuo_inf_cabeza_izq', 'oblicuo_inf_cabeza_der'
+    'oblicuo_inf_cabeza_izq', 'oblicuo_inf_cabeza_der',
+    'flexor_dedos_mano_izq', 'flexor_dedos_mano_der',
+    'extensor_dedos_mano_izq', 'extensor_dedos_mano_der',
+    'oponente_pulgar_izq', 'oponente_pulgar_der',
+    'flexor_corto_pulgar_izq', 'flexor_corto_pulgar_der',
+    'abductor_corto_pulgar_izq', 'abductor_corto_pulgar_der',
+    'subclavio_izq', 'subclavio_der',
+    'semispinalis_capitis_izq', 'semispinalis_capitis_der',
+    'escaleno_ant_izq', 'escaleno_ant_der',
+    'escaleno_med_izq', 'escaleno_med_der',
+    'escaleno_post_izq', 'escaleno_post_der',
+    'multifidos_izq', 'multifidos_der',
+    'supinador_izq', 'supinador_der'
 ];
 
 const ARTICULACIONES = [
@@ -40,7 +52,12 @@ const ESTRUCTURAS = ['cabeza', 'cuello', 'occipital', 'mano_izq', 'mano_der', 'p
     'mano_izq_palma', 'mano_der_palma',
     'mano_izq_dedo_0', 'mano_izq_dedo_1', 'mano_izq_dedo_2', 'mano_izq_dedo_3',
     'mano_der_dedo_0', 'mano_der_dedo_1', 'mano_der_dedo_2', 'mano_der_dedo_3',
-    'mano_izq_pulgar', 'mano_der_pulgar'];
+    'mano_izq_pulgar', 'mano_der_pulgar',
+    'flexor_dedos_mano_izq', 'flexor_dedos_mano_der',
+    'extensor_dedos_mano_izq', 'extensor_dedos_mano_der',
+    'oponente_pulgar_izq', 'oponente_pulgar_der',
+    'flexor_corto_pulgar_izq', 'flexor_corto_pulgar_der',
+    'abductor_corto_pulgar_izq', 'abductor_corto_pulgar_der'];
 
 const MUSCULOS_RELACIONADOS = {
     'largo_cuello_izq': ['Largo de la Cabeza', 'Recto Anterior de la Cabeza', 'Esternocleidomastoideo'],
@@ -49,6 +66,20 @@ const MUSCULOS_RELACIONADOS = {
     'largo_cabeza_der': ['Largo del Cuello', 'Recto Anterior de la Cabeza'],
     'recto_ant_cabeza_izq': ['Largo de la Cabeza', 'Largo del Cuello'],
     'recto_ant_cabeza_der': ['Largo de la Cabeza', 'Largo del Cuello'],
+    'semispinalis_capitis_izq': ['Esplenio', 'Oblicuo Superior de la Cabeza', 'Trapecio Superior'],
+    'semispinalis_capitis_der': ['Esplenio', 'Oblicuo Superior de la Cabeza', 'Trapecio Superior'],
+    'escaleno_ant_izq': ['Escaleno Medio', 'Escaleno Posterior', 'Esternocleidomastoideo'],
+    'escaleno_ant_der': ['Escaleno Medio', 'Escaleno Posterior', 'Esternocleidomastoideo'],
+    'escaleno_med_izq': ['Escaleno Anterior', 'Escaleno Posterior'],
+    'escaleno_med_der': ['Escaleno Anterior', 'Escaleno Posterior'],
+    'escaleno_post_izq': ['Escaleno Anterior', 'Escaleno Medio', 'Elevador de la Escápula'],
+    'escaleno_post_der': ['Escaleno Anterior', 'Escaleno Medio', 'Elevador de la Escápula'],
+    'multifidos_izq': ['Erector Espinal', 'Espinoso', 'Cuadrado Lumbar'],
+    'multifidos_der': ['Erector Espinal', 'Espinoso', 'Cuadrado Lumbar'],
+    'supinador_izq': ['Bíceps Braquial', 'Braquial', 'Braquiorradial'],
+    'supinador_der': ['Bíceps Braquial', 'Braquial', 'Braquiorradial'],
+    'subclavio_izq': ['Pectoral Menor', 'Pectoral Mayor'],
+    'subclavio_der': ['Pectoral Menor', 'Pectoral Mayor'],
     'elevador_escapula_izq': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
     'elevador_escapula_der': ['Trapecio Superior', 'Romboides', 'Esternocleidomastoideo'],
     'coracobraquial_izq': ['Bíceps Cabeza Corta', 'Pectoral Mayor', 'Deltoides Anterior'],
@@ -145,8 +176,8 @@ const MUSCULOS_RELACIONADOS = {
     'gracil_der': ['Aductor Largo', 'Aductor Mayor', 'Sartorio'],
     'braquial_izq': ['Bíceps Braquial', 'Braquiorradial', 'Coracobraquial'],
     'braquial_der': ['Bíceps Braquial', 'Braquiorradial', 'Coracobraquial'],
-    'braquiorradial_izq': ['Braquial', 'Flexores del Antebrazo', 'Extensores del Antebrazo'],
-    'braquiorradial_der': ['Braquial', 'Flexores del Antebrazo', 'Extensores del Antebrazo']
+    'braquiorradial_izq': ['Braquial', 'Flexores del Antebrazo', 'Supinador'],
+    'braquiorradial_der': ['Braquial', 'Flexores del Antebrazo', 'Supinador']
 };
 
 function esProfundo(id) { return PROFUNDOS.includes(id); }
@@ -156,12 +187,12 @@ function esMusculo(id) { return !esArticulacion(id) && !esEstructura(id); }
 
 const GRUPOS_MUSCULARES = {
     hombro: ['deltoides', 'supraespinoso', 'infraespinoso', 'subescapular', 'redondo_menor'],
-    pecho: ['pectoral'],
-    espalda: ['dorsal', 'trapecio_med', 'trapecio_inf', 'romboides', 'erector', 'iliocostal', 'longisimo', 'espinoso', 'redondo_mayor'],
+    pecho: ['pectoral', 'subclavio'],
+    espalda: ['dorsal', 'trapecio_med', 'trapecio_inf', 'romboides', 'erector', 'iliocostal', 'longisimo', 'espinoso', 'redondo_mayor', 'multifidos'],
     biceps: ['biceps', 'braquial', 'coracobraquial'],
     triceps: ['triceps', 'anconeo'],
-    antebrazo: ['antebrazo', 'braquiorradial'],
-    cuello: ['esternocleidomastoideo', 'largo_cuello', 'largo_cabeza', 'recto_ant', 'esplenio', 'oblicuo_sup_cabeza', 'oblicuo_inf_cabeza', 'trapecio_sup', 'elevador'],
+    antebrazo: ['antebrazo', 'braquiorradial', 'supinador'],
+    cuello: ['esternocleidomastoideo', 'largo_cuello', 'largo_cabeza', 'recto_ant', 'esplenio', 'oblicuo_sup_cabeza', 'oblicuo_inf_cabeza', 'trapecio_sup', 'elevador', 'semispinalis', 'escaleno'],
     core: ['abdomen', 'oblicuo', 'transverso'],
     gluteo: ['gluteo', 'piriforme', 'gemino', 'cuadrado_femoral'],
     cuadriceps: ['cuadriceps', 'vastolateral', 'vastomedial', 'vastointermedio'],
@@ -296,12 +327,23 @@ crearParte(new THREE.BoxGeometry(0.1, 0.1, 0.1), {x:0.18, y:2.95, z:0.15}, 'mase
 crearParte(new THREE.BoxGeometry(0.2, 0.15, 0.1), {x:0, y:3.1, z:-0.2}, 'occipital');
 crearParte(new THREE.BoxGeometry(0.06, 0.15, 0.06), {x:-0.08, y:2.68, z:-0.08}, 'esplenio_izq');
 crearParte(new THREE.BoxGeometry(0.06, 0.15, 0.06), {x:0.08, y:2.68, z:-0.08}, 'esplenio_der');
+crearParte(new THREE.BoxGeometry(0.05, 0.08, 0.05), {x:-0.1, y:2.7, z:-0.12}, 'semispinalis_capitis_izq');
+crearParte(new THREE.BoxGeometry(0.05, 0.08, 0.05), {x:0.1, y:2.7, z:-0.12}, 'semispinalis_capitis_der');
 crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:-0.05, y:2.88, z:-0.04}, 'oblicuo_sup_cabeza_izq');
 crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:0.05, y:2.88, z:-0.04}, 'oblicuo_sup_cabeza_der');
 crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:-0.05, y:2.85, z:-0.06}, 'oblicuo_inf_cabeza_izq');
 crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.04), {x:0.05, y:2.85, z:-0.06}, 'oblicuo_inf_cabeza_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:-0.32, y:2.62, z:-0.02}, 'elevador_escapula_izq', {z:0.2});
 crearParte(new THREE.BoxGeometry(0.1, 0.18, 0.08), {x:0.32, y:2.62, z:-0.02}, 'elevador_escapula_der', {z:-0.2});
+crearParte(new THREE.BoxGeometry(0.04, 0.2, 0.04), {x:-0.22, y:2.55, z:0.02}, 'escaleno_ant_izq', {z:0.1});
+crearParte(new THREE.BoxGeometry(0.04, 0.2, 0.04), {x:0.22, y:2.55, z:0.02}, 'escaleno_ant_der', {z:-0.1});
+crearParte(new THREE.BoxGeometry(0.04, 0.2, 0.04), {x:-0.24, y:2.55, z:-0.02}, 'escaleno_med_izq');
+crearParte(new THREE.BoxGeometry(0.04, 0.2, 0.04), {x:0.24, y:2.55, z:-0.02}, 'escaleno_med_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.2, 0.04), {x:-0.26, y:2.55, z:-0.06}, 'escaleno_post_izq', {z:-0.1});
+crearParte(new THREE.BoxGeometry(0.04, 0.2, 0.04), {x:0.26, y:2.55, z:-0.06}, 'escaleno_post_der', {z:0.1});
+
+crearParte(new THREE.BoxGeometry(0.18, 0.06, 0.08), {x:-0.4, y:2.1, z:0.18}, 'subclavio_izq');
+crearParte(new THREE.BoxGeometry(0.18, 0.06, 0.08), {x:0.4, y:2.1, z:0.18}, 'subclavio_der');
 
 crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:-0.28, y:2.3, z:0.15}, 'pectoral_sup_izq');
 crearParte(new THREE.BoxGeometry(0.45, 0.25, 0.4), {x:0.28, y:2.3, z:0.15}, 'pectoral_sup_der');
@@ -342,6 +384,8 @@ crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:-0.1, y:1.85, z:-0.2}, 'lo
 crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:0.1, y:1.85, z:-0.2}, 'longisimo_der');
 crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:-0.02, y:1.85, z:-0.2}, 'espinoso_izq');
 crearParte(new THREE.BoxGeometry(0.04, 0.75, 0.1), {x:0.02, y:1.85, z:-0.2}, 'espinoso_der');
+crearParte(new THREE.BoxGeometry(0.06, 0.75, 0.08), {x:-0.13, y:1.85, z:-0.28}, 'multifidos_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.75, 0.08), {x:0.13, y:1.85, z:-0.28}, 'multifidos_der');
 crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:0, y:1.85, z:-0.25}, 'erector_espinal_izq', {x:0, y:0, z:0}, null, {x:0.01, y:0.01, z:0.01});
 crearParte(new THREE.BoxGeometry(0.1, 0.75, 0.12), {x:0, y:1.85, z:-0.25}, 'erector_espinal_der', {x:0, y:0, z:0}, null, {x:0.01, y:0.01, z:0.01});
 crearParte(new THREE.BoxGeometry(0.15, 0.15, 0.15), {x:-0.4, y:2.25, z:-0.15}, 'infraespinoso_izq');
@@ -399,6 +443,8 @@ crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:-0.78, y:1.45, z:-0.05}, 'a
 crearParte(new THREE.BoxGeometry(0.08, 0.3, 0.1), {x:0.78, y:1.45, z:-0.05}, 'antebrazo_ext_der');
 crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:-0.73, y:1.55, z:0.1}, 'braquiorradial_izq');
 crearParte(new THREE.BoxGeometry(0.06, 0.25, 0.08), {x:0.73, y:1.55, z:0.1}, 'braquiorradial_der');
+crearParte(new THREE.BoxGeometry(0.06, 0.15, 0.06), {x:-0.74, y:1.38, z:0.1}, 'supinador_izq');
+crearParte(new THREE.BoxGeometry(0.06, 0.15, 0.06), {x:0.74, y:1.38, z:0.1}, 'supinador_der');
 
 crearParte(new THREE.BoxGeometry(0.18, 0.22, 0.09), {x:-0.78, y:1.04, z:0.05}, 'mano_izq', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.BoxGeometry(0.18, 0.22, 0.09), {x:0.78, y:1.04, z:0.05}, 'mano_der', {x:0, y:0, z:0}, materialHueso);
@@ -415,6 +461,17 @@ dedoOffsets.forEach((offset, i) => {
 });
 crearParte(new THREE.BoxGeometry(0.05, 0.10, 0.08), {x:-0.70, y:0.98, z:0.05}, 'mano_izq_pulgar', {x:0, y:0, z:0.5}, materialHueso);
 crearParte(new THREE.BoxGeometry(0.05, 0.10, 0.08), {x:0.70, y:0.98, z:0.05}, 'mano_der_pulgar', {x:0, y:0, z:-0.5}, materialHueso);
+
+crearParte(new THREE.BoxGeometry(0.15, 0.05, 0.09), {x:-0.78, y:1.05, z:0.06}, 'flexor_dedos_mano_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.05, 0.09), {x:0.78, y:1.05, z:0.06}, 'flexor_dedos_mano_der');
+crearParte(new THREE.BoxGeometry(0.15, 0.04, 0.08), {x:-0.78, y:1.03, z:0.055}, 'extensor_dedos_mano_izq');
+crearParte(new THREE.BoxGeometry(0.15, 0.04, 0.08), {x:0.78, y:1.03, z:0.055}, 'extensor_dedos_mano_der');
+crearParte(new THREE.BoxGeometry(0.04, 0.04, 0.05), {x:-0.70, y:0.98, z:0.06}, 'oponente_pulgar_izq', {x:0, y:0, z:0.5});
+crearParte(new THREE.BoxGeometry(0.04, 0.04, 0.05), {x:0.70, y:0.98, z:0.06}, 'oponente_pulgar_der', {x:0, y:0, z:-0.5});
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.05), {x:-0.70, y:0.96, z:0.06}, 'flexor_corto_pulgar_izq', {x:0, y:0, z:0.5});
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.05), {x:0.70, y:0.96, z:0.06}, 'flexor_corto_pulgar_der', {x:0, y:0, z:-0.5});
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.05), {x:-0.72, y:0.94, z:0.06}, 'abductor_corto_pulgar_izq', {x:0, y:0, z:0.5});
+crearParte(new THREE.BoxGeometry(0.04, 0.05, 0.05), {x:0.72, y:0.94, z:0.06}, 'abductor_corto_pulgar_der', {x:0, y:0, z:-0.5});
 
 crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:-0.25, y:1.0, z:-0.15}, 'gluteo_mayor_izq');
 crearParte(new THREE.BoxGeometry(0.35, 0.25, 0.3), {x:0.25, y:1.0, z:-0.15}, 'gluteo_mayor_der');
