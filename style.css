@@ -116,6 +116,31 @@ input[type="text"]::placeholder {
     margin-bottom: 0;
 }
 
+.toggle-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+}
+.toggle-label {
+    font-size: 13px;
+    color: #ccc;
+    cursor: pointer;
+    user-select: none;
+}
+#checkPose {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #4a6aaa;
+    margin: 0;
+    padding: 0;
+}
+
 .grupo-filtro {
     display: flex;
     gap: 8px;
