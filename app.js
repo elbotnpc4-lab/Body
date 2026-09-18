@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { POSES, MAPA_POSES } from './poses.js';
 
 const BASE_URL = 'https://raw.githubusercontent.com/elbotnpc4-lab/Body/main/Data/';
 
@@ -8,6 +9,13 @@ const [nombresMusculos, infoMusculos, baseDatos] = await Promise.all([
     fetch(BASE_URL + 'musculos.json').then(r => r.json()),
     fetch(BASE_URL + 'ejercicios.json').then(r => r.json())
 ]);
+
+let descripciones = { musculos: {}, ejercicios: {} };
+try {
+    descripciones = await fetch(BASE_URL + 'descripciones.json').then(r => r.json());
+} catch (e) {
+    console.warn('Sin descripciones.json, se ignora');
+}
 
 const PROFUNDOS = [
     'transverso_abdominal', 'psoas_iliaco_izq', 'psoas_iliaco_der',
@@ -163,7 +171,7 @@ const MUSCULOS_RELACIONADOS = {
     'cuadrado_lumbar_izq': ['Psoas Ilíaco', 'Iliocostal', 'Oblicuo Interno'],
     'cuadrado_lumbar_der': ['Psoas Ilíaco', 'Iliocostal', 'Oblicuo Interno'],
     'sartorio_izq': ['Recto Femoral', 'Grácil', 'Aductor Largo'],
-    'sartorio_der': ['Recto Femoral', 'Grácil', 'Aductor Largo'],
+    'sartorio_der': ['Recto Femoral', 'Gràcil', 'Aductor Largo'],
     'tfl_izq': ['Glúteo Medio', 'Glúteo Menor', 'Sartorio'],
     'tfl_der': ['Glúteo Medio', 'Glúteo Menor', 'Sartorio'],
     'piriforme_izq': ['Glúteo Mayor', 'Glúteo Medio', 'Gémino Superior'],
@@ -555,6 +563,42 @@ crearParte(new THREE.CylinderGeometry(0.06, 0.06, 0.4, 8), {x:0, y:2.55, z:-0.05
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8), {x:0, y:1.95, z:-0.1}, 'columna_toracica', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 8), {x:0, y:1.4, z:-0.1}, 'columna_lumbar', {x:0, y:0, z:0}, materialHueso);
 
+const posicionesDefault = {};
+Object.values(partes).forEach(parte => {
+    posicionesDefault[parte.name] = {
+        pos: parte.position.clone(),
+        rot: parte.rotation.clone(),
+        scale: parte.scale.clone()
+    };
+});
+
+function aplicarPose(nombrePose) {
+    if (!POSES[nombrePose]) nombrePose = 'default';
+    Object.values(partes).forEach(parte => {
+        const def = posicionesDefault[parte.name];
+        if (def) {
+            parte.position.copy(def.pos);
+            parte.rotation.copy(def.rot);
+            parte.scale.copy(def.scale);
+        }
+    });
+    const pose = POSES[nombrePose];
+    if (pose) {
+        for (const id in pose) {
+            const parte = partes[id];
+            if (!parte) continue;
+            const cambios = pose[id];
+            if (cambios.pos) parte.position.set(cambios.pos[0], cambios.pos[1], cambios.pos[2]);
+            if (cambios.rot) parte.rotation.set(cambios.rot[0], cambios.rot[1], cambios.rot[2]);
+            if (cambios.scale) parte.scale.set(cambios.scale[0], cambios.scale[1], cambios.scale[2]);
+        }
+    }
+}
+
+function resetPose() {
+    aplicarPose('default');
+}
+
 function validarDatos() {
     const idsValidos = new Set(Object.keys(partes));
     const errores = [];
@@ -662,6 +706,11 @@ function mostrarInfoMusculo(id) {
     let html = `<div class="tipo-badge ${tipoBadge}">${tipoTexto}</div>`;
     html += `<div class="tecnica-peso"><strong>💡 Técnica &gt; Peso</strong><br>La técnica correcta es más importante que cargar mucho peso. Con mala forma: (1) el músculo objetivo no trabaja, (2) te lesionas, (3) progresas más lento. <strong>Primero domina el movimiento, después sube el peso.</strong></div>`;
 
+    const desc = descripciones.musculos && descripciones.musculos[id];
+    if (desc) {
+        html += `<div class="info-seccion"><span class="info-label">Descripción</span><div class="info-texto">${desc}</div></div>`;
+    }
+
     if (info) {
         if (info.funciones) {
             html += `<div class="info-seccion"><span class="info-label">Función</span>`;
@@ -731,6 +780,7 @@ function setTexto(texto) { document.getElementById("inputEjercicio").value = tex
 function limpiar() {
     restaurarSeleccion();
     musculoSeleccionado = null;
+    resetPose();
 
     Object.values(partes).forEach(parte => {
         let baseMat;
@@ -772,15 +822,16 @@ function entrenar() {
     limpiar();
     const input = normalizar(document.getElementById("inputEjercicio").value);
     let ejercicioEncontrado = null;
+    let claveEncontrada = null;
     const aliasOrdenados = [];
     for (const clave in baseDatos) baseDatos[clave].alias.forEach(alias => aliasOrdenados.push({ aliasNorm: normalizar(alias), clave }));
     aliasOrdenados.sort((a, b) => b.aliasNorm.length - a.aliasNorm.length);
-    for (const entrada of aliasOrdenados) if (input === entrada.aliasNorm) { ejercicioEncontrado = baseDatos[entrada.clave]; break; }
+    for (const entrada of aliasOrdenados) if (input === entrada.aliasNorm) { ejercicioEncontrado = baseDatos[entrada.clave]; claveEncontrada = entrada.clave; break; }
     if (!ejercicioEncontrado) {
         for (const entrada of aliasOrdenados) {
             const aliasEscapado = entrada.aliasNorm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const regex = new RegExp(`(^|\\s)${aliasEscapado}(\\s|$)`);
-            if (regex.test(input)) { ejercicioEncontrado = baseDatos[entrada.clave]; break; }
+            if (regex.test(input)) { ejercicioEncontrado = baseDatos[entrada.clave]; claveEncontrada = entrada.clave; break; }
         }
     }
     const resultadoDiv = document.getElementById("resultado");
@@ -791,12 +842,21 @@ function entrenar() {
         aplicarMaterial(ejercicioEncontrado.stabilizers || [], materialStabilizerBase);
         aplicarMaterial(ejercicioEncontrado.joints || [], materialJointBase);
         let html = "";
+
+        const descEj = descripciones.ejercicios && descripciones.ejercicios[claveEncontrada];
+        if (descEj) {
+            html += `<div class="cat"><span class="cat-titulo" style="color:#88dd88;">DESCRIPCIÓN</span><div class="musculo">${descEj}</div></div>`;
+        }
+
         if (ejercicioEncontrado.primary?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ff0000;">PRIMARIOS</span>${construirHTMLLista(ejercicioEncontrado.primary, '#ff0000')}</div>`;
         if (ejercicioEncontrado.secondary?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ff8800;">SECUNDARIOS</span>${construirHTMLLista(ejercicioEncontrado.secondary, '#ff8800')}</div>`;
         if (ejercicioEncontrado.stabilizers?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#ffdd00;">ESTABILIZADORES</span>${construirHTMLLista(ejercicioEncontrado.stabilizers, '#ffdd00')}</div>`;
         if (ejercicioEncontrado.joints?.length) html += `<div class="cat"><span class="cat-titulo" style="color:#00ccff;">ARTICULACIONES</span>${construirHTMLLista(ejercicioEncontrado.joints, '#00ccff')}</div>`;
         if (ejercicioEncontrado.movement) html += `<div class="movimiento"><span class="cat-titulo" style="color:#fff;">MOVIMIENTO</span><div class="musculo">↑ ${ejercicioEncontrado.movement.subida}</div><div class="musculo">↓ ${ejercicioEncontrado.movement.bajada}</div></div>`;
         resultadoDiv.innerHTML = html;
+
+        const poseNombre = MAPA_POSES[claveEncontrada];
+        if (poseNombre) aplicarPose(poseNombre);
     } else {
         resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
         resultadoDiv.style.color = "#ff4444";
@@ -914,6 +974,8 @@ document.getElementById("toggle-btn").addEventListener("click", togglePanel);
 document.getElementById("btnEntrenar").addEventListener("click", entrenar);
 const btnRC = document.getElementById("btnRutinaCompleta");
 if (btnRC) btnRC.addEventListener("click", rutinaCompleta);
+const btnReset = document.getElementById("btnResetPose");
+if (btnReset) btnReset.addEventListener("click", resetPose);
 document.getElementById("inputEjercicio").addEventListener("keypress", function(event) { if (event.key === "Enter") entrenar(); });
 
 document.querySelectorAll(".filtro-btn").forEach(btn => btn.addEventListener("click", function() {
