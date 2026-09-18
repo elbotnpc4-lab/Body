@@ -855,8 +855,10 @@ function entrenar() {
         if (ejercicioEncontrado.movement) html += `<div class="movimiento"><span class="cat-titulo" style="color:#fff;">MOVIMIENTO</span><div class="musculo">↑ ${ejercicioEncontrado.movement.subida}</div><div class="musculo">↓ ${ejercicioEncontrado.movement.bajada}</div></div>`;
         resultadoDiv.innerHTML = html;
 
-        const poseNombre = MAPA_POSES[claveEncontrada];
-        if (poseNombre) aplicarPose(poseNombre);
+        if (poseActivada) {
+            const poseNombre = MAPA_POSES[claveEncontrada];
+            if (poseNombre) aplicarPose(poseNombre);
+        }
     } else {
         resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
         resultadoDiv.style.color = "#ff4444";
@@ -976,6 +978,17 @@ const btnRC = document.getElementById("btnRutinaCompleta");
 if (btnRC) btnRC.addEventListener("click", rutinaCompleta);
 const btnReset = document.getElementById("btnResetPose");
 if (btnReset) btnReset.addEventListener("click", resetPose);
+
+const checkPose = document.getElementById("checkPose");
+let poseActivada = false;
+if (checkPose) {
+    poseActivada = checkPose.checked;
+    checkPose.addEventListener("change", () => {
+        poseActivada = checkPose.checked;
+        if (!poseActivada) resetPose();
+    });
+}
+
 document.getElementById("inputEjercicio").addEventListener("keypress", function(event) { if (event.key === "Enter") entrenar(); });
 
 document.querySelectorAll(".filtro-btn").forEach(btn => btn.addEventListener("click", function() {
