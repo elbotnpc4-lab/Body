@@ -1,1 +1,32 @@
-
+{
+    "musculos": {
+        "biceps_corto_izq": "Cabeza medial del bíceps. Trabaja más cuando el codo está pegado al cuerpo y el antebrazo supinado.",
+        "biceps_largo_izq": "Cabeza lateral del bíceps. Se activa más cuando el codo va por delante del cuerpo.",
+        "triceps_largo_izq": "Cabeza larga del tríceps. Es la única que cruza el hombro, por eso trabaja más en ejercicios sobre la cabeza.",
+        "cuadriceps_recto_izq": "Único músculo del cuádriceps que cruza la cadera. Trabaja más cuando la cadera está extendida.",
+        "gluteo_mayor_izq": "El músculo más grande del cuerpo. Extiende la cadera con fuerza en sentadillas, peso muerto y puentes.",
+        "dorsal_izq": "Músculo principal de la espalda. Da la forma en V. Trabaja en dominadas, remos y jalones.",
+        "pectoral_sup_izq": "Porción superior del pecho. Se activa más en press inclinado y aperturas.",
+        "pectoral_inf_izq": "Porción inferior del pecho. Se activa más en press declinado y fondos.",
+        "deltoides_ant_izq": "Deltoides frontal. Trabaja en press militar, elevaciones frontales y flexiones.",
+        "deltoides_lat_izq": "Deltoides lateral. Trabaja en elevaciones laterales y press militar.",
+        "deltoides_post_izq": "Deltoides trasero. Trabaja en pájaros, face pull y remos.",
+        "sartorio_izq": "El músculo más largo del cuerpo. Cruza cadera y rodilla en diagonal.",
+        "gastrocnemio_izq": "Gemelo. Trabaja con la rodilla extendida (de pie).",
+        "soleo_izq": "Está debajo del gemelo. Trabaja más con la rodilla flexionada (sentado).",
+        "psoas_iliaco_izq": "Flexor profundo de cadera. Se acorta con el sedentarismo.",
+        "transverso_abdominal": "Músculo más profundo del abdomen. Estabiliza el core y protege la columna."
+    },
+    "ejercicios": {
+        "sentadilla": "Ejercicio rey para piernas. Trabaja cuádriceps, glúteos, isquios y core. Mantén la espalda recta y baja hasta que los muslos queden paralelos al suelo.",
+        "flexion": "Empuje horizontal. Trabaja pecho, tríceps y deltoides anterior. Cuerpo en línea recta de cabeza a talones.",
+        "dominadas": "Tracción vertical. Trabaja dorsal, bíceps, romboides y trapecio. Si no puedes hacer una, usa banda elástica o haz jalón en máquina.",
+        "press banca": "Empuje horizontal pesado. Trabaja pecho, tríceps y deltoides anterior. Escápulas retraídas y pies firmes en el suelo.",
+        "peso muerto": "Bisagra de cadera. Trabaja glúteo, isquios y erectores. Espalda neutra y barra pegada al cuerpo.",
+        "curl de biceps": "Aislamiento de bíceps. Codos pegados al cuerpo y control en la bajada. No balancees el torso.",
+        "press militar": "Empuje vertical. Trabaja deltoides, tríceps y trapecio. Core apretado para no arquear la espalda.",
+        "remo": "Tracción horizontal. Trabaja dorsal, trapecio y romboides. Aprieta las escápulas al final del movimiento.",
+        "plancha": "Isométrico de core. Mantén el cuerpo recto y el abdomen apretado. No dejes caer la cadera.",
+        "zancadas": "Unilateral de piernas. Trabaja cuádriceps, glúteo e isquios. Rodilla delantera no pasa la punta del pie."
+    }
+}
