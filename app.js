@@ -564,35 +564,36 @@ crearParte(new THREE.CylinderGeometry(0.06, 0.06, 0.4, 8), {x:0, y:2.55, z:-0.05
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8), {x:0, y:1.95, z:-0.1}, 'columna_toracica', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 8), {x:0, y:1.4, z:-0.1}, 'columna_lumbar', {x:0, y:0, z:0}, materialHueso);
 
-const posicionesDefault = {};
+const estadoOriginal = {};
 Object.values(partes).forEach(parte => {
-    posicionesDefault[parte.name] = {
+    estadoOriginal[parte.name] = {
         pos: parte.position.clone(),
         rot: parte.rotation.clone(),
         scale: parte.scale.clone()
     };
 });
 
-function aplicarPoseForzada(nombrePose) {
-    if (!POSES[nombrePose]) nombrePose = 'default';
+function restaurarEstadoOriginal() {
     Object.values(partes).forEach(parte => {
-        const def = posicionesDefault[parte.name];
-        if (def) {
-            parte.position.copy(def.pos);
-            parte.rotation.copy(def.rot);
-            parte.scale.copy(def.scale);
-        }
+        const orig = estadoOriginal[parte.name];
+        if (!orig) return;
+        parte.position.copy(orig.pos);
+        parte.rotation.copy(orig.rot);
+        parte.scale.copy(orig.scale);
     });
+}
+
+function aplicarPoseForzada(nombrePose) {
+    restaurarEstadoOriginal();
     const pose = POSES[nombrePose];
-    if (pose) {
-        for (const id in pose) {
-            const parte = partes[id];
-            if (!parte) continue;
-            const cambios = pose[id];
-            if (cambios.pos) parte.position.set(cambios.pos[0], cambios.pos[1], cambios.pos[2]);
-            if (cambios.rot) parte.rotation.set(cambios.rot[0], cambios.rot[1], cambios.rot[2]);
-            if (cambios.scale) parte.scale.set(cambios.scale[0], cambios.scale[1], cambios.scale[2]);
-        }
+    if (!pose) return;
+    for (const id in pose) {
+        const parte = partes[id];
+        if (!parte) continue;
+        const cambios = pose[id];
+        if (cambios.pos) parte.position.set(cambios.pos[0], cambios.pos[1], cambios.pos[2]);
+        if (cambios.rot) parte.rotation.set(cambios.rot[0], cambios.rot[1], cambios.rot[2]);
+        if (cambios.scale) parte.scale.set(cambios.scale[0], cambios.scale[1], cambios.scale[2]);
     }
 }
 
@@ -602,7 +603,7 @@ function aplicarPose(nombrePose) {
 }
 
 function resetPose() {
-    aplicarPoseForzada('default');
+    restaurarEstadoOriginal();
 }
 
 function validarDatos() {
@@ -863,7 +864,7 @@ function entrenar() {
 
         if (poseActivada) {
             const poseNombre = MAPA_POSES ? MAPA_POSES[claveEncontrada] : null;
-            if (poseNombre) aplicarPose(poseNombre);
+            if (poseNombre) aplicarPoseForzada(poseNombre);
         }
     } else {
         resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
@@ -987,7 +988,8 @@ if (btnReset) btnReset.addEventListener("click", resetPose);
 
 const checkPose = document.getElementById("checkPose");
 if (checkPose) {
-    poseActivada = checkPose.checked;
+    checkPose.checked = false;
+    poseActivada = false;
     checkPose.addEventListener("change", () => {
         poseActivada = checkPose.checked;
         if (!poseActivada) resetPose();
