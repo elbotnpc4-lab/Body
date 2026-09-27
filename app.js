@@ -220,6 +220,7 @@ function obtenerGrupoMuscular(ejercicio) {
 let filtroEquipo = 'todos';
 let filtroGrupo = 'todos';
 let musculoSeleccionado = null;
+let poseActivada = false;
 
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
@@ -572,7 +573,7 @@ Object.values(partes).forEach(parte => {
     };
 });
 
-function aplicarPose(nombrePose) {
+function aplicarPoseForzada(nombrePose) {
     if (!POSES[nombrePose]) nombrePose = 'default';
     Object.values(partes).forEach(parte => {
         const def = posicionesDefault[parte.name];
@@ -595,8 +596,13 @@ function aplicarPose(nombrePose) {
     }
 }
 
+function aplicarPose(nombrePose) {
+    if (!poseActivada) return;
+    aplicarPoseForzada(nombrePose);
+}
+
 function resetPose() {
-    aplicarPose('default');
+    aplicarPoseForzada('default');
 }
 
 function validarDatos() {
@@ -856,7 +862,7 @@ function entrenar() {
         resultadoDiv.innerHTML = html;
 
         if (poseActivada) {
-            const poseNombre = MAPA_POSES[claveEncontrada];
+            const poseNombre = MAPA_POSES ? MAPA_POSES[claveEncontrada] : null;
             if (poseNombre) aplicarPose(poseNombre);
         }
     } else {
@@ -980,7 +986,6 @@ const btnReset = document.getElementById("btnResetPose");
 if (btnReset) btnReset.addEventListener("click", resetPose);
 
 const checkPose = document.getElementById("checkPose");
-let poseActivada = false;
 if (checkPose) {
     poseActivada = checkPose.checked;
     checkPose.addEventListener("change", () => {
