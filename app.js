@@ -564,46 +564,49 @@ crearParte(new THREE.CylinderGeometry(0.06, 0.06, 0.4, 8), {x:0, y:2.55, z:-0.05
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8), {x:0, y:1.95, z:-0.1}, 'columna_toracica', {x:0, y:0, z:0}, materialHueso);
 crearParte(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 8), {x:0, y:1.4, z:-0.1}, 'columna_lumbar', {x:0, y:0, z:0}, materialHueso);
 
-const estadoOriginal = {};
-Object.values(partes).forEach(parte => {
-    estadoOriginal[parte.name] = {
-        pos: parte.position.clone(),
-        rot: parte.rotation.clone(),
-        scale: parte.scale.clone()
+// =========================================================================
+// ESTADO ORIGINAL DEL MODELO 3D RECIÉN CREADO.
+// ESTO ES LO QUE SE RESTAURA. NADA MÁS. NI POSES.DEFAULT NI MIERDAS.
+// =========================================================================
+const ESTADO_ORIGINAL = {};
+Object.keys(partes).forEach(nombre => {
+    const mesh = partes[nombre];
+    ESTADO_ORIGINAL[nombre] = {
+        pos: mesh.position.clone(),
+        rot: mesh.rotation.clone(),
+        scl: mesh.scale.clone()
     };
 });
+console.log('[Body] Estado original capturado para', Object.keys(ESTADO_ORIGINAL).length, 'partes');
 
-function restaurarEstadoOriginal() {
-    Object.values(partes).forEach(parte => {
-        const orig = estadoOriginal[parte.name];
-        if (!orig) return;
-        parte.position.copy(orig.pos);
-        parte.rotation.copy(orig.rot);
-        parte.scale.copy(orig.scale);
-    });
-}
-
-function aplicarPoseForzada(nombrePose) {
-    restaurarEstadoOriginal();
-    const pose = POSES[nombrePose];
-    if (!pose) return;
-    for (const id in pose) {
-        const parte = partes[id];
-        if (!parte) continue;
-        const cambios = pose[id];
-        if (cambios.pos) parte.position.set(cambios.pos[0], cambios.pos[1], cambios.pos[2]);
-        if (cambios.rot) parte.rotation.set(cambios.rot[0], cambios.rot[1], cambios.rot[2]);
-        if (cambios.scale) parte.scale.set(cambios.scale[0], cambios.scale[1], cambios.scale[2]);
+function volverAlOrigen() {
+    for (const nombre in ESTADO_ORIGINAL) {
+        const mesh = partes[nombre];
+        if (!mesh) continue;
+        const o = ESTADO_ORIGINAL[nombre];
+        mesh.position.copy(o.pos);
+        mesh.rotation.copy(o.rot);
+        mesh.scale.copy(o.scl);
     }
 }
 
-function aplicarPose(nombrePose) {
-    if (!poseActivada) return;
-    aplicarPoseForzada(nombrePose);
+function resetPose() {
+    volverAlOrigen();
 }
 
-function resetPose() {
-    restaurarEstadoOriginal();
+function aplicarPose(nombrePose) {
+    if (poseActivada !== true) return; // ← NO HACE NADA SI EL TOGGLE ESTÁ OFF
+    volverAlOrigen();
+    const pose = POSES[nombrePose];
+    if (!pose) return;
+    for (const id in pose) {
+        const mesh = partes[id];
+        if (!mesh) continue;
+        const c = pose[id];
+        if (c.pos) mesh.position.set(c.pos[0], c.pos[1], c.pos[2]);
+        if (c.rot) mesh.rotation.set(c.rot[0], c.rot[1], c.rot[2]);
+        if (c.scale) mesh.scale.set(c.scale[0], c.scale[1], c.scale[2]);
+    }
 }
 
 function validarDatos() {
@@ -787,7 +790,7 @@ function setTexto(texto) { document.getElementById("inputEjercicio").value = tex
 function limpiar() {
     restaurarSeleccion();
     musculoSeleccionado = null;
-    resetPose();
+    volverAlOrigen(); // ← SIEMPRE vuelve al original (que es lo que queremos)
 
     Object.values(partes).forEach(parte => {
         let baseMat;
@@ -862,9 +865,10 @@ function entrenar() {
         if (ejercicioEncontrado.movement) html += `<div class="movimiento"><span class="cat-titulo" style="color:#fff;">MOVIMIENTO</span><div class="musculo">↑ ${ejercicioEncontrado.movement.subida}</div><div class="musculo">↓ ${ejercicioEncontrado.movement.bajada}</div></div>`;
         resultadoDiv.innerHTML = html;
 
-        if (poseActivada) {
+        // SOLO aplica la pose si el toggle está ON. aplicarPose ya lo comprueba, pero lo dejamos explícito aquí también.
+        if (poseActivada === true) {
             const poseNombre = MAPA_POSES ? MAPA_POSES[claveEncontrada] : null;
-            if (poseNombre) aplicarPoseForzada(poseNombre);
+            if (poseNombre) aplicarPose(poseNombre);
         }
     } else {
         resultadoDiv.innerText = "No reconocido. Escribe un ejercicio válido.";
@@ -986,13 +990,14 @@ if (btnRC) btnRC.addEventListener("click", rutinaCompleta);
 const btnReset = document.getElementById("btnResetPose");
 if (btnReset) btnReset.addEventListener("click", resetPose);
 
+// FORZAR toggle apagado por defecto SIEMPRE
 const checkPose = document.getElementById("checkPose");
 if (checkPose) {
     checkPose.checked = false;
     poseActivada = false;
     checkPose.addEventListener("change", () => {
-        poseActivada = checkPose.checked;
-        if (!poseActivada) resetPose();
+        poseActivada = (checkPose.checked === true);
+        if (!poseActivada) resetPose(); // al apagarlo, vuelve todo al original
     });
 }
 
