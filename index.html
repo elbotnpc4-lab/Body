@@ -1,112 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muscular</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letras</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<button id="toggle-btn">Mostrar Menú</button>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <span class="title">Canciones</span>
+      <button class="btn-add" id="openAdd" title="Agregar">+</button>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Buscar...">
+    </div>
+    <ul class="song-list" id="songList"></ul>
+  </aside>
 
-<div class="panel" id="panelControl">
-    <h2>Muscular</h2>
+  <div class="overlay" id="overlay"></div>
 
-    <div class="seccion">
-        <p class="seccion-titulo">Buscar ejercicio</p>
-        <input type="text" id="inputEjercicio" placeholder="Ej: sentadilla, curl, dominadas...">
-        <button class="btn-accion" id="btnEntrenar">Entrenar</button>
-        <button class="btn-accion" id="btnRutinaCompleta" style="background-color: #2a4a8a; border-color: #4a6aaa;">Rutina completa (todo el cuerpo)</button>
-        <button class="btn-accion" id="btnResetPose">Reset pose</button>
-        <div class="toggle-fila">
-            <label class="toggle-label" for="checkPose">Reproducir pose al entrenar</label>
-            <input type="checkbox" id="checkPose">
+  <main class="main">
+    <div class="mobile-bar">
+      <button class="toggle" id="menuToggle">Menu</button>
+      <span class="cur" id="mobileCur">Sin seleccion</span>
+    </div>
+
+    <div class="main-header">
+      <div class="song-title muted" id="songTitle">Selecciona una cancion</div>
+      <div class="header-actions">
+        <div class="speed-frame" id="speedFrame">
+          <label for="speed">Velocidad</label>
+          <input type="range" id="speed" min="1" max="100" value="25">
+          <span id="speedVal">25</span>
         </div>
+        <button class="auto-btn" id="autoBtn">Auto Scroll</button>
+      </div>
     </div>
 
-    <div class="seccion">
-        <p class="seccion-titulo">Buscar músculo</p>
-        <input type="text" id="inputMusculo" placeholder="Ej: bíceps, dorsal, cuádriceps..." autocomplete="off">
-        <div id="sugerenciasMusculo"></div>
+    <div class="lyrics-wrap" id="lyricsWrap">
+      <div id="lyrics" class="placeholder">Selecciona una cancion para ver la letra.</div>
     </div>
-
-    <div class="seccion">
-        <p class="seccion-titulo">Filtrar por equipo</p>
-        <div class="grupo-filtro">
-            <button class="filtro-btn activo" data-filtro="todos">Todos</button>
-            <button class="filtro-btn" data-filtro="mancuerna">Mancuernas</button>
-            <button class="filtro-btn" data-filtro="barra">Barra</button>
-            <button class="filtro-btn" data-filtro="maquina">Máquinas</button>
-            <button class="filtro-btn" data-filtro="cuerpo">Peso corporal</button>
-        </div>
-    </div>
-
-    <div class="seccion">
-        <p class="seccion-titulo">Filtrar por grupo muscular</p>
-        <div class="grupo-filtro" id="filtroGrupoMuscular">
-            <button class="grupo-btn activo" data-grupo="todos">Todos</button>
-            <button class="grupo-btn" data-grupo="hombro">Hombro</button>
-            <button class="grupo-btn" data-grupo="pecho">Pecho</button>
-            <button class="grupo-btn" data-grupo="espalda">Espalda</button>
-            <button class="grupo-btn" data-grupo="biceps">Bíceps</button>
-            <button class="grupo-btn" data-grupo="triceps">Tríceps</button>
-            <button class="grupo-btn" data-grupo="antebrazo">Antebrazo</button>
-            <button class="grupo-btn" data-grupo="cuello">Cuello</button>
-            <button class="grupo-btn" data-grupo="core">Core</button>
-            <button class="grupo-btn" data-grupo="gluteo">Glúteo</button>
-            <button class="grupo-btn" data-grupo="cuadriceps">Cuádriceps</button>
-            <button class="grupo-btn" data-grupo="isquio">Isquios</button>
-            <button class="grupo-btn" data-grupo="pantorrilla">Pantorrilla</button>
-            <button class="grupo-btn" data-grupo="aductor">Aductor</button>
-        </div>
-    </div>
-
-    <div class="seccion">
-        <div id="listaBotones"></div>
-    </div>
-
-    <div class="seccion">
-        <p class="seccion-titulo">Resultado</p>
-        <div id="resultado">Escribe un ejercicio...</div>
-    </div>
+  </main>
 </div>
 
-<div id="info-panel">
-    <button class="cerrar" onclick="cerrarInfo()">×</button>
-    <h3 id="info-nombre">Músculo</h3>
-    <div id="info-contenido"></div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">Agregar cancion</h3>
+    <label for="inTitle">Nombre</label>
+    <input type="text" id="inTitle" placeholder="Nombre de la cancion">
+    <label for="inLyrics">Letra</label>
+    <textarea id="inLyrics" placeholder="Pega la letra aqui..."></textarea>
+    <div class="modal-actions">
+      <button class="secondary" id="cancelBtn">Cancelar</button>
+      <button class="primary" id="saveBtn">Guardar</button>
+    </div>
+  </div>
 </div>
 
-<div class="leyenda" id="leyendaFlotante">
-    <div class="leyenda-item"><div class="color-box" style="background:#ff0000;"></div> Primario</div>
-    <div class="leyenda-item"><div class="color-box" style="background:#ff8800;"></div> Secundario</div>
-    <div class="leyenda-item"><div class="color-box" style="background:#ffdd00;"></div> Estabilizador</div>
-    <div class="leyenda-item"><div class="color-box" style="background:#00ccff;"></div> Articulación</div>
-    <button id="legend-help" title="¿Qué significa cada categoría?">?</button>
-</div>
-
-<div id="legend-modal">
-    <button class="legend-cierre" onclick="document.getElementById('legend-modal').style.display='none'">×</button>
-    <h3>¿Qué significa cada categoría?</h3>
-    <p><strong style="color:#ff0000;">■ Primario (agonista):</strong> Músculo que genera la mayor parte de la fuerza en el movimiento. Es el protagonista del ejercicio.</p>
-    <p><strong style="color:#ff8800;">■ Secundario (sinergista):</strong> Músculo que asiste al movimiento principal. Ayuda a completar la acción pero no es el motor principal.</p>
-    <p><strong style="color:#ffdd00;">■ Estabilizador:</strong> Músculo que mantiene la postura y fija las articulaciones para que el movimiento principal sea seguro y eficiente.</p>
-    <p><strong style="color:#00ccff;">■ Articulación:</strong> Punto de unión entre dos o más huesos donde ocurre el movimiento (no es un músculo).</p>
-</div>
-
-<div id="muscle-popup"></div>
-<div id="canvas-container"></div>
-
-<script type="importmap">
-{
-    "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
-}
-</script>
-
-<script type="module" src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
